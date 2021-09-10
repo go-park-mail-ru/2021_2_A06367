@@ -4,4 +4,6 @@ type StatusCode int
 
 const (
 	Okey StatusCode = iota
+	NotFound
+	InternalError
 )
