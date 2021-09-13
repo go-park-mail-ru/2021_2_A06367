@@ -6,4 +6,5 @@ const (
 	Okey StatusCode = iota
 	NotFound
 	InternalError
+	Unauthed
 )

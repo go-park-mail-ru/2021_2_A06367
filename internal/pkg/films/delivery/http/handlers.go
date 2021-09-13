@@ -17,4 +17,5 @@ func NewFilmsHandler(uc films.FilmsUsecase) *FilmsHandler {
 
 func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request)  {
 
+
 }
