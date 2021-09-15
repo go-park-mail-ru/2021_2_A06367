@@ -9,16 +9,16 @@ import (
 )
 
 const (
-	SElECT_USER = "SELECT id, email, login, encrypted_password, created_at FROM users;"
-	CHECK_USER = "SELECT encrypted_password FROM users WHERE login=$1;"
-	CREATE_USER = "INSERT INTO users(id, email, login, encrypted_password, created_at) VALUES($1, $2, $3, $4, $5) RETURNING id;"
+	SElECT_USER = "SELECT id, email, login, encrypted_password, created_at FROM public.users;"
+	CHECK_USER = "SELECT encrypted_password FROM public.users WHERE login=$1;"
+	CREATE_USER = "INSERT INTO public.users(id, email, login, encrypted_password, created_at) VALUES($1, $2, $3, $4, $5) RETURNING id;"
 )
 
 type AuthRepo struct {
-	pool pgxpool.Pool
+	pool *pgxpool.Pool
 }
 
-func NewAuthRepo(pool pgxpool.Pool) *AuthRepo {
+func NewAuthRepo(pool *pgxpool.Pool) *AuthRepo {
 	return &AuthRepo{pool: pool}
 }
 
