@@ -25,6 +25,16 @@ func TestAuthHandler_Login(t *testing.T) {
 		t.Error(err.Error())
 	}
 
+	userNOk := models.User{
+		Login:             "Rocky",
+		Email:             "d@mail.ru",
+		EncryptedPassword: "ddd",
+	}
+	baduserjson, err := json.Marshal(&userNOk)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
 	mockUsecase := auth.NewMockAuthUsecase(ctl)
 	type fields struct {
 		Usecase auth.AuthUsecase
@@ -46,10 +56,21 @@ func TestAuthHandler_Login(t *testing.T) {
 			name:   "simple create",
 			fields: fields{Usecase: mockUsecase},
 			args: args{
-				r: httptest.NewRequest("POST", "/persons", bytes.NewReader(userjson)),
+				r:            httptest.NewRequest("POST", "/persons", bytes.NewReader(userjson)),
+				statusReturn: models.Okey,
+			},
+		},
+		{
+			name:   "no user with such login etc",
+			fields: fields{Usecase: mockUsecase},
+			args: args{
+				r:            httptest.NewRequest("POST", "/persons", bytes.NewReader(baduserjson)),
+				statusReturn: models.Conflict,
 			},
 		},
 	}
+	mockUsecase.EXPECT().SignIn(userOk).Return(tests[0].args.statusReturn)
+	mockUsecase.EXPECT().SignIn(userOk).Return(tests[1].args.statusReturn)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -59,10 +80,7 @@ func TestAuthHandler_Login(t *testing.T) {
 			}
 			w := httptest.NewRecorder()
 
-			mockUsecase.EXPECT().SignIn(userOk).Return(tt.args.statusReturn)
-
 			h.Login(w, tt.args.r)
-
 			if tt.args.status != w.Code {
 				t.Error(tt.name)
 			}
