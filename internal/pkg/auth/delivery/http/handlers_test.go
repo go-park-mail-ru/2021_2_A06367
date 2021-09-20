@@ -1,14 +1,13 @@
 package http
 
 import (
-	"fmt"
+	"bytes"
+	"encoding/json"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
-	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
 	"github.com/golang/mock/gomock"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 )
 
@@ -16,8 +15,17 @@ func TestAuthHandler_Login(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUsecase := auth.NewMockAuthUsecase(ctl)
+	userOk := models.User{
+		Login:             "Rocky",
+		Email:             "d@mail.ru",
+		EncryptedPassword: "ddd",
+	}
+	userjson, err := json.Marshal(&userOk)
+	if err != nil {
+		t.Error(err.Error())
+	}
 
+	mockUsecase := auth.NewMockAuthUsecase(ctl)
 	type fields struct {
 		Usecase auth.AuthUsecase
 	}
@@ -38,11 +46,9 @@ func TestAuthHandler_Login(t *testing.T) {
 			name:   "simple create",
 			fields: fields{Usecase: mockUsecase},
 			args: args{
-				r: httptest.NewRequest("POST", "/persons",
-					strings.NewReader(fmt.Sprintf(`{"name": "%s" }`, "name"))),
-				status:       http.StatusCreated,
-				statusReturn: models.Okey,
-			}},
+				r: httptest.NewRequest("POST", "/persons", bytes.NewReader(userjson)),
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -53,7 +59,7 @@ func TestAuthHandler_Login(t *testing.T) {
 			}
 			w := httptest.NewRecorder()
 
-			mockUsecase.EXPECT().SignIn().Return(uint(0), tt.args.statusReturn)
+			mockUsecase.EXPECT().SignIn(userOk).Return(tt.args.statusReturn)
 
 			h.Login(w, tt.args.r)
 
