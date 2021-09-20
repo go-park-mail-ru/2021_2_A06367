@@ -7,4 +7,6 @@ const (
 	NotFound
 	InternalError
 	Unauthed
+	Conflict
+	AlreadyExists
 )
