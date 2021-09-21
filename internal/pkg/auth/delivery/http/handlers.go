@@ -10,7 +10,7 @@ import (
 )
 
 type AuthHandler struct {
-	uc auth.AuthUsecase
+	uc     auth.AuthUsecase
 	logger *zap.SugaredLogger
 }
 
@@ -18,15 +18,15 @@ func NewAuthHandler(uc auth.AuthUsecase) *AuthHandler {
 	return &AuthHandler{uc: uc}
 }
 
-func (h AuthHandler) Login(w http.ResponseWriter, r *http.Request)  {
+func (h AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (h AuthHandler) Logout(w http.ResponseWriter, r *http.Request)  {
+func (h AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (h AuthHandler) SignUp(w http.ResponseWriter, r *http.Request)  {
+func (h AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
 	if err != nil {

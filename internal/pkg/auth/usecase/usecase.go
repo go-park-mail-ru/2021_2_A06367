@@ -18,7 +18,7 @@ func (u *AuthUsecase) SignIn(user models.User) models.StatusCode {
 	return u.repo.CheckUser(user)
 }
 
-func (u *AuthUsecase) SignUp(user models.User) models.StatusCode  {
+func (u *AuthUsecase) SignUp(user models.User) models.StatusCode {
 	user.Id = uuid.New()
 	return u.repo.CreateUser(user)
 }

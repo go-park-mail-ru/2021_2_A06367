@@ -10,7 +10,7 @@ import (
 )
 
 type FilmsHandler struct {
-	uc films.FilmsUsecase
+	uc     films.FilmsUsecase
 	logger *zap.SugaredLogger
 }
 
@@ -18,13 +18,24 @@ func NewFilmsHandler(uc films.FilmsUsecase) *FilmsHandler {
 	return &FilmsHandler{uc: uc}
 }
 
-func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request)  {
+func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	genres, found := vars["genre"]
-	if !found{
+	if !found {
 		middleware.Response(w, models.NotFound, nil)
 	}
 
 	films, status := h.uc.GetCompilation(genres)
+	middleware.Response(w, status, films)
+}
+
+func (h FilmsHandler) FilmBySelection(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	selection, found := vars["selection"]
+	if !found {
+		middleware.Response(w, models.NotFound, nil)
+	}
+
+	films, status := h.uc.GetSelection(selection)
 	middleware.Response(w, status, films)
 }

@@ -49,6 +49,21 @@ func (mr *MockFilmsUsecaseMockRecorder) GetCompilation(topic interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCompilation", reflect.TypeOf((*MockFilmsUsecase)(nil).GetCompilation), topic)
 }
 
+// GetSelection mocks base method.
+func (m *MockFilmsUsecase) GetSelection(selection string) ([]models.Film, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSelection", selection)
+	ret0, _ := ret[0].([]models.Film)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetSelection indicates an expected call of GetSelection.
+func (mr *MockFilmsUsecaseMockRecorder) GetSelection(selection interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSelection", reflect.TypeOf((*MockFilmsUsecase)(nil).GetSelection), selection)
+}
+
 // MockFilmsRepository is a mock of FilmsRepository interface.
 type MockFilmsRepository struct {
 	ctrl     *gomock.Controller
@@ -85,4 +100,34 @@ func (m *MockFilmsRepository) GetFilmsByTopic(topic string) ([]models.Film, mode
 func (mr *MockFilmsRepositoryMockRecorder) GetFilmsByTopic(topic interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmsByTopic", reflect.TypeOf((*MockFilmsRepository)(nil).GetFilmsByTopic), topic)
+}
+
+// GetHottestFilms mocks base method.
+func (m *MockFilmsRepository) GetHottestFilms() ([]models.Film, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetHottestFilms")
+	ret0, _ := ret[0].([]models.Film)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetHottestFilms indicates an expected call of GetHottestFilms.
+func (mr *MockFilmsRepositoryMockRecorder) GetHottestFilms() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHottestFilms", reflect.TypeOf((*MockFilmsRepository)(nil).GetHottestFilms))
+}
+
+// GetNewestFilms mocks base method.
+func (m *MockFilmsRepository) GetNewestFilms() ([]models.Film, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNewestFilms")
+	ret0, _ := ret[0].([]models.Film)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetNewestFilms indicates an expected call of GetNewestFilms.
+func (mr *MockFilmsRepositoryMockRecorder) GetNewestFilms() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNewestFilms", reflect.TypeOf((*MockFilmsRepository)(nil).GetNewestFilms))
 }

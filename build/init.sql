@@ -32,3 +32,11 @@ CREATE TABLE films
     Check(year > 0),
 	Check(duration > 0)
 );
+
+
+CREATE TABLE rating
+(
+    film_id integer REFERENCES films(id) NOT NULL,
+    rating double precision NOT NULL,
+    CONSTRAINT rating_pkey PRIMARY KEY (film_id)
+)

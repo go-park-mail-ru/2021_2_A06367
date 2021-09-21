@@ -53,7 +53,8 @@ func run() error {
 	}
 	film := r.PathPrefix("/films").Subrouter()
 	{
-		film.HandleFunc("/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
+		film.HandleFunc("/genre/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
+		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet)
 
 	}
 
