@@ -13,3 +13,8 @@ type AuthRepo interface {
 	CreateUser(user models.User) models.StatusCode
 	CheckUser(user models.User) models.StatusCode
 }
+
+type OnlineRepo interface {
+	UserOn(user models.User) models.StatusCode
+	UserOff(user models.User) models.StatusCode
+}
