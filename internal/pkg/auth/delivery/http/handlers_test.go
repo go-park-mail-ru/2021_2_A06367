@@ -11,29 +11,30 @@ import (
 	"testing"
 )
 
+func bodyPrepare(user models.User) []byte {
+	userjson, err := json.Marshal(&user)
+	if err != nil {
+		return nil
+	}
+	return userjson
+}
+
+var testUsers []models.User = []models.User{
+	models.User{
+		Login:             "Phil",
+		EncryptedPassword: "mancity",
+		Email:             "phil@yandex.ru",
+	},
+	models.User{
+		Login:             "Donald",
+		EncryptedPassword: "maga",
+		Email:             "usa@gmail.com",
+	},
+}
+
 func TestAuthHandler_Login(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
-
-	userOk := models.User{
-		Login:             "Rocky",
-		Email:             "d@mail.ru",
-		EncryptedPassword: "ddd",
-	}
-	userjson, err := json.Marshal(&userOk)
-	if err != nil {
-		t.Error(err.Error())
-	}
-
-	userNOk := models.User{
-		Login:             "Rocky",
-		Email:             "d@mail.ru",
-		EncryptedPassword: "ddd",
-	}
-	baduserjson, err := json.Marshal(&userNOk)
-	if err != nil {
-		t.Error(err.Error())
-	}
 
 	mockUsecase := auth.NewMockAuthUsecase(ctl)
 	type fields struct {
@@ -43,46 +44,51 @@ func TestAuthHandler_Login(t *testing.T) {
 	type args struct {
 		r            *http.Request
 		result       http.Response
-		status       int
 		statusReturn models.StatusCode
 	}
 
 	tests := []struct {
-		name   string
+		Login  string
+		body   []byte
 		fields fields
 		args   args
 	}{
 		{
-			name:   "simple create",
+			Login:  testUsers[0].Login,
 			fields: fields{Usecase: mockUsecase},
 			args: args{
-				r:            httptest.NewRequest("POST", "/persons", bytes.NewReader(userjson)),
+				r: httptest.NewRequest("POST", "/persons",
+					bytes.NewReader(bodyPrepare(testUsers[0]))),
 				statusReturn: models.Okey,
+				result:       http.Response{StatusCode: http.StatusOK},
 			},
 		},
 		{
-			name:   "no user with such login etc",
+			Login:  "Phil",
 			fields: fields{Usecase: mockUsecase},
 			args: args{
-				r:            httptest.NewRequest("POST", "/persons", bytes.NewReader(baduserjson)),
+				r: httptest.NewRequest("POST", "/persons",
+					bytes.NewReader(bodyPrepare(testUsers[1]))),
 				statusReturn: models.Conflict,
+				result:       http.Response{StatusCode: http.StatusConflict},
 			},
 		},
 	}
-	mockUsecase.EXPECT().SignIn(userOk).Return(tests[0].args.statusReturn)
-	mockUsecase.EXPECT().SignIn(userOk).Return(tests[1].args.statusReturn)
+
+	for i := 0; i < len(tests); i++ {
+		mockUsecase.EXPECT().SignIn(testUsers[0]).Return(tests[0].args.statusReturn)
+	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-
+		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthHandler{
 				uc: tt.fields.Usecase,
 			}
 			w := httptest.NewRecorder()
 
 			h.Login(w, tt.args.r)
-			if tt.args.status != w.Code {
-				t.Error(tt.name)
+			if tt.args.result.StatusCode != w.Code {
+				t.Error(tt.Login)
 			}
 		})
 	}
