@@ -74,7 +74,7 @@ func TestAuthHandler_Login(t *testing.T) {
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[1]))),
-				statusReturn: models.Conflict,
+				statusReturn: models.Unauthed,
 				result:       http.Response{StatusCode: http.StatusConflict},
 			},
 		},
@@ -84,7 +84,7 @@ func TestAuthHandler_Login(t *testing.T) {
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[2]))),
-				statusReturn: models.Conflict,
+				statusReturn: models.Unauthed,
 				result:       http.Response{StatusCode: http.StatusNotAcceptable},
 			},
 		},
@@ -156,7 +156,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[2]))),
-				statusReturn: models.Conflict,
+				statusReturn: models.NotFound,
 				result:       http.Response{StatusCode: http.StatusNotAcceptable},
 			},
 		},

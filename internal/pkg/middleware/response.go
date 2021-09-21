@@ -13,8 +13,10 @@ func Response(w http.ResponseWriter, status models.StatusCode, body interface{})
 		w.WriteHeader(http.StatusOK)
 	case models.NotFound:
 		w.WriteHeader(http.StatusNotFound)
-	case models.InternalError:
+	case models.Conflict:
 		w.WriteHeader(http.StatusUnprocessableEntity)
+	case models.Unauthed:
+		w.WriteHeader(http.StatusUnauthorized)
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
 	}

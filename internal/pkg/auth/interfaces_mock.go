@@ -35,11 +35,12 @@ func (m *MockAuthUsecase) EXPECT() *MockAuthUsecaseMockRecorder {
 }
 
 // SignIn mocks base method.
-func (m *MockAuthUsecase) SignIn(user models.User) models.StatusCode {
+func (m *MockAuthUsecase) SignIn(user models.LoginUser) (string, models.StatusCode) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignIn", user)
-	ret0, _ := ret[0].(models.StatusCode)
-	return ret0
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
 }
 
 // SignIn indicates an expected call of SignIn.
@@ -49,11 +50,12 @@ func (mr *MockAuthUsecaseMockRecorder) SignIn(user interface{}) *gomock.Call {
 }
 
 // SignUp mocks base method.
-func (m *MockAuthUsecase) SignUp(user models.User) models.StatusCode {
+func (m *MockAuthUsecase) SignUp(user models.User) (string, models.StatusCode) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignUp", user)
-	ret0, _ := ret[0].(models.StatusCode)
-	return ret0
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
 }
 
 // SignUp indicates an expected call of SignUp.

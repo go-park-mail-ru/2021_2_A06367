@@ -8,5 +8,4 @@ const (
 	InternalError
 	Unauthed
 	Conflict
-	AlreadyExists
 )
