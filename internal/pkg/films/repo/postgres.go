@@ -9,14 +9,15 @@ import (
 const (
 	SElECT_FILM_BY_TOPIC = "SELECT id, genres, title, year, director, " +
 		"authors, release, duration, language " +
-		"FROM films "
+		"FROM films " +
+		"WHERE $1 = ANY(genres)"
 )
 
 type FilmsRepo struct {
-	pool pgxpool.Pool
+	pool *pgxpool.Pool
 }
 
-func NewFilmsRepo(pool pgxpool.Pool) *FilmsRepo {
+func NewFilmsRepo(pool *pgxpool.Pool) *FilmsRepo {
 	return &FilmsRepo{pool: pool}
 }
 

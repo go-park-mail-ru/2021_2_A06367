@@ -1,5 +1,5 @@
--- DROP DATABASE Netflix;
-CREATE DATABASE Netflix
+-- DROP DATABASE netflix;
+CREATE DATABASE netflix
     WITH
     OWNER = postgres
     ENCODING = 'UTF8'
@@ -15,4 +15,20 @@ CREATE TABLE users(
     login text UNIQUE NOT NULL,
     encrypted_password text NOT NULL,
     created_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE films
+(
+    id bigserial NOT NULL,
+    genres text[] NOT NULL,
+    title text NOT NULL,
+    year integer NOT NULL,
+    director text[] NOT NULL,
+    authors text[] NOT NULL,
+    release date NOT NULL,
+    duration integer NOT NULL,
+    language text NOT NULL,
+    PRIMARY KEY (id),
+    Check(year > 0),
+	Check(duration > 0)
 );
