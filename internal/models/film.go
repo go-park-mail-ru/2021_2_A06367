@@ -4,6 +4,8 @@ import (
 	"time"
 )
 
+// easyjson -all .\internal\models\film.go
+
 type Film struct {
 	Id       int       `json:"id"`
 	Title    string    `json:"title"`
