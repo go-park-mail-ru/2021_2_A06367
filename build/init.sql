@@ -16,3 +16,9 @@ CREATE TABLE users(
     encrypted_password text NOT NULL,
     created_at TIMESTAMP NOT NULL
 );
+
+CREATE TABLE online_users(
+    login text UNIQUE NOT NULL,
+);
+
+CREATE UNIQUE INDEX online_idx ON online_users (login);

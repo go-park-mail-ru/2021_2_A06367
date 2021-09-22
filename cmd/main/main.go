@@ -31,9 +31,10 @@ func run() error {
 		return err
 	}
 
+	onlineRepo := authRepository.NewOnlineRepo(pool)
 	authRepo := authRepository.NewAuthRepo(pool)
 	authUse := authUsecase.NewAuthUsecase(authRepo)
-	authHandler := authDelivery.NewAuthHandler(authUse)
+	authHandler := authDelivery.NewAuthHandler(authUse, onlineRepo)
 
 	filmsHandler := filmsDelivery.FilmsHandler{}
 

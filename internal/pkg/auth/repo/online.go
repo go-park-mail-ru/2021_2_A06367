@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	OnQuery  = `INSERT INTO online_users VALUES($1);`
-	OffQuery = `DELETE FROM online_users WHERE user_id=$1;`
+	OnQuery    = `INSERT INTO online_users VALUES($1);`
+	OffQuery   = `DELETE FROM online_users WHERE login=$1;`
+	CheckQuery = `SELECT * FROM online_users WHERE login=$1;`
 )
 
 type OnlineRepo struct {
@@ -22,6 +23,10 @@ func NewOnlineRepo(pool *pgxpool.Pool) *OnlineRepo {
 }
 
 func (or *OnlineRepo) UserOn(user models.User) models.StatusCode {
+	if or.IsOnline(user) {
+		return models.Okey
+	}
+
 	_, err := or.conn.Exec(context.Background(), OnQuery, user.Login)
 	if err != nil {
 		return models.InternalError
@@ -35,4 +40,13 @@ func (or *OnlineRepo) UserOff(user models.User) models.StatusCode {
 		return models.InternalError
 	}
 	return models.Okey
+}
+
+func (or *OnlineRepo) IsOnline(user models.User) bool {
+	var login string
+	err := or.conn.QueryRow(context.Background(), CheckQuery, user.Login).Scan(&login)
+	if err != nil || login == "" {
+		return false
+	}
+	return true
 }

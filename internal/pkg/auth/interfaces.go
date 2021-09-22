@@ -17,4 +17,5 @@ type AuthRepo interface {
 type OnlineRepo interface {
 	UserOn(user models.User) models.StatusCode
 	UserOff(user models.User) models.StatusCode
+	IsOnline(user models.User) bool
 }

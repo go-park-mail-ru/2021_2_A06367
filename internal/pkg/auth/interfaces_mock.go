@@ -114,3 +114,68 @@ func (mr *MockAuthRepoMockRecorder) CreateUser(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockAuthRepo)(nil).CreateUser), user)
 }
+
+// MockOnlineRepo is a mock of OnlineRepo interface.
+type MockOnlineRepo struct {
+	ctrl     *gomock.Controller
+	recorder *MockOnlineRepoMockRecorder
+}
+
+// MockOnlineRepoMockRecorder is the mock recorder for MockOnlineRepo.
+type MockOnlineRepoMockRecorder struct {
+	mock *MockOnlineRepo
+}
+
+// NewMockOnlineRepo creates a new mock instance.
+func NewMockOnlineRepo(ctrl *gomock.Controller) *MockOnlineRepo {
+	mock := &MockOnlineRepo{ctrl: ctrl}
+	mock.recorder = &MockOnlineRepoMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockOnlineRepo) EXPECT() *MockOnlineRepoMockRecorder {
+	return m.recorder
+}
+
+// IsOnline mocks base method.
+func (m *MockOnlineRepo) IsOnline(user models.User) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsOnline", user)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsOnline indicates an expected call of IsOnline.
+func (mr *MockOnlineRepoMockRecorder) IsOnline(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsOnline", reflect.TypeOf((*MockOnlineRepo)(nil).IsOnline), user)
+}
+
+// UserOff mocks base method.
+func (m *MockOnlineRepo) UserOff(user models.User) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UserOff", user)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// UserOff indicates an expected call of UserOff.
+func (mr *MockOnlineRepoMockRecorder) UserOff(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserOff", reflect.TypeOf((*MockOnlineRepo)(nil).UserOff), user)
+}
+
+// UserOn mocks base method.
+func (m *MockOnlineRepo) UserOn(user models.User) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UserOn", user)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// UserOn indicates an expected call of UserOn.
+func (mr *MockOnlineRepoMockRecorder) UserOn(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserOn", reflect.TypeOf((*MockOnlineRepo)(nil).UserOn), user)
+}
