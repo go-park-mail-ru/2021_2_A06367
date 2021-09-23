@@ -19,6 +19,20 @@ func bodyPrepare(user models.User) []byte {
 	return userjson
 }
 
+type fields struct {
+	Usecase    auth.AuthUsecase
+	OnlineRepo auth.OnlineRepo
+}
+
+type args struct {
+	r            *http.Request
+	result       http.Response
+	statusReturn models.StatusCode
+	OnlineStatus bool
+	SetOnline    models.StatusCode
+	SetOffline   models.StatusCode
+}
+
 var testUsers []models.User = []models.User{
 	models.User{
 		Login:             "Phil",
@@ -30,11 +44,6 @@ var testUsers []models.User = []models.User{
 		EncryptedPassword: "maga",
 		Email:             "usa@gmail.com",
 	},
-	models.User{
-		Login:             "",
-		EncryptedPassword: "",
-		Email:             "",
-	},
 }
 
 func TestAuthHandler_Login(t *testing.T) {
@@ -43,19 +52,6 @@ func TestAuthHandler_Login(t *testing.T) {
 
 	mockUsecase := auth.NewMockAuthUsecase(ctl)
 	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
-	type fields struct {
-		Usecase    auth.AuthUsecase
-		OnlineRepo auth.OnlineRepo
-	}
-
-	type args struct {
-		r            *http.Request
-		result       http.Response
-		statusReturn models.StatusCode
-		OnlineStatus bool
-		SetOnline    models.StatusCode
-		SetOffline   models.StatusCode
-	}
 
 	tests := []struct {
 		Login  string
@@ -82,21 +78,8 @@ func TestAuthHandler_Login(t *testing.T) {
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[1]))),
-				statusReturn: models.Unauthed,
-				result:       http.Response{StatusCode: http.StatusConflict},
-				OnlineStatus: false,
-				SetOnline:    models.Okey,
-				SetOffline:   models.Okey,
-			},
-		},
-		{
-			Login:  "Anonymous",
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
-			args: args{
-				r: httptest.NewRequest("POST", "/persons",
-					bytes.NewReader(bodyPrepare(testUsers[2]))),
-				statusReturn: models.Unauthed,
-				result:       http.Response{StatusCode: http.StatusNotAcceptable},
+				statusReturn: models.Okey,
+				result:       http.Response{StatusCode: http.StatusOK},
 				OnlineStatus: false,
 				SetOnline:    models.Okey,
 				SetOffline:   models.Okey,
@@ -105,18 +88,18 @@ func TestAuthHandler_Login(t *testing.T) {
 	}
 
 	for i := 0; i < len(tests); i++ {
+		LoginUserCopy := models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}
+		mockOnlineRepo.EXPECT().UserOn(LoginUserCopy).Return(tests[i].args.statusReturn)
 		mockUsecase.EXPECT().
-			SignIn(models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).
+			SignIn(LoginUserCopy).
 			Return("token", tests[i].args.statusReturn)
-		mockOnlineRepo.EXPECT().IsOnline(testUsers[i]).Return(tests[i].args.OnlineStatus)
-		mockOnlineRepo.EXPECT().UserOn(testUsers[i]).Return(models.Okey)
-		mockOnlineRepo.EXPECT().UserOff(testUsers[i]).Return(models.Okey)
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthHandler{
-				uc: tt.fields.Usecase,
+				uc:     tt.fields.Usecase,
+				online: tt.fields.OnlineRepo,
 			}
 			w := httptest.NewRecorder()
 
@@ -134,19 +117,6 @@ func TestAuthHandler_SignUp(t *testing.T) {
 
 	mockUsecase := auth.NewMockAuthUsecase(ctl)
 	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
-	type fields struct {
-		Usecase    auth.AuthUsecase
-		OnlineRepo auth.OnlineRepo
-	}
-
-	type args struct {
-		r            *http.Request
-		result       http.Response
-		statusReturn models.StatusCode
-		OnlineStatus bool
-		SetOnline    models.StatusCode
-		SetOffline   models.StatusCode
-	}
 
 	tests := []struct {
 		Login  string
@@ -173,21 +143,8 @@ func TestAuthHandler_SignUp(t *testing.T) {
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[1]))),
-				statusReturn: models.Conflict,
-				result:       http.Response{StatusCode: http.StatusConflict},
-				OnlineStatus: false,
-				SetOnline:    models.Okey,
-				SetOffline:   models.Okey,
-			},
-		},
-		{
-			Login:  "Anonymous",
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
-			args: args{
-				r: httptest.NewRequest("POST", "/persons",
-					bytes.NewReader(bodyPrepare(testUsers[2]))),
-				statusReturn: models.NotFound,
-				result:       http.Response{StatusCode: http.StatusNotAcceptable},
+				statusReturn: models.Okey,
+				result:       http.Response{StatusCode: http.StatusOK},
 				OnlineStatus: false,
 				SetOnline:    models.Okey,
 				SetOffline:   models.Okey,
@@ -197,9 +154,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 
 	for i := 0; i < len(tests); i++ {
 		mockUsecase.EXPECT().SignUp(testUsers[i]).Return("token", tests[i].args.statusReturn)
-		mockOnlineRepo.EXPECT().IsOnline(testUsers[i]).Return(tests[i].args.OnlineStatus)
 		mockOnlineRepo.EXPECT().UserOn(testUsers[i]).Return(models.Okey)
-		mockOnlineRepo.EXPECT().UserOff(testUsers[i]).Return(models.Okey)
 	}
 
 	for _, tt := range tests {

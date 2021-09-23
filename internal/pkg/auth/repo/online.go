@@ -22,7 +22,7 @@ func NewOnlineRepo(pool *pgxpool.Pool) *OnlineRepo {
 	}
 }
 
-func (or *OnlineRepo) UserOn(user models.User) models.StatusCode {
+func (or *OnlineRepo) UserOn(user models.LoginUser) models.StatusCode {
 	if or.IsOnline(user) {
 		return models.Okey
 	}
@@ -34,7 +34,7 @@ func (or *OnlineRepo) UserOn(user models.User) models.StatusCode {
 	return models.Okey
 }
 
-func (or *OnlineRepo) UserOff(user models.User) models.StatusCode {
+func (or *OnlineRepo) UserOff(user models.LoginUser) models.StatusCode {
 	_, err := or.conn.Exec(context.Background(), OffQuery, user.Login)
 	if err != nil {
 		return models.InternalError
@@ -42,7 +42,7 @@ func (or *OnlineRepo) UserOff(user models.User) models.StatusCode {
 	return models.Okey
 }
 
-func (or *OnlineRepo) IsOnline(user models.User) bool {
+func (or *OnlineRepo) IsOnline(user models.LoginUser) bool {
 	var login string
 	err := or.conn.QueryRow(context.Background(), CheckQuery, user.Login).Scan(&login)
 	if err != nil || login == "" {

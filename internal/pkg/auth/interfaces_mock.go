@@ -139,7 +139,7 @@ func (m *MockOnlineRepo) EXPECT() *MockOnlineRepoMockRecorder {
 }
 
 // IsOnline mocks base method.
-func (m *MockOnlineRepo) IsOnline(user models.User) bool {
+func (m *MockOnlineRepo) IsOnline(user models.LoginUser) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsOnline", user)
 	ret0, _ := ret[0].(bool)
@@ -153,7 +153,7 @@ func (mr *MockOnlineRepoMockRecorder) IsOnline(user interface{}) *gomock.Call {
 }
 
 // UserOff mocks base method.
-func (m *MockOnlineRepo) UserOff(user models.User) models.StatusCode {
+func (m *MockOnlineRepo) UserOff(user models.LoginUser) models.StatusCode {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UserOff", user)
 	ret0, _ := ret[0].(models.StatusCode)
@@ -167,7 +167,7 @@ func (mr *MockOnlineRepoMockRecorder) UserOff(user interface{}) *gomock.Call {
 }
 
 // UserOn mocks base method.
-func (m *MockOnlineRepo) UserOn(user models.User) models.StatusCode {
+func (m *MockOnlineRepo) UserOn(user models.LoginUser) models.StatusCode {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UserOn", user)
 	ret0, _ := ret[0].(models.StatusCode)

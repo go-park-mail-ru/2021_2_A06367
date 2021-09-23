@@ -26,23 +26,23 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
 	if err != nil {
-		middleware.Response(w, models.InternalError, nil)
+		middleware.Response(w, models.BadRequest, nil)
 		return
 	}
 	token, status := h.uc.SignIn(user)
 	if status == models.Okey {
-		status = h.online.UserOn(models.User{Login: user.Login})
+		status = h.online.UserOn(user)
 	}
 	middleware.Response(w, status, map[string]interface{}{"Token": token})
 }
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	user := models.User{}
+	user := models.LoginUser{}
 	user.Login = r.URL.Query().Get("login")
 	if user.Login == "" {
 		middleware.Response(w, models.BadRequest, nil)
+		return
 	}
-
 	status := h.online.UserOff(user)
 	middleware.Response(w, status, nil)
 }
@@ -51,12 +51,13 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
 	if err != nil {
-		middleware.Response(w, models.InternalError, nil)
+		middleware.Response(w, models.BadRequest, nil)
 		return
 	}
 	token, status := h.uc.SignUp(user)
 	if status == models.Okey {
-		status = h.online.UserOn(models.User{Login: user.Login})
+		userCopy := models.LoginUser{Login: user.Login, EncryptedPassword: user.EncryptedPassword}
+		status = h.online.UserOn(userCopy)
 	}
 	middleware.Response(w, status, map[string]interface{}{"Token": token})
 }
