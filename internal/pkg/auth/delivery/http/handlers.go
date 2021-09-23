@@ -61,3 +61,18 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 	middleware.Response(w, status, map[string]interface{}{"Token": token})
 }
+
+func (h *AuthHandler) OnlineStatus(w http.ResponseWriter, r *http.Request) {
+	user := models.LoginUser{}
+	user.Login = r.URL.Query().Get("login")
+	if user.Login == "" {
+		middleware.Response(w, models.BadRequest, nil)
+		return
+	}
+	status := h.online.IsOnline(user)
+	if status {
+		middleware.Response(w, models.Unauthed, nil)
+		return
+	}
+	middleware.Response(w, models.Okey, nil)
+}
