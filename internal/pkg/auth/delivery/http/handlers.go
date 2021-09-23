@@ -38,11 +38,11 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	user := models.User{}
-	err := easyjson.UnmarshalFromReader(r.Body, &user)
-	if err != nil {
-		middleware.Response(w, models.InternalError, nil)
-		return
+	user.Login = r.URL.Query().Get("login")
+	if user.Login == "" {
+		middleware.Response(w, models.BadRequest, nil)
 	}
+
 	status := h.online.UserOff(user)
 	middleware.Response(w, status, nil)
 }

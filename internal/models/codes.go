@@ -9,4 +9,5 @@ const (
 	Unauthed
 	Conflict
 	InvalidBody
+	BadRequest
 )

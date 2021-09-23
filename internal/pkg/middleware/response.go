@@ -19,6 +19,8 @@ func Response(w http.ResponseWriter, status models.StatusCode, body interface{})
 		w.WriteHeader(http.StatusUnauthorized)
 	case models.InvalidBody:
 		w.WriteHeader(http.StatusUnprocessableEntity)
+	case models.BadRequest:
+		w.WriteHeader(http.StatusBadRequest)
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
 	}
