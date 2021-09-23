@@ -10,6 +10,7 @@ import (
 	filmsDelivery "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/http"
 	filmsRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/repo"
 	filmsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/usecase"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"log"
@@ -25,7 +26,8 @@ func main() {
 }
 func run() error {
 	r := mux.NewRouter()
-	srv := http.Server{Handler: r, Addr: fmt.Sprintf(":%s", "8080")}
+	r.Use(middleware.CORSMiddleware)
+	srv := http.Server{Handler: r, Addr: fmt.Sprintf(":%s", "8000")}
 
 	conn, err := config.GetConnectionString()
 	if err != nil {
@@ -54,7 +56,8 @@ func run() error {
 	film := r.PathPrefix("/films").Subrouter()
 	{
 		film.HandleFunc("/genre/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
-		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet)
+		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet,
+			http.MethodOptions)
 
 	}
 
