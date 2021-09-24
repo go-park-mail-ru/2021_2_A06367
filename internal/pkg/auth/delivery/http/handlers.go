@@ -59,16 +59,26 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		userCopy := models.LoginUser{Login: user.Login, EncryptedPassword: user.EncryptedPassword}
 		status = h.online.UserOn(userCopy)
 	}
-	middleware.Response(w, status, map[string]interface{}{"Token": token})
+
+	w.Header().Set("Authorization", token)
+
+	middleware.Response(w, status, nil)
 }
 
 func (h *AuthHandler) OnlineStatus(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
-	user.Login = r.URL.Query().Get("login")
+	user.Login = r.URL.Query().Get("user")
+	jwtData, err := middleware.ExtractTokenMetadata(r)
+
 	if user.Login == "" {
 		middleware.Response(w, models.BadRequest, nil)
 		return
 	}
+
+	if err != nil || jwtData.Login != user.Login {
+		middleware.Response(w, models.Unauthed, nil)
+	}
+
 	status := h.online.IsOnline(user)
 	if status {
 		middleware.Response(w, models.Unauthed, nil)
