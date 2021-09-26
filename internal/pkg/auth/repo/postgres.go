@@ -22,13 +22,13 @@ func NewAuthRepo(pool *pgxpool.Pool) *AuthRepo {
 	return &AuthRepo{pool: pool}
 }
 
-func (r *AuthRepo) CreateUser(user models.User) models.StatusCode {
+func (r *AuthRepo) CreateUser(user models.User)  models.StatusCode {
+
 	var id uuid.UUID
 	row := r.pool.QueryRow(context.Background(), CREATE_USER,
 		user.Id, user.Email, user.Login, user.EncryptedPassword, time.Now())
 
 	err := row.Scan(&id)
-
 	if err != nil {
 		return models.InternalError
 	}

@@ -6,7 +6,11 @@ import (
 	authDelivery "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/http"
 	authRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/repo"
 	authUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/config"
 	filmsDelivery "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/http"
+	filmsRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/repo"
+	filmsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/usecase"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"log"
@@ -22,9 +26,13 @@ func main() {
 }
 func run() error {
 	r := mux.NewRouter()
-	srv := http.Server{Handler: r, Addr: fmt.Sprintf(":%s", "8080")}
+	r.Use(middleware.CORSMiddleware)
+	srv := http.Server{Handler: r, Addr: fmt.Sprintf(":%s", "8000")}
 
-	conn := ""
+	conn, err := config.GetConnectionString()
+	if err != nil {
+		return err
+	}
 
 	pool, err := pgxpool.Connect(context.Background(), conn)
 	if err != nil {
@@ -36,7 +44,9 @@ func run() error {
 	authUse := authUsecase.NewAuthUsecase(authRepo)
 	authHandler := authDelivery.NewAuthHandler(authUse, onlineRepo)
 
-	filmsHandler := filmsDelivery.FilmsHandler{}
+	filmsRepo := filmsRepository.NewFilmsRepo(pool)
+	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo)
+	filmsHandler := filmsDelivery.NewFilmsHandler(filmsUse)
 
 	auth := r.PathPrefix("/user").Subrouter()
 	{
@@ -46,7 +56,9 @@ func run() error {
 	}
 	film := r.PathPrefix("/films").Subrouter()
 	{
-		film.HandleFunc("/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
+		film.HandleFunc("/genre/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
+		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet,
+			http.MethodOptions)
 
 	}
 
