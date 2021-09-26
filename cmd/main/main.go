@@ -24,7 +24,7 @@ func run() error {
 	r := mux.NewRouter()
 	srv := http.Server{Handler: r, Addr: fmt.Sprintf(":%s", "8080")}
 
-	conn := ""
+	conn := "port=5432 host=127.0.0.1 user=slavaryanov dbname=netflix password=postgres"
 
 	pool, err := pgxpool.Connect(context.Background(), conn)
 	if err != nil {

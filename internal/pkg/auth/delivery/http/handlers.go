@@ -4,6 +4,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
+	"github.com/gorilla/mux"
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"net/http"
@@ -33,12 +34,19 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if status == models.Okey {
 		status = h.online.UserOn(user)
 	}
-	middleware.Response(w, status, map[string]interface{}{"Token": token})
+	answerBody := models.TokenView{Token: token}
+	middleware.Response(w, status, answerBody)
 }
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
-	user.Login = r.URL.Query().Get("login")
+	accesToken, err := middleware.ExtractTokenMetadata(r)
+	if err != nil {
+		middleware.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	user.Login = accesToken.Login
 	if user.Login == "" {
 		middleware.Response(w, models.BadRequest, nil)
 		return
@@ -60,14 +68,20 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		status = h.online.UserOn(userCopy)
 	}
 
-	w.Header().Set("Authorization", token)
+	if token == "" {
+		middleware.Response(w, status, nil)
+		return
+	}
 
+	w.Header().Set("Authorization", token)
 	middleware.Response(w, status, nil)
 }
 
 func (h *AuthHandler) OnlineStatus(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
-	user.Login = r.URL.Query().Get("user")
+	Var := mux.Vars(r)
+	//user.Login = r.URL.Query().Get("user")
+	user.Login = Var["user"]
 	jwtData, err := middleware.ExtractTokenMetadata(r)
 
 	if user.Login == "" {
@@ -79,7 +93,7 @@ func (h *AuthHandler) OnlineStatus(w http.ResponseWriter, r *http.Request) {
 		middleware.Response(w, models.Unauthed, nil)
 	}
 
-	status := h.online.IsOnline(user)
+	status := h.online.IsAuthed(user)
 	if status {
 		middleware.Response(w, models.Unauthed, nil)
 		return

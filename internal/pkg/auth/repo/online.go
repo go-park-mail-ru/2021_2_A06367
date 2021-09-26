@@ -23,7 +23,7 @@ func NewOnlineRepo(pool *pgxpool.Pool) *OnlineRepo {
 }
 
 func (or *OnlineRepo) UserOn(user models.LoginUser) models.StatusCode {
-	if or.IsOnline(user) {
+	if or.IsAuthed(user) {
 		return models.Okey
 	}
 
@@ -42,7 +42,7 @@ func (or *OnlineRepo) UserOff(user models.LoginUser) models.StatusCode {
 	return models.Okey
 }
 
-func (or *OnlineRepo) IsOnline(user models.LoginUser) bool {
+func (or *OnlineRepo) IsAuthed(user models.LoginUser) bool {
 	var login string
 	err := or.conn.QueryRow(context.Background(), CheckQuery, user.Login).Scan(&login)
 	if err != nil || login == "" {
