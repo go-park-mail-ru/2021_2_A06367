@@ -44,7 +44,7 @@ func ExtractTokenFromHeader(r *http.Request) string {
 func VerifyToken(r *http.Request, extrater Extrater) (*models.Token, error) {
 	tokenStr := extrater(r)
 	if tokenStr == "" {
-		return nil, errors.New("No token")
+		return nil, errors.New("no token")
 	}
 
 	token, err := jwt.ParseWithClaims(tokenStr, &models.Token{}, func(token *jwt.Token) (interface{}, error) {
@@ -72,11 +72,11 @@ func ExtractTokenMetadata(r *http.Request, extrater Extrater) (*AccessDetails, e
 	exp := token.ExpiresAt
 	now := time.Now().Unix()
 	if exp < now {
-		return nil, errors.New("Token Exprired")
+		return nil, errors.New("token Exprired")
 	}
 	data := &AccessDetails{Login: token.Login}
 	if data.Login == "" {
-		return nil, errors.New("Invalid token")
+		return nil, errors.New("invalid token")
 	}
 
 	return data, err
