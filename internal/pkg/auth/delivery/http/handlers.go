@@ -34,13 +34,13 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if status == models.Okey {
 		status = h.online.UserOn(user)
 	}
-	answerBody := models.TokenView{Token: token}
-	middleware.Response(w, status, answerBody)
+
+	middleware.Response(w, status, models.TokenView{Token: token})
 }
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
-	accesToken, err := middleware.ExtractTokenMetadata(r)
+	accesToken, err := middleware.ExtractTokenMetadata(r, middleware.ExtractToken)
 	if err != nil {
 		middleware.Response(w, models.BadRequest, nil)
 		return
@@ -73,16 +73,15 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Authorization", token)
-	middleware.Response(w, status, nil)
+	middleware.Response(w, status, models.TokenView{Token: token})
 }
 
-func (h *AuthHandler) OnlineStatus(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	Var := mux.Vars(r)
 	//user.Login = r.URL.Query().Get("user")
 	user.Login = Var["user"]
-	jwtData, err := middleware.ExtractTokenMetadata(r)
+	jwtData, err := middleware.ExtractTokenMetadata(r, middleware.ExtractTokenFromHeader)
 
 	if user.Login == "" {
 		middleware.Response(w, models.BadRequest, nil)
@@ -94,7 +93,7 @@ func (h *AuthHandler) OnlineStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	status := h.online.IsAuthed(user)
-	if status {
+	if !status {
 		middleware.Response(w, models.Unauthed, nil)
 		return
 	}

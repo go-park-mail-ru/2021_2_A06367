@@ -138,18 +138,18 @@ func (m *MockOnlineRepo) EXPECT() *MockOnlineRepoMockRecorder {
 	return m.recorder
 }
 
-// IsOnline mocks base method.
-func (m *MockOnlineRepo) IsOnline(user models.LoginUser) bool {
+// IsAuthed mocks base method.
+func (m *MockOnlineRepo) IsAuthed(user models.LoginUser) bool {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsOnline", user)
+	ret := m.ctrl.Call(m, "IsAuthed", user)
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
 
-// IsOnline indicates an expected call of IsOnline.
-func (mr *MockOnlineRepoMockRecorder) IsOnline(user interface{}) *gomock.Call {
+// IsAuthed indicates an expected call of IsAuthed.
+func (mr *MockOnlineRepoMockRecorder) IsAuthed(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsOnline", reflect.TypeOf((*MockOnlineRepo)(nil).IsOnline), user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAuthed", reflect.TypeOf((*MockOnlineRepo)(nil).IsAuthed), user)
 }
 
 // UserOff mocks base method.

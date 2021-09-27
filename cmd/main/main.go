@@ -24,7 +24,7 @@ func run() error {
 	r := mux.NewRouter()
 	srv := http.Server{Handler: r, Addr: fmt.Sprintf(":%s", "8080")}
 
-	conn := "port=5432 host=127.0.0.1 user=slavaryanov dbname=netflix password=postgres"
+	conn := "port=5432 host=127.0.0.1 user=slavaryanov dbname=postgres password=postgres"
 
 	pool, err := pgxpool.Connect(context.Background(), conn)
 	if err != nil {
@@ -38,13 +38,13 @@ func run() error {
 
 	filmsHandler := filmsDelivery.FilmsHandler{}
 
+	os.Setenv("SECRET", "DEBUG")
 	auth := r.PathPrefix("/user").Subrouter()
 	{
 		auth.HandleFunc("/login", authHandler.Login).Methods(http.MethodPost)
 		auth.HandleFunc("/logout", authHandler.Logout).Methods(http.MethodDelete)
 		auth.HandleFunc("/signup", authHandler.SignUp).Methods(http.MethodPost)
-		auth.HandleFunc("/online/{user}", authHandler.SignUp).Methods(http.MethodPost)
-
+		auth.HandleFunc("/auth/{user}", authHandler.AuthStatus).Methods(http.MethodGet)
 	}
 	film := r.PathPrefix("/films").Subrouter()
 	{
