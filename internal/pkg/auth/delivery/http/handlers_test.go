@@ -44,6 +44,11 @@ var testUsers []models.User = []models.User{
 		EncryptedPassword: "maga",
 		Email:             "usa@gmail.com",
 	},
+	models.User{
+		Login:             "Anonym",
+		EncryptedPassword: "",
+		Email:             "",
+	},
 }
 
 func TestAuthHandler_Login(t *testing.T) {
@@ -78,21 +83,34 @@ func TestAuthHandler_Login(t *testing.T) {
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[1]))),
-				statusReturn: models.Okey,
-				result:       http.Response{StatusCode: http.StatusOK},
+				statusReturn: models.Unauthed,
+				result:       http.Response{StatusCode: http.StatusUnauthorized},
 				OnlineStatus: false,
-				SetOnline:    models.Okey,
-				SetOffline:   models.Okey,
+				SetOnline:    models.Unauthed,
+			},
+		},
+		{
+			Login:  testUsers[1].Login,
+			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			args: args{
+				r: httptest.NewRequest("POST", "/persons",
+					bytes.NewReader([]byte("Hi there"))),
+				statusReturn: models.BadRequest,
+				result:       http.Response{StatusCode: http.StatusBadRequest},
 			},
 		},
 	}
 
 	for i := 0; i < len(tests); i++ {
 		LoginUserCopy := models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}
-		mockOnlineRepo.EXPECT().UserOn(LoginUserCopy).Return(tests[i].args.statusReturn)
-		mockUsecase.EXPECT().
-			SignIn(LoginUserCopy).
-			Return("token", tests[i].args.statusReturn)
+		if tests[i].args.statusReturn == models.Okey {
+			mockOnlineRepo.EXPECT().UserOn(LoginUserCopy).Return(tests[i].args.statusReturn)
+		}
+		if tests[i].args.statusReturn != models.BadRequest {
+			mockUsecase.EXPECT().
+				SignIn(LoginUserCopy).
+				Return("", tests[i].args.statusReturn)
+		}
 	}
 
 	for _, tt := range tests {
@@ -101,8 +119,10 @@ func TestAuthHandler_Login(t *testing.T) {
 				uc:     tt.fields.Usecase,
 				online: tt.fields.OnlineRepo,
 			}
+			if tt.Login == testUsers[1].Login {
+				tt.Login = tt.Login
+			}
 			w := httptest.NewRecorder()
-
 			h.Login(w, tt.args.r)
 			if tt.args.result.StatusCode != w.Code {
 				t.Error(tt.Login)
@@ -143,35 +163,52 @@ func TestAuthHandler_SignUp(t *testing.T) {
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[1]))),
-				statusReturn: models.Okey,
-				result:       http.Response{StatusCode: http.StatusOK},
+				statusReturn: models.Conflict,
+				result:       http.Response{StatusCode: http.StatusConflict},
 				OnlineStatus: false,
-				SetOnline:    models.Okey,
-				SetOffline:   models.Okey,
+			},
+		},
+		{
+			Login:  testUsers[2].Login,
+			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			args: args{
+				r: httptest.NewRequest("POST", "/persons",
+					bytes.NewReader([]byte("d"))),
+				statusReturn: models.BadRequest,
+				result:       http.Response{StatusCode: http.StatusBadRequest},
+				OnlineStatus: false,
 			},
 		},
 	}
 
 	for i := 0; i < len(tests); i++ {
-		mockUsecase.EXPECT().SignUp(testUsers[i]).Return("token", tests[i].args.statusReturn)
-		mockOnlineRepo.EXPECT().UserOn(testUsers[i]).Return(models.Okey)
+		if tests[i].args.statusReturn == models.BadRequest {
+			continue
+		}
+		if tests[i].args.statusReturn == models.Okey {
+			mockUsecase.EXPECT().SignUp(testUsers[i]).Return("token", tests[i].args.statusReturn)
+			mockOnlineRepo.EXPECT().
+				UserOn(models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).
+				Return(tests[i].args.statusReturn)
+			continue
+		}
+		mockUsecase.EXPECT().
+			SignUp(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword, Email: testUsers[i].Email}).
+			Return("", tests[i].args.statusReturn)
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthHandler{
-				uc: tt.fields.Usecase,
+				uc:     tt.fields.Usecase,
+				online: tt.fields.OnlineRepo,
 			}
 			w := httptest.NewRecorder()
 
-			h.Login(w, tt.args.r)
+			h.SignUp(w, tt.args.r)
 			if tt.args.result.StatusCode != w.Code {
 				t.Error(tt.Login)
 			}
 		})
 	}
-}
-
-func TestAuthHandler_Logout(t *testing.T) {
-
 }

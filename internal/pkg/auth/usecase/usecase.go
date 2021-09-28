@@ -19,7 +19,7 @@ func NewAuthUsecase(repo auth.AuthRepo) *AuthUsecase {
 
 func (u *AuthUsecase) SignIn(user models.LoginUser) (string, models.StatusCode) {
 	if user.Login == "" || user.EncryptedPassword == "" {
-		return "", models.Unauthed
+		return "", models.BadRequest
 	}
 	repoUser := models.User{Login: user.Login, EncryptedPassword: user.EncryptedPassword}
 

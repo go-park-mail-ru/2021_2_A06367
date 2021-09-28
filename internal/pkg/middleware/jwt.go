@@ -16,7 +16,7 @@ type AccessDetails struct {
 	Login string
 }
 
-type Extrater func(r *http.Request) string
+type Extracter func(r *http.Request) string
 
 func ExtractToken(r *http.Request) string {
 	token := models.TokenView{}
@@ -41,8 +41,8 @@ func ExtractTokenFromHeader(r *http.Request) string {
 	return strArr[0]
 }
 
-func VerifyToken(r *http.Request, extrater Extrater) (*models.Token, error) {
-	tokenStr := extrater(r)
+func VerifyToken(r *http.Request, extracter Extracter) (*models.Token, error) {
+	tokenStr := extracter(r)
 	if tokenStr == "" {
 		return nil, errors.New("no token")
 	}
@@ -64,15 +64,15 @@ func VerifyToken(r *http.Request, extrater Extrater) (*models.Token, error) {
 	return nil, errors.New("no auth data")
 }
 
-func ExtractTokenMetadata(r *http.Request, extrater Extrater) (*AccessDetails, error) {
-	token, err := VerifyToken(r, extrater)
+func ExtractTokenMetadata(r *http.Request, extracter Extracter) (*AccessDetails, error) {
+	token, err := VerifyToken(r, extracter)
 	if err != nil {
 		return nil, err
 	}
 	exp := token.ExpiresAt
 	now := time.Now().Unix()
 	if exp < now {
-		return nil, errors.New("token Exprired")
+		return nil, errors.New("token expired")
 	}
 	data := &AccessDetails{Login: token.Login}
 	if data.Login == "" {

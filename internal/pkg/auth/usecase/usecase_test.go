@@ -1,0 +1,92 @@
+package usecase
+
+import (
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
+	"github.com/golang/mock/gomock"
+	"os"
+	"testing"
+)
+
+type fields struct {
+	AuthRepo auth.AuthRepo
+}
+
+type args struct {
+	statusReturn models.StatusCode
+	OnlineStatus models.StatusCode
+	SetOnline    models.StatusCode
+	SetOffline   models.StatusCode
+}
+
+var testUsers []models.User = []models.User{
+	models.User{
+		Login:             "Phil",
+		EncryptedPassword: "mancity",
+		Email:             "phil@yandex.ru",
+	},
+	models.User{
+		Login:             "Donald",
+		EncryptedPassword: "maga",
+		Email:             "usa@gmail.com",
+	},
+	models.User{
+		Login:             "Anonym",
+		EncryptedPassword: "",
+		Email:             "",
+	},
+}
+
+func TestAuthUsecase_SignIn(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	os.Setenv("SECRET", "TESTS")
+	mockAuthRepo := auth.NewMockAuthRepo(ctl)
+
+	tests := []struct {
+		Login  string
+		fields fields
+		args   args
+	}{
+		{
+			Login:  testUsers[0].Login,
+			fields: fields{mockAuthRepo},
+			args:   args{statusReturn: models.Okey, OnlineStatus: models.Okey},
+		},
+		{
+			Login:  testUsers[1].Login,
+			fields: fields{mockAuthRepo},
+			args:   args{statusReturn: models.Unauthed, OnlineStatus: models.Unauthed},
+		},
+		{
+			Login:  testUsers[2].Login,
+			fields: fields{mockAuthRepo},
+			args:   args{statusReturn: models.BadRequest},
+		},
+	}
+
+	for i := 0; i < len(tests); i++ {
+		if tests[i].args.statusReturn == models.BadRequest {
+			continue
+		}
+		mockAuthRepo.EXPECT().CheckUser(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).Return(tests[i].args.statusReturn)
+	}
+
+	for i, tt := range tests {
+		t.Run(tt.Login, func(t *testing.T) {
+			h := &AuthUsecase{
+				repo: mockAuthRepo,
+			}
+
+			_, code := h.SignIn(models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword})
+			if tt.args.statusReturn != code {
+				t.Error(tt.Login)
+			}
+		})
+	}
+
+}
+
+func TestAuthUsecase_SignUp(t *testing.T) {
+
+}

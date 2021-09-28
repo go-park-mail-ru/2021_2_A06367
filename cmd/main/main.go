@@ -48,7 +48,6 @@ func run() error {
 	film := r.PathPrefix("/films").Subrouter()
 	{
 		film.HandleFunc("/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
-
 	}
 
 	http.Handle("/", r)

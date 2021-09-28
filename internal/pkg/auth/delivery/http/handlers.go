@@ -26,7 +26,7 @@ func NewAuthHandler(uc auth.AuthUsecase, or auth.OnlineRepo) *AuthHandler {
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
-	if err != nil {
+	if err != nil || !middleware.LoginUserIsValid(user) {
 		middleware.Response(w, models.BadRequest, nil)
 		return
 	}
@@ -34,14 +34,13 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if status == models.Okey {
 		status = h.online.UserOn(user)
 	}
-
 	middleware.Response(w, status, models.TokenView{Token: token})
 }
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	accesToken, err := middleware.ExtractTokenMetadata(r, middleware.ExtractToken)
-	if err != nil {
+	if err != nil || !middleware.LoginUserIsValid(user) {
 		middleware.Response(w, models.BadRequest, nil)
 		return
 	}
@@ -58,7 +57,7 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
-	if err != nil {
+	if err != nil || !middleware.UserIsValid(user) {
 		middleware.Response(w, models.BadRequest, nil)
 		return
 	}
@@ -72,14 +71,13 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		middleware.Response(w, status, nil)
 		return
 	}
-
 	middleware.Response(w, status, models.TokenView{Token: token})
 }
 
 func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	Var := mux.Vars(r)
-	//user.Login = r.URL.Query().Get("user")
+
 	user.Login = Var["user"]
 	jwtData, err := middleware.ExtractTokenMetadata(r, middleware.ExtractTokenFromHeader)
 
