@@ -88,5 +88,52 @@ func TestAuthUsecase_SignIn(t *testing.T) {
 }
 
 func TestAuthUsecase_SignUp(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	os.Setenv("SECRET", "TESTS")
+	mockAuthRepo := auth.NewMockAuthRepo(ctl)
+
+	tests := []struct {
+		Login  string
+		fields fields
+		args   args
+	}{
+		{
+			Login:  testUsers[0].Login,
+			fields: fields{mockAuthRepo},
+			args:   args{statusReturn: models.Conflict, OnlineStatus: models.Okey},
+		},
+		//{
+		//	Login:  testUsers[1].Login,
+		//	fields: fields{mockAuthRepo},
+		//	args:   args{statusReturn: models.Conflict, OnlineStatus: models.Unauthed},
+		//},
+		//{
+		//	Login:  testUsers[2].Login,
+		//	fields: fields{mockAuthRepo},
+		//	args:   args{statusReturn: models.BadRequest},
+		//},
+	}
+
+	for i := 0; i < len(tests); i++ {
+		if tests[i].args.statusReturn == models.BadRequest {
+			continue
+		}
+		//mockAuthRepo.EXPECT().CreateUser(testUsers[i]).Return(tests[i].args.statusReturn)
+		mockAuthRepo.EXPECT().CheckUser(testUsers[i]).Return(tests[i].args.OnlineStatus)
+	}
+
+	for i, tt := range tests {
+		t.Run(tt.Login, func(t *testing.T) {
+			h := &AuthUsecase{
+				repo: mockAuthRepo,
+			}
+
+			_, code := h.SignUp(testUsers[i])
+			if tt.args.statusReturn != code {
+				t.Error(tt.Login)
+			}
+		})
+	}
 
 }
