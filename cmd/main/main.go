@@ -51,7 +51,7 @@ func run() error {
 	auth := r.PathPrefix("/user").Subrouter()
 	{
 		auth.HandleFunc("/login", authHandler.Login).Methods(http.MethodPost)
-		auth.HandleFunc("/logout", authHandler.Logout).Methods(http.MethodDelete)
+		auth.HandleFunc("/logout", authHandler.Logout).Methods(http.MethodPost, http.MethodOptions)
 		auth.HandleFunc("/signup", authHandler.SignUp).Methods(http.MethodPost)
 	}
 	film := r.PathPrefix("/films").Subrouter()
