@@ -56,6 +56,11 @@ var testUsers []models.User = []models.User{
 		EncryptedPassword: "User",
 		Email:             "KKK",
 	},
+	models.User{
+		Login:             "Pom",
+		EncryptedPassword: "Pom",
+		Email:             "Pom",
+	},
 }
 
 func TestNewAuthHandler(t *testing.T) {
@@ -241,6 +246,10 @@ func TestAuthHandler_Logout(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	os.Setenv("SECRET", "TEST")
+	tkn := &usecase.Tokenator{}
+	bdy := tkn.GetToken(models.User{Login: testUsers[1].Login})
+	body, _ := json.Marshal(models.TokenView{Token: bdy})
 	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
 
 	tests := []struct {
@@ -257,6 +266,19 @@ func TestAuthHandler_Logout(t *testing.T) {
 					bytes.NewReader(bodyPrepare(testUsers[0]))),
 				statusReturn: models.BadRequest,
 				result:       http.Response{StatusCode: http.StatusBadRequest},
+				OnlineStatus: false,
+				SetOnline:    models.Okey,
+				SetOffline:   models.Okey,
+			},
+		},
+		{
+			Login:  testUsers[1].Login,
+			fields: fields{OnlineRepo: mockOnlineRepo},
+			args: args{
+				r: httptest.NewRequest("POST", "/persons",
+					bytes.NewReader(body)),
+				statusReturn: models.Okey,
+				result:       http.Response{StatusCode: http.StatusOK},
 				OnlineStatus: false,
 				SetOnline:    models.Okey,
 				SetOffline:   models.Okey,
@@ -339,6 +361,19 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 				statusReturn: models.Okey,
 				result:       http.Response{StatusCode: http.StatusOK},
 				OnlineStatus: true,
+				SetOnline:    models.Okey,
+				SetOffline:   models.Okey,
+			},
+		},
+		{
+			Login:  testUsers[3].Login,
+			fields: fields{OnlineRepo: mockOnlineRepo},
+			args: args{
+				r: httptest.NewRequest("GET", "/user/auth?user=Phil",
+					bytes.NewReader(goodBody)),
+				statusReturn: models.Okey,
+				result:       http.Response{StatusCode: http.StatusUnauthorized},
+				OnlineStatus: false,
 				SetOnline:    models.Okey,
 				SetOffline:   models.Okey,
 			},

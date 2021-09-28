@@ -39,16 +39,13 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	accesToken, err := middleware.ExtractTokenMetadata(r, middleware.ExtractToken)
-	if err != nil {
+	if err != nil || accesToken == nil {
 		middleware.Response(w, models.BadRequest, nil)
 		return
 	}
 
 	user.Login = accesToken.Login
-	if user.Login == "" {
-		middleware.Response(w, models.BadRequest, nil)
-		return
-	}
+
 	status := h.online.UserOff(user)
 	middleware.Response(w, status, nil)
 }
