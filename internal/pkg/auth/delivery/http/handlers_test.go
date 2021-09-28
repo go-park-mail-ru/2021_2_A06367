@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
 	"github.com/golang/mock/gomock"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -288,7 +290,13 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	os.Setenv("SECRET", "TEST")
 	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+	tkn := &usecase.Tokenator{}
+	bdy := tkn.GetToken(models.User{Login: "Phi"})
+	badBody, _ := json.Marshal(models.TokenView{Token: bdy})
+	bdyOK := tkn.GetToken(models.User{Login: "Phil"})
+	goodBody, _ := json.Marshal(models.TokenView{Token: bdyOK})
 
 	tests := []struct {
 		Login  string
@@ -300,8 +308,8 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 			Login:  testUsers[0].Login,
 			fields: fields{OnlineRepo: mockOnlineRepo},
 			args: args{
-				r: httptest.NewRequest("GET", "/auth/",
-					bytes.NewReader(bodyPrepare(testUsers[0]))),
+				r: httptest.NewRequest("GET", "/auth?user=",
+					bytes.NewReader([]byte(""))),
 				statusReturn: models.BadRequest,
 				result:       http.Response{StatusCode: http.StatusBadRequest},
 				OnlineStatus: false,
@@ -309,12 +317,38 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 				SetOffline:   models.Okey,
 			},
 		},
+		{
+			Login:  testUsers[1].Login,
+			fields: fields{OnlineRepo: mockOnlineRepo},
+			args: args{
+				r: httptest.NewRequest("GET", "/user/auth?user=Phil",
+					bytes.NewReader(badBody)),
+				statusReturn: models.Unauthed,
+				result:       http.Response{StatusCode: http.StatusUnauthorized},
+				OnlineStatus: false,
+				SetOnline:    models.Okey,
+				SetOffline:   models.Okey,
+			},
+		},
+		{
+			Login:  testUsers[2].Login,
+			fields: fields{OnlineRepo: mockOnlineRepo},
+			args: args{
+				r: httptest.NewRequest("GET", "/user/auth?user=Phil",
+					bytes.NewReader(goodBody)),
+				statusReturn: models.Okey,
+				result:       http.Response{StatusCode: http.StatusOK},
+				OnlineStatus: true,
+				SetOnline:    models.Okey,
+				SetOffline:   models.Okey,
+			},
+		},
 	}
 
 	for i := 0; i < len(tests); i++ {
-		if tests[i].args.statusReturn != models.BadRequest {
-			//LoginUserCopy := models.LoginUser{Login: testUsers[i].Login}
-			//mockOnlineRepo.EXPECT().IsAuthed(LoginUserCopy).Return(false)
+		if tests[i].args.statusReturn != models.BadRequest && tests[i].args.statusReturn != models.Unauthed {
+			LoginUserCopy := models.LoginUser{Login: "Phil"}
+			mockOnlineRepo.EXPECT().IsAuthed(LoginUserCopy).Return(tests[i].args.OnlineStatus)
 		}
 	}
 
@@ -322,6 +356,9 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthHandler{
 				online: tt.fields.OnlineRepo,
+			}
+			if tt.Login == testUsers[2].Login {
+				tt.Login = tt.Login
 			}
 
 			w := httptest.NewRecorder()
