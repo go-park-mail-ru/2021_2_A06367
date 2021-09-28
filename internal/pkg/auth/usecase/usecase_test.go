@@ -10,6 +10,7 @@ import (
 
 type fields struct {
 	AuthRepo auth.AuthRepo
+	TokenGen auth.TokenGenerator
 }
 
 type args struct {
@@ -42,6 +43,7 @@ func TestAuthUsecase_SignIn(t *testing.T) {
 	defer ctl.Finish()
 	os.Setenv("SECRET", "TESTS")
 	mockAuthRepo := auth.NewMockAuthRepo(ctl)
+	mockTokenGen := auth.NewMockTokenGenerator(ctl)
 
 	tests := []struct {
 		Login  string
@@ -50,17 +52,17 @@ func TestAuthUsecase_SignIn(t *testing.T) {
 	}{
 		{
 			Login:  testUsers[0].Login,
-			fields: fields{mockAuthRepo},
+			fields: fields{mockAuthRepo, mockTokenGen},
 			args:   args{statusReturn: models.Okey, OnlineStatus: models.Okey},
 		},
 		{
 			Login:  testUsers[1].Login,
-			fields: fields{mockAuthRepo},
+			fields: fields{mockAuthRepo, mockTokenGen},
 			args:   args{statusReturn: models.Unauthed, OnlineStatus: models.Unauthed},
 		},
 		{
 			Login:  testUsers[2].Login,
-			fields: fields{mockAuthRepo},
+			fields: fields{mockAuthRepo, mockTokenGen},
 			args:   args{statusReturn: models.BadRequest},
 		},
 	}
@@ -69,13 +71,17 @@ func TestAuthUsecase_SignIn(t *testing.T) {
 		if tests[i].args.statusReturn == models.BadRequest {
 			continue
 		}
+		if tests[i].args.statusReturn == models.Okey {
+			mockTokenGen.EXPECT().GetToken(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).Return("TEST TOKEN")
+		}
 		mockAuthRepo.EXPECT().CheckUser(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).Return(tests[i].args.statusReturn)
 	}
 
 	for i, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthUsecase{
-				repo: mockAuthRepo,
+				repo:      mockAuthRepo,
+				tokenator: mockTokenGen,
 			}
 
 			_, code := h.SignIn(models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword})
@@ -92,6 +98,7 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 	defer ctl.Finish()
 	os.Setenv("SECRET", "TESTS")
 	mockAuthRepo := auth.NewMockAuthRepo(ctl)
+	mockTokenGenereator := auth.NewMockTokenGenerator(ctl)
 
 	tests := []struct {
 		Login  string
@@ -100,33 +107,32 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 	}{
 		{
 			Login:  testUsers[0].Login,
-			fields: fields{mockAuthRepo},
+			fields: fields{mockAuthRepo, mockTokenGenereator},
 			args:   args{statusReturn: models.Conflict, OnlineStatus: models.Okey},
 		},
-		//{
-		//	Login:  testUsers[1].Login,
-		//	fields: fields{mockAuthRepo},
-		//	args:   args{statusReturn: models.Conflict, OnlineStatus: models.Unauthed},
-		//},
-		//{
-		//	Login:  testUsers[2].Login,
-		//	fields: fields{mockAuthRepo},
-		//	args:   args{statusReturn: models.BadRequest},
-		//},
+		{
+			Login:  testUsers[1].Login,
+			fields: fields{mockAuthRepo, mockTokenGenereator},
+			args:   args{statusReturn: models.Okey, OnlineStatus: models.Unauthed},
+		},
 	}
 
 	for i := 0; i < len(tests); i++ {
 		if tests[i].args.statusReturn == models.BadRequest {
 			continue
 		}
-		//mockAuthRepo.EXPECT().CreateUser(testUsers[i]).Return(tests[i].args.statusReturn)
+		if tests[i].args.statusReturn == models.Okey {
+			mockAuthRepo.EXPECT().CreateUser(testUsers[i]).Return(tests[i].args.statusReturn)
+			mockTokenGenereator.EXPECT().GetToken(testUsers[i]).Return("TEST TOKEN")
+		}
 		mockAuthRepo.EXPECT().CheckUser(testUsers[i]).Return(tests[i].args.OnlineStatus)
 	}
 
 	for i, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthUsecase{
-				repo: mockAuthRepo,
+				repo:      mockAuthRepo,
+				tokenator: mockTokenGenereator,
 			}
 
 			_, code := h.SignUp(testUsers[i])

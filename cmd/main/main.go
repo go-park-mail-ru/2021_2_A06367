@@ -23,17 +23,20 @@ func main() {
 func run() error {
 	r := mux.NewRouter()
 	srv := http.Server{Handler: r, Addr: fmt.Sprintf(":%s", "8080")}
-
-	conn := ""
+	os.Setenv("SECRET", "DEBUG")
+	conn := "host=localhost port=5432 dbname=postgres user=slavaryanov password=postgres"
 
 	pool, err := pgxpool.Connect(context.Background(), conn)
 	if err != nil {
 		return err
 	}
 
+	//TODO на этом этапе вытаскивать секретный ключ и класть в конструкторк генератора токена
+	//в данный момент это делается внутри метода GetToken
+	tokenGenerator := authUsecase.NewTokenator()
 	onlineRepo := authRepository.NewOnlineRepo(pool)
 	authRepo := authRepository.NewAuthRepo(pool)
-	authUse := authUsecase.NewAuthUsecase(authRepo)
+	authUse := authUsecase.NewAuthUsecase(authRepo, tokenGenerator)
 	authHandler := authDelivery.NewAuthHandler(authUse, onlineRepo)
 
 	filmsHandler := filmsDelivery.FilmsHandler{}

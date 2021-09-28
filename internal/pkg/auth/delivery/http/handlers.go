@@ -40,7 +40,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	accesToken, err := middleware.ExtractTokenMetadata(r, middleware.ExtractToken)
-	if err != nil || !middleware.LoginUserIsValid(user) {
+	if err != nil {
 		middleware.Response(w, models.BadRequest, nil)
 		return
 	}

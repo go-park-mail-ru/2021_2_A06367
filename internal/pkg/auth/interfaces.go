@@ -19,3 +19,7 @@ type OnlineRepo interface {
 	UserOff(user models.LoginUser) models.StatusCode
 	IsAuthed(user models.LoginUser) bool
 }
+
+type TokenGenerator interface {
+	GetToken(user models.User) string
+}

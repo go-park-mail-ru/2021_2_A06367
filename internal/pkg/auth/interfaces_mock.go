@@ -179,3 +179,40 @@ func (mr *MockOnlineRepoMockRecorder) UserOn(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserOn", reflect.TypeOf((*MockOnlineRepo)(nil).UserOn), user)
 }
+
+// MockTokenGenerator is a mock of TokenGenerator interface.
+type MockTokenGenerator struct {
+	ctrl     *gomock.Controller
+	recorder *MockTokenGeneratorMockRecorder
+}
+
+// MockTokenGeneratorMockRecorder is the mock recorder for MockTokenGenerator.
+type MockTokenGeneratorMockRecorder struct {
+	mock *MockTokenGenerator
+}
+
+// NewMockTokenGenerator creates a new mock instance.
+func NewMockTokenGenerator(ctrl *gomock.Controller) *MockTokenGenerator {
+	mock := &MockTokenGenerator{ctrl: ctrl}
+	mock.recorder = &MockTokenGeneratorMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTokenGenerator) EXPECT() *MockTokenGeneratorMockRecorder {
+	return m.recorder
+}
+
+// GetToken mocks base method.
+func (m *MockTokenGenerator) GetToken(user models.User) string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetToken", user)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// GetToken indicates an expected call of GetToken.
+func (mr *MockTokenGeneratorMockRecorder) GetToken(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetToken", reflect.TypeOf((*MockTokenGenerator)(nil).GetToken), user)
+}
