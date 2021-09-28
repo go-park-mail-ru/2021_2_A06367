@@ -4,7 +4,6 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
-	"github.com/gorilla/mux"
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"net/http"
@@ -27,7 +26,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
 	if err != nil || !middleware.LoginUserIsValid(user) {
-		middleware.Response(w, models.BadRequest, nil)
+		middleware.Response(w, models.Forbidden, nil)
 		return
 	}
 	token, status := h.uc.SignIn(user)
@@ -76,18 +75,18 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
-	Var := mux.Vars(r)
 
-	user.Login = Var["user"]
-	jwtData, err := middleware.ExtractTokenMetadata(r, middleware.ExtractTokenFromHeader)
+	user.Login = r.URL.Query().Get("user")
+	jwtData, err := middleware.ExtractTokenMetadata(r, middleware.ExtractToken)
 
-	if user.Login == "" {
+	if user.Login == "" || jwtData == nil {
 		middleware.Response(w, models.BadRequest, nil)
 		return
 	}
 
 	if err != nil || jwtData.Login != user.Login {
 		middleware.Response(w, models.Unauthed, nil)
+		return
 	}
 
 	status := h.online.IsAuthed(user)

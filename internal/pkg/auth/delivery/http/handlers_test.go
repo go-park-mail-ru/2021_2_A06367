@@ -119,8 +119,8 @@ func TestAuthHandler_Login(t *testing.T) {
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader([]byte("Hi there"))),
-				statusReturn: models.BadRequest,
-				result:       http.Response{StatusCode: http.StatusBadRequest},
+				statusReturn: models.Forbidden,
+				result:       http.Response{StatusCode: http.StatusForbidden},
 			},
 		},
 	}
@@ -130,7 +130,7 @@ func TestAuthHandler_Login(t *testing.T) {
 		if tests[i].args.statusReturn == models.Okey {
 			mockOnlineRepo.EXPECT().UserOn(LoginUserCopy).Return(tests[i].args.statusReturn)
 		}
-		if tests[i].args.statusReturn != models.BadRequest {
+		if tests[i].args.statusReturn != models.Forbidden {
 			mockUsecase.EXPECT().
 				SignIn(LoginUserCopy).
 				Return("", tests[i].args.statusReturn)
