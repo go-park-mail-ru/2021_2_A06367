@@ -212,3 +212,52 @@ func TestAuthHandler_SignUp(t *testing.T) {
 		})
 	}
 }
+
+func TestAuthHandler_Logout(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+
+	tests := []struct {
+		Login  string
+		body   []byte
+		fields fields
+		args   args
+	}{
+		{
+			Login:  testUsers[0].Login,
+			fields: fields{OnlineRepo: mockOnlineRepo},
+			args: args{
+				r: httptest.NewRequest("POST", "/persons",
+					bytes.NewReader(bodyPrepare(testUsers[0]))),
+				statusReturn: models.BadRequest,
+				result:       http.Response{StatusCode: http.StatusBadRequest},
+				OnlineStatus: false,
+				SetOnline:    models.Okey,
+				SetOffline:   models.Okey,
+			},
+		},
+	}
+
+	for i := 0; i < len(tests); i++ {
+		if tests[i].args.statusReturn != models.BadRequest {
+			LoginUserCopy := models.LoginUser{Login: testUsers[i].Login}
+			mockOnlineRepo.EXPECT().UserOff(LoginUserCopy).Return(tests[i].args.statusReturn)
+		}
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Login, func(t *testing.T) {
+			h := &AuthHandler{
+				online: tt.fields.OnlineRepo,
+			}
+
+			w := httptest.NewRecorder()
+			h.Logout(w, tt.args.r)
+			if tt.args.result.StatusCode != w.Code {
+				t.Error(tt.Login)
+			}
+		})
+	}
+}
