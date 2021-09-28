@@ -23,8 +23,8 @@ func main() {
 func run() error {
 	r := mux.NewRouter()
 	srv := http.Server{Handler: r, Addr: fmt.Sprintf(":%s", "8080")}
-	os.Setenv("SECRET", "DEBUG")
-	conn := "host=localhost port=5432 dbname=postgres user=slavaryanov password=postgres"
+	//os.Setenv("SECRET", "DEBUG")
+	conn := ""
 
 	pool, err := pgxpool.Connect(context.Background(), conn)
 	if err != nil {
