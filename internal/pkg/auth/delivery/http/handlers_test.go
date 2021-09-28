@@ -49,6 +49,28 @@ var testUsers []models.User = []models.User{
 		EncryptedPassword: "",
 		Email:             "",
 	},
+	models.User{
+		Login:             "Bad",
+		EncryptedPassword: "User",
+		Email:             "KKK",
+	},
+}
+
+func TestNewAuthHandler(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockUsecase := auth.NewMockAuthUsecase(ctl)
+	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+
+	testHandler := NewAuthHandler(mockUsecase, mockOnlineRepo)
+	if testHandler.uc != mockUsecase {
+		t.Error("bad constructor")
+	}
+
+	if testHandler.online != mockOnlineRepo {
+		t.Error("bad constructor")
+	}
 }
 
 func TestAuthHandler_Login(t *testing.T) {
@@ -90,7 +112,7 @@ func TestAuthHandler_Login(t *testing.T) {
 			},
 		},
 		{
-			Login:  testUsers[1].Login,
+			Login:  testUsers[2].Login,
 			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
@@ -255,6 +277,55 @@ func TestAuthHandler_Logout(t *testing.T) {
 
 			w := httptest.NewRecorder()
 			h.Logout(w, tt.args.r)
+			if tt.args.result.StatusCode != w.Code {
+				t.Error(tt.Login)
+			}
+		})
+	}
+}
+
+func TestAuthHandler_AuthStatus(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+
+	tests := []struct {
+		Login  string
+		body   []byte
+		fields fields
+		args   args
+	}{
+		{
+			Login:  testUsers[0].Login,
+			fields: fields{OnlineRepo: mockOnlineRepo},
+			args: args{
+				r: httptest.NewRequest("GET", "/auth/",
+					bytes.NewReader(bodyPrepare(testUsers[0]))),
+				statusReturn: models.BadRequest,
+				result:       http.Response{StatusCode: http.StatusBadRequest},
+				OnlineStatus: false,
+				SetOnline:    models.Okey,
+				SetOffline:   models.Okey,
+			},
+		},
+	}
+
+	for i := 0; i < len(tests); i++ {
+		if tests[i].args.statusReturn != models.BadRequest {
+			//LoginUserCopy := models.LoginUser{Login: testUsers[i].Login}
+			//mockOnlineRepo.EXPECT().IsAuthed(LoginUserCopy).Return(false)
+		}
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Login, func(t *testing.T) {
+			h := &AuthHandler{
+				online: tt.fields.OnlineRepo,
+			}
+
+			w := httptest.NewRecorder()
+			h.AuthStatus(w, tt.args.r)
 			if tt.args.result.StatusCode != w.Code {
 				t.Error(tt.Login)
 			}

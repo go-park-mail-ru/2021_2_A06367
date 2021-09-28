@@ -38,6 +38,21 @@ var testUsers []models.User = []models.User{
 	},
 }
 
+func TestNewAuthUsecase(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	mockAuthRepo := auth.NewMockAuthRepo(ctl)
+	mockTokenGen := auth.NewMockTokenGenerator(ctl)
+	testUC := NewAuthUsecase(mockAuthRepo, mockTokenGen)
+	if testUC.repo != mockAuthRepo {
+		t.Error("bad constructor")
+	}
+
+	if testUC.tokenator != mockTokenGen {
+		t.Error("bad constructor")
+	}
+}
+
 func TestAuthUsecase_SignIn(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
