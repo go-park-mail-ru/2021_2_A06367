@@ -392,9 +392,6 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 			h := &AuthHandler{
 				online: tt.fields.OnlineRepo,
 			}
-			if tt.Login == testUsers[2].Login {
-				tt.Login = tt.Login
-			}
 
 			w := httptest.NewRecorder()
 			h.AuthStatus(w, tt.args.r)

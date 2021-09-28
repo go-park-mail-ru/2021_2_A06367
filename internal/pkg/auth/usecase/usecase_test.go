@@ -116,19 +116,28 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 	mockTokenGenereator := auth.NewMockTokenGenerator(ctl)
 
 	tests := []struct {
-		Login  string
-		fields fields
-		args   args
+		Login       string
+		fields      fields
+		args        args
+		returnToken string
 	}{
 		{
-			Login:  testUsers[0].Login,
-			fields: fields{mockAuthRepo, mockTokenGenereator},
-			args:   args{statusReturn: models.Conflict, OnlineStatus: models.Okey},
+			Login:       testUsers[0].Login,
+			fields:      fields{mockAuthRepo, mockTokenGenereator},
+			args:        args{statusReturn: models.Conflict, OnlineStatus: models.Okey},
+			returnToken: "TEST TOKEN",
 		},
 		{
-			Login:  testUsers[1].Login,
-			fields: fields{mockAuthRepo, mockTokenGenereator},
-			args:   args{statusReturn: models.Okey, OnlineStatus: models.Unauthed},
+			Login:       testUsers[1].Login,
+			fields:      fields{mockAuthRepo, mockTokenGenereator},
+			args:        args{statusReturn: models.Okey, OnlineStatus: models.Unauthed},
+			returnToken: "TEST TOKEN",
+		},
+		{
+			Login:       testUsers[2].Login,
+			fields:      fields{mockAuthRepo, mockTokenGenereator},
+			args:        args{statusReturn: models.Conflict, OnlineStatus: models.Unauthed},
+			returnToken: "",
 		},
 	}
 
@@ -136,9 +145,11 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 		if tests[i].args.statusReturn == models.BadRequest {
 			continue
 		}
-		if tests[i].args.statusReturn == models.Okey {
+		if tests[i].args.statusReturn == models.Okey && tests[i].args.OnlineStatus != models.Okey {
 			mockAuthRepo.EXPECT().CreateUser(testUsers[i]).Return(tests[i].args.statusReturn)
-			mockTokenGenereator.EXPECT().GetToken(testUsers[i]).Return("TEST TOKEN")
+			mockTokenGenereator.EXPECT().GetToken(testUsers[i]).Return(tests[i].returnToken)
+		} else if tests[i].args.statusReturn == models.Conflict && tests[i].args.OnlineStatus != models.Okey {
+			mockAuthRepo.EXPECT().CreateUser(testUsers[i]).Return(tests[i].args.statusReturn)
 		}
 		mockAuthRepo.EXPECT().CheckUser(testUsers[i]).Return(tests[i].args.OnlineStatus)
 	}
@@ -148,6 +159,9 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 			h := &AuthUsecase{
 				repo:      mockAuthRepo,
 				tokenator: mockTokenGenereator,
+			}
+			if tt.Login == testUsers[2].Login {
+				tt.Login = tt.Login
 			}
 
 			_, code := h.SignUp(testUsers[i])
