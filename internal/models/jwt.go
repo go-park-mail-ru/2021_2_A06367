@@ -7,3 +7,7 @@ type Token struct {
 	Login string
 	jwt.StandardClaims
 }
+
+type TokenView struct {
+	Token string `json:"token"`
+}

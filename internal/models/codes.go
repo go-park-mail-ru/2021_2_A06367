@@ -10,4 +10,5 @@ const (
 	Conflict
 	InvalidBody
 	BadRequest
+	Forbidden
 )

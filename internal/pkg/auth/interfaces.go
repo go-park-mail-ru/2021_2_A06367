@@ -17,5 +17,9 @@ type AuthRepo interface {
 type OnlineRepo interface {
 	UserOn(user models.LoginUser) models.StatusCode
 	UserOff(user models.LoginUser) models.StatusCode
-	IsOnline(user models.LoginUser) bool
+	IsAuthed(user models.LoginUser) bool
+}
+
+type TokenGenerator interface {
+	GetToken(user models.User) string
 }

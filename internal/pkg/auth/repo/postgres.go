@@ -25,6 +25,7 @@ func NewAuthRepo(pool *pgxpool.Pool) *AuthRepo {
 func (r *AuthRepo) CreateUser(user models.User)  models.StatusCode {
 
 	var id uuid.UUID
+	user.Id = uuid.New()
 	row := r.pool.QueryRow(context.Background(), CREATE_USER,
 		user.Id, user.Email, user.Login, user.EncryptedPassword, time.Now())
 
