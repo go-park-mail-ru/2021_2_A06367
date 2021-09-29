@@ -18,7 +18,7 @@ CREATE TABLE users(
 );
 
 CREATE TABLE online_users(
-    login text UNIQUE NOT NULL,
+    login text UNIQUE NOT NULL
 );
 
 CREATE UNIQUE INDEX online_idx ON online_users (login);
@@ -45,4 +45,4 @@ CREATE TABLE rating
     film_id integer REFERENCES films(id) NOT NULL,
     rating double precision NOT NULL,
     CONSTRAINT rating_pkey PRIMARY KEY (film_id)
-)
+);

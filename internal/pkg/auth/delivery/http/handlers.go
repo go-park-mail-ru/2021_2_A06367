@@ -30,6 +30,9 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	token, status := h.uc.SignIn(user)
+	if status != models.Okey {
+		middleware.Response(w, models.Unauthed, nil)
+	}
 	if status == models.Okey {
 		status = h.online.UserOn(user)
 	}
@@ -63,7 +66,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		status = h.online.UserOn(userCopy)
 	}
 
-	if token == "" {
+	if token == "" || status != models.Okey {
 		middleware.Response(w, status, nil)
 		return
 	}
