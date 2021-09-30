@@ -1,0 +1,3 @@
+go test -coverprofile=coverage.out.tmp ./...
+cat coverage.out.tmp | grep -v _mock.go > coverage.out
+go tool cover -func=coverage.out

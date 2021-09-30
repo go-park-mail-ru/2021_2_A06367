@@ -1,0 +1,15 @@
+name: Netflix v2 build
+
+on:
+  push:
+    branches: [ dev ] # Пока собираем только дев-ветку
+
+jobs:
+  prebuild:
+    name: prebuild
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: echo 0
+    # TODO: добавить шаг с линтером
+    # TODO: добавить шаг с тестами
