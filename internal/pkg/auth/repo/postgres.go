@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	SElECT_USER = "SELECT id, email, login, encrypted_password, created_at FROM public.users;"
+	SElECT_USER = "SELECT login, about, avatar, subscriptions, subscribers FROM public.users WHERE id=$1;"
 	CHECK_USER  = "SELECT encrypted_password FROM public.users WHERE login=$1;"
 	CREATE_USER = "INSERT INTO public.users(id, email, login, encrypted_password, created_at) VALUES($1, $2, $3, $4, $5) RETURNING id;"
 )
@@ -49,4 +49,16 @@ func (r *AuthRepo) CheckUser(user models.User) models.StatusCode {
 	}
 
 	return models.Okey
+}
+
+func (r *AuthRepo) GetProfile(user models.Profile) (models.Profile, models.StatusCode) {
+
+	row := r.pool.QueryRow(context.Background(), SElECT_USER,
+		user.Id)
+
+	err := row.Scan(&user.Login, &user.About, &user.Avatar, &user.Subscriptions, &user.Subscribers)
+	if err != nil {
+		return models.Profile{}, models.InternalError
+	}
+	return user, models.Okey
 }

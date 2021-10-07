@@ -4,6 +4,8 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
+	uuid "github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"net/http"
@@ -95,4 +97,23 @@ func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	middleware.Response(w, models.Okey, nil)
+}
+
+func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request)  {
+	profile := models.Profile{}
+
+	vars := mux.Vars(r)
+	id, found := vars["id"]
+	if !found {
+		middleware.Response(w, models.BadRequest, nil)
+	}
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		middleware.Response(w, models.BadRequest, profile)
+	}
+	profile.Id = uid
+
+	user, status := h.uc.GetProfile(profile)
+
+	middleware.Response(w, status, user)
 }

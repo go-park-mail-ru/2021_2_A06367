@@ -7,11 +7,13 @@ import "github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 type AuthUsecase interface {
 	SignIn(user models.LoginUser) (string, models.StatusCode)
 	SignUp(user models.User) (string, models.StatusCode)
+	GetProfile(user models.Profile) (models.Profile, models.StatusCode)
 }
 
 type AuthRepo interface {
 	CreateUser(user models.User) models.StatusCode
 	CheckUser(user models.User) models.StatusCode
+	GetProfile(user models.Profile) (models.Profile, models.StatusCode)
 }
 
 type OnlineRepo interface {

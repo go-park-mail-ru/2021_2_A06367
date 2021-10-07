@@ -19,3 +19,12 @@ type LoginUser struct {
 	Login             string `json:"login"`
 	EncryptedPassword string `json:"password"`
 }
+
+type Profile struct {
+	Id uuid.UUID
+	Login string
+	About string
+	Avatar string
+	Subscriptions uint
+	Subscribers uint
+}
