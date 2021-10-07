@@ -17,4 +17,5 @@ jobs:
     # TODO: добавить шаг с тестами
       - name: tests
         run: |
+          cd ./internal
           go test ./...
