@@ -22,8 +22,8 @@ func bodyPrepare(user models.User) []byte {
 }
 
 type fields struct {
-	Usecase    auth.AuthUsecase
-	OnlineRepo auth.OnlineRepo
+	Usecase       auth.AuthUsecase
+	OnlineUsecase auth.OnlineUsecase
 }
 
 type args struct {
@@ -68,14 +68,14 @@ func TestNewAuthHandler(t *testing.T) {
 	defer ctl.Finish()
 
 	mockUsecase := auth.NewMockAuthUsecase(ctl)
-	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+	mockOnlineUsecase := auth.NewMockOnlineUsecase(ctl)
 
-	testHandler := NewAuthHandler(mockUsecase, mockOnlineRepo)
+	testHandler := NewAuthHandler(mockUsecase, mockOnlineUsecase)
 	if testHandler.uc != mockUsecase {
 		t.Error("bad constructor")
 	}
 
-	if testHandler.online != mockOnlineRepo {
+	if testHandler.online != mockOnlineUsecase {
 		t.Error("bad constructor")
 	}
 }
@@ -85,7 +85,7 @@ func TestAuthHandler_Login(t *testing.T) {
 	defer ctl.Finish()
 
 	mockUsecase := auth.NewMockAuthUsecase(ctl)
-	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+	mockOnlineUsecase := auth.NewMockOnlineUsecase(ctl)
 
 	tests := []struct {
 		Login  string
@@ -95,7 +95,7 @@ func TestAuthHandler_Login(t *testing.T) {
 	}{
 		{
 			Login:  testUsers[0].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase, OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[0]))),
@@ -108,7 +108,7 @@ func TestAuthHandler_Login(t *testing.T) {
 		},
 		{
 			Login:  testUsers[1].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase, OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[1]))),
@@ -120,7 +120,7 @@ func TestAuthHandler_Login(t *testing.T) {
 		},
 		{
 			Login:  testUsers[2].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase, OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader([]byte("Hi there"))),
@@ -133,7 +133,7 @@ func TestAuthHandler_Login(t *testing.T) {
 	for i := 0; i < len(tests); i++ {
 		LoginUserCopy := models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}
 		if tests[i].args.statusReturn == models.Okey {
-			mockOnlineRepo.EXPECT().UserOn(LoginUserCopy).Return(tests[i].args.statusReturn)
+			mockOnlineUsecase.EXPECT().Activate(LoginUserCopy).Return(tests[i].args.statusReturn)
 		}
 		if tests[i].args.statusReturn != models.Forbidden {
 			mockUsecase.EXPECT().
@@ -146,7 +146,7 @@ func TestAuthHandler_Login(t *testing.T) {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthHandler{
 				uc:     tt.fields.Usecase,
-				online: tt.fields.OnlineRepo,
+				online: tt.fields.OnlineUsecase,
 			}
 			if tt.Login == testUsers[1].Login {
 				tt.Login = tt.Login
@@ -165,7 +165,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 	defer ctl.Finish()
 
 	mockUsecase := auth.NewMockAuthUsecase(ctl)
-	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+	mockOnlineUsecase := auth.NewMockOnlineUsecase(ctl)
 
 	tests := []struct {
 		Login  string
@@ -175,7 +175,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 	}{
 		{
 			Login:  testUsers[0].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase, OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[0]))),
@@ -188,7 +188,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 		},
 		{
 			Login:  testUsers[1].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase, OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[1]))),
@@ -199,7 +199,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 		},
 		{
 			Login:  testUsers[2].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase, OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader([]byte("d"))),
@@ -216,8 +216,8 @@ func TestAuthHandler_SignUp(t *testing.T) {
 		}
 		if tests[i].args.statusReturn == models.Okey {
 			mockUsecase.EXPECT().SignUp(testUsers[i]).Return("token", tests[i].args.statusReturn)
-			mockOnlineRepo.EXPECT().
-				UserOn(models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).
+			mockOnlineUsecase.EXPECT().
+				Activate(models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).
 				Return(tests[i].args.statusReturn)
 			continue
 		}
@@ -230,7 +230,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthHandler{
 				uc:     tt.fields.Usecase,
-				online: tt.fields.OnlineRepo,
+				online: tt.fields.OnlineUsecase,
 			}
 			w := httptest.NewRecorder()
 
@@ -250,7 +250,7 @@ func TestAuthHandler_Logout(t *testing.T) {
 	tkn := &usecase.Tokenator{}
 	bdy := tkn.GetToken(models.User{Login: testUsers[1].Login})
 	body, _ := json.Marshal(models.TokenView{Token: bdy})
-	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+	mockOnlineUsecase := auth.NewMockOnlineUsecase(ctl)
 
 	tests := []struct {
 		Login  string
@@ -260,7 +260,7 @@ func TestAuthHandler_Logout(t *testing.T) {
 	}{
 		{
 			Login:  testUsers[0].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
+			fields: fields{OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[0]))),
@@ -273,7 +273,7 @@ func TestAuthHandler_Logout(t *testing.T) {
 		},
 		{
 			Login:  testUsers[1].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
+			fields: fields{OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(body)),
@@ -289,14 +289,14 @@ func TestAuthHandler_Logout(t *testing.T) {
 	for i := 0; i < len(tests); i++ {
 		if tests[i].args.statusReturn != models.BadRequest {
 			LoginUserCopy := models.LoginUser{Login: testUsers[i].Login}
-			mockOnlineRepo.EXPECT().UserOff(LoginUserCopy).Return(tests[i].args.statusReturn)
+			mockOnlineUsecase.EXPECT().Deactivate(LoginUserCopy).Return(tests[i].args.statusReturn)
 		}
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthHandler{
-				online: tt.fields.OnlineRepo,
+				online: tt.fields.OnlineUsecase,
 			}
 
 			w := httptest.NewRecorder()
@@ -313,7 +313,7 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 	defer ctl.Finish()
 
 	os.Setenv("SECRET", "TEST")
-	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+	mockOnlineUsecase := auth.NewMockOnlineUsecase(ctl)
 	tkn := &usecase.Tokenator{}
 	bdy := tkn.GetToken(models.User{Login: "Phi"})
 	badBody, _ := json.Marshal(models.TokenView{Token: bdy})
@@ -328,7 +328,7 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 	}{
 		{
 			Login:  testUsers[0].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
+			fields: fields{OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("GET", "/auth?user=",
 					bytes.NewReader([]byte(""))),
@@ -341,7 +341,7 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 		},
 		{
 			Login:  testUsers[1].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
+			fields: fields{OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("GET", "/user/auth?user=Phil",
 					bytes.NewReader(badBody)),
@@ -354,7 +354,7 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 		},
 		{
 			Login:  testUsers[2].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
+			fields: fields{OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("GET", "/user/auth?user=Phil",
 					bytes.NewReader(goodBody)),
@@ -367,7 +367,7 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 		},
 		{
 			Login:  testUsers[3].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
+			fields: fields{OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("GET", "/user/auth?user=Phil",
 					bytes.NewReader(goodBody)),
@@ -383,14 +383,14 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 	for i := 0; i < len(tests); i++ {
 		if tests[i].args.statusReturn != models.BadRequest && tests[i].args.statusReturn != models.Unauthed {
 			LoginUserCopy := models.LoginUser{Login: "Phil"}
-			mockOnlineRepo.EXPECT().IsAuthed(LoginUserCopy).Return(tests[i].args.OnlineStatus)
+			mockOnlineUsecase.EXPECT().IsAuthed(LoginUserCopy).Return(tests[i].args.OnlineStatus)
 		}
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthHandler{
-				online: tt.fields.OnlineRepo,
+				online: tt.fields.OnlineUsecase,
 			}
 
 			w := httptest.NewRecorder()

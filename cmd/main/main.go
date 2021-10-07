@@ -42,9 +42,10 @@ func run() error {
 
 	tokenGenerator := authUsecase.NewTokenator()
 	onlineRepo := authRepository.NewOnlineRepo(pool)
+	onlineUsecase := authUsecase.NewOnlineUsecase(onlineRepo)
 	authRepo := authRepository.NewAuthRepo(pool)
 	authUse := authUsecase.NewAuthUsecase(authRepo, tokenGenerator)
-	authHandler := authDelivery.NewAuthHandler(authUse, onlineRepo)
+	authHandler := authDelivery.NewAuthHandler(authUse, onlineUsecase)
 
 	filmsRepo := filmsRepository.NewFilmsRepo(pool)
 	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo)

@@ -14,6 +14,12 @@ type AuthRepo interface {
 	CheckUser(user models.User) models.StatusCode
 }
 
+type OnlineUsecase interface {
+	Activate(user models.LoginUser) models.StatusCode
+	Deactivate(user models.LoginUser) models.StatusCode
+	IsAuthed(user models.LoginUser) bool
+}
+
 type OnlineRepo interface {
 	UserOn(user models.LoginUser) models.StatusCode
 	UserOff(user models.LoginUser) models.StatusCode

@@ -115,6 +115,71 @@ func (mr *MockAuthRepoMockRecorder) CreateUser(user interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockAuthRepo)(nil).CreateUser), user)
 }
 
+// MockOnlineUsecase is a mock of OnlineUsecase interface.
+type MockOnlineUsecase struct {
+	ctrl     *gomock.Controller
+	recorder *MockOnlineUsecaseMockRecorder
+}
+
+// MockOnlineUsecaseMockRecorder is the mock recorder for MockOnlineUsecase.
+type MockOnlineUsecaseMockRecorder struct {
+	mock *MockOnlineUsecase
+}
+
+// NewMockOnlineUsecase creates a new mock instance.
+func NewMockOnlineUsecase(ctrl *gomock.Controller) *MockOnlineUsecase {
+	mock := &MockOnlineUsecase{ctrl: ctrl}
+	mock.recorder = &MockOnlineUsecaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockOnlineUsecase) EXPECT() *MockOnlineUsecaseMockRecorder {
+	return m.recorder
+}
+
+// Activate mocks base method.
+func (m *MockOnlineUsecase) Activate(user models.LoginUser) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Activate", user)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// Activate indicates an expected call of Activate.
+func (mr *MockOnlineUsecaseMockRecorder) Activate(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Activate", reflect.TypeOf((*MockOnlineUsecase)(nil).Activate), user)
+}
+
+// Deactivate mocks base method.
+func (m *MockOnlineUsecase) Deactivate(user models.LoginUser) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Deactivate", user)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// Deactivate indicates an expected call of Deactivate.
+func (mr *MockOnlineUsecaseMockRecorder) Deactivate(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Deactivate", reflect.TypeOf((*MockOnlineUsecase)(nil).Deactivate), user)
+}
+
+// IsAuthed mocks base method.
+func (m *MockOnlineUsecase) IsAuthed(user models.LoginUser) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsAuthed", user)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsAuthed indicates an expected call of IsAuthed.
+func (mr *MockOnlineUsecaseMockRecorder) IsAuthed(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAuthed", reflect.TypeOf((*MockOnlineUsecase)(nil).IsAuthed), user)
+}
+
 // MockOnlineRepo is a mock of OnlineRepo interface.
 type MockOnlineRepo struct {
 	ctrl     *gomock.Controller

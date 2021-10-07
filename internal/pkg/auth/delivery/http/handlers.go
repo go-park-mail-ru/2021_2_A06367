@@ -12,13 +12,13 @@ import (
 type AuthHandler struct {
 	uc     auth.AuthUsecase
 	logger *zap.SugaredLogger
-	online auth.OnlineRepo
+	online auth.OnlineUsecase
 }
 
-func NewAuthHandler(uc auth.AuthUsecase, or auth.OnlineRepo) *AuthHandler {
+func NewAuthHandler(uc auth.AuthUsecase, ou auth.OnlineUsecase) *AuthHandler {
 	return &AuthHandler{
 		uc:     uc,
-		online: or,
+		online: ou,
 	}
 }
 
@@ -34,7 +34,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		middleware.Response(w, models.Unauthed, nil)
 	}
 	if status == models.Okey {
-		status = h.online.UserOn(user)
+		status = h.online.Activate(user)
 	}
 	middleware.Response(w, status, models.TokenView{Token: token})
 }
@@ -49,7 +49,7 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 
 	user.Login = accesToken.Login
 
-	status := h.online.UserOff(user)
+	status := h.online.Deactivate(user)
 	middleware.Response(w, status, nil)
 }
 
@@ -63,7 +63,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	token, status := h.uc.SignUp(user)
 	if status == models.Okey {
 		userCopy := models.LoginUser{Login: user.Login, EncryptedPassword: user.EncryptedPassword}
-		status = h.online.UserOn(userCopy)
+		status = h.online.Activate(userCopy)
 	}
 
 	if token == "" || status != models.Okey {
