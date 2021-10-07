@@ -99,7 +99,7 @@ func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 	middleware.Response(w, models.Okey, nil)
 }
 
-func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request)  {
+func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	profile := models.Profile{}
 
 	vars := mux.Vars(r)

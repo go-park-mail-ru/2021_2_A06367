@@ -3,6 +3,7 @@ package usecase
 import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
+	"github.com/google/uuid"
 )
 
 type AuthUsecase struct {
@@ -41,7 +42,13 @@ func (u *AuthUsecase) SignUp(user models.User) (string, models.StatusCode) {
 	}
 }
 
-
 func (u *AuthUsecase) GetProfile(user models.Profile) (models.Profile, models.StatusCode) {
-	return models.Profile{}, 0
+	return u.repo.GetProfile(user)
+}
+
+func (u *AuthUsecase) Follow(who, whom uuid.UUID) models.StatusCode {
+	if who == whom {
+		return models.Forbidden
+	}
+	return u.repo.AddFollowing(who, whom)
 }

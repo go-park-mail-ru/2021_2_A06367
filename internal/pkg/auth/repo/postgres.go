@@ -12,6 +12,7 @@ const (
 	SElECT_USER = "SELECT login, about, avatar, subscriptions, subscribers FROM public.users WHERE id=$1;"
 	CHECK_USER  = "SELECT encrypted_password FROM public.users WHERE login=$1;"
 	CREATE_USER = "INSERT INTO public.users(id, email, login, encrypted_password, created_at) VALUES($1, $2, $3, $4, $5) RETURNING id;"
+	FOLLOW      = "INSERT INTO public.subscriptions (user_id, subscribed_at) VALUES($1, $2) RETURNING id;"
 )
 
 type AuthRepo struct {
@@ -22,7 +23,7 @@ func NewAuthRepo(pool *pgxpool.Pool) *AuthRepo {
 	return &AuthRepo{pool: pool}
 }
 
-func (r *AuthRepo) CreateUser(user models.User)  models.StatusCode {
+func (r *AuthRepo) CreateUser(user models.User) models.StatusCode {
 
 	var id uuid.UUID
 	user.Id = uuid.New()
@@ -61,4 +62,18 @@ func (r *AuthRepo) GetProfile(user models.Profile) (models.Profile, models.Statu
 		return models.Profile{}, models.InternalError
 	}
 	return user, models.Okey
+}
+
+func (r *AuthRepo) AddFollowing(who, whom uuid.UUID) models.StatusCode {
+
+	var id int
+	row := r.pool.QueryRow(context.Background(), FOLLOW,
+		who, whom)
+
+	err := row.Scan(&id)
+	if err != nil {
+		//TODO: добавить проверку ошибок
+		return models.InternalError
+	}
+	return models.Okey
 }
