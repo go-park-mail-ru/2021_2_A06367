@@ -14,7 +14,18 @@ CREATE TABLE users(
     email text NOT NULL,
     login text UNIQUE NOT NULL,
     encrypted_password text NOT NULL,
+    about text,
+    avatar text,
+    subscriptions int,
+    subscribers int,
     created_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE subscriptions (
+    id serial PRIMARY KEY,
+    user_id UUID REFERENCES users(id) NOT NULL,
+    subscribed_at UUID REFERENCES users(id) NOT NULL,
+    UNIQUE (user_id, subscribed_at)
 );
 
 CREATE TABLE online_users(
