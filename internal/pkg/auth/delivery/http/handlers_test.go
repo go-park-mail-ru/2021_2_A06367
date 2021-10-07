@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 )
 
 func bodyPrepare(user models.User) []byte {
@@ -249,7 +250,7 @@ func TestAuthHandler_Logout(t *testing.T) {
 	os.Setenv("SECRET", "TEST")
 	tkn := &usecase.Tokenator{}
 	bdy := tkn.GetToken(models.User{Login: testUsers[1].Login})
-	body, _ := json.Marshal(models.TokenView{Token: bdy})
+
 	mockOnlineUsecase := auth.NewMockOnlineUsecase(ctl)
 
 	tests := []struct {
@@ -263,7 +264,7 @@ func TestAuthHandler_Logout(t *testing.T) {
 			fields: fields{OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
-					bytes.NewReader(bodyPrepare(testUsers[0]))),
+					nil),
 				statusReturn: models.BadRequest,
 				result:       http.Response{StatusCode: http.StatusBadRequest},
 				OnlineStatus: false,
@@ -276,7 +277,7 @@ func TestAuthHandler_Logout(t *testing.T) {
 			fields: fields{OnlineUsecase: mockOnlineUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
-					bytes.NewReader(body)),
+					nil),
 				statusReturn: models.Okey,
 				result:       http.Response{StatusCode: http.StatusOK},
 				OnlineStatus: false,
@@ -290,6 +291,19 @@ func TestAuthHandler_Logout(t *testing.T) {
 		if tests[i].args.statusReturn != models.BadRequest {
 			LoginUserCopy := models.LoginUser{Login: testUsers[i].Login}
 			mockOnlineUsecase.EXPECT().Deactivate(LoginUserCopy).Return(tests[i].args.statusReturn)
+			tests[i].args.r.AddCookie(&http.Cookie{
+				Name:     "SSID",
+				Value:    bdy,
+				Expires:  time.Time{},
+				HttpOnly: true,
+			})
+		} else {
+			tests[i].args.r.AddCookie(&http.Cookie{
+				Name:     "SSID",
+				Value:    "bdy",
+				Expires:  time.Time{},
+				HttpOnly: true,
+			})
 		}
 	}
 
@@ -299,6 +313,9 @@ func TestAuthHandler_Logout(t *testing.T) {
 				online: tt.fields.OnlineUsecase,
 			}
 
+			if tt.Login == testUsers[1].Login {
+				tt.Login = tt.Login
+			}
 			w := httptest.NewRecorder()
 			h.Logout(w, tt.args.r)
 			if tt.args.result.StatusCode != w.Code {

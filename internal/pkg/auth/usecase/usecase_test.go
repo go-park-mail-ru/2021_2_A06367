@@ -86,9 +86,7 @@ func TestAuthUsecase_SignIn(t *testing.T) {
 		if tests[i].args.statusReturn == models.BadRequest {
 			continue
 		}
-		if tests[i].args.statusReturn == models.Okey {
-			mockTokenGen.EXPECT().GetToken(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).Return("TEST TOKEN")
-		}
+		mockTokenGen.EXPECT().GetToken(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).Return("TEST TOKEN")
 		mockAuthRepo.EXPECT().CheckUser(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).Return(tests[i].args.statusReturn)
 	}
 
@@ -150,6 +148,7 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 			mockTokenGenereator.EXPECT().GetToken(testUsers[i]).Return(tests[i].returnToken)
 		} else if tests[i].args.statusReturn == models.Conflict && tests[i].args.OnlineStatus != models.Okey {
 			mockAuthRepo.EXPECT().CreateUser(testUsers[i]).Return(tests[i].args.statusReturn)
+			mockTokenGenereator.EXPECT().GetToken(testUsers[i]).Return(tests[i].returnToken)
 		}
 		mockAuthRepo.EXPECT().CheckUser(testUsers[i]).Return(tests[i].args.OnlineStatus)
 	}

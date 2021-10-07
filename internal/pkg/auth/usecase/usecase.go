@@ -21,11 +21,11 @@ func (u *AuthUsecase) SignIn(user models.LoginUser) (string, models.StatusCode) 
 	repoUser := models.User{Login: user.Login, EncryptedPassword: user.EncryptedPassword}
 
 	status := u.repo.CheckUser(repoUser)
-	if status == models.Okey {
-		return u.tokenator.GetToken(repoUser), status
-	} else {
-		return "", status
+	token := u.tokenator.GetToken(repoUser)
+	if status == models.Okey && token != "" {
+		return token, status
 	}
+	return "", status
 }
 
 func (u *AuthUsecase) SignUp(user models.User) (string, models.StatusCode) {
@@ -33,10 +33,9 @@ func (u *AuthUsecase) SignUp(user models.User) (string, models.StatusCode) {
 		return "", models.Conflict
 	}
 	status := u.repo.CreateUser(user)
-
-	if status == models.Okey {
-		return u.tokenator.GetToken(user), status
-	} else {
-		return "", status
+	token := u.tokenator.GetToken(user)
+	if status == models.Okey && token != "" {
+		return token, status
 	}
+	return "", status
 }

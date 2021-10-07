@@ -2,8 +2,8 @@ name: Netflix v2 build
 
 on:
   push:
-    branches: [ dev ] # Пока собираем только дев-ветку
-
+    branches:
+      - auth-update
 jobs:
   prebuild:
     name: prebuild
@@ -12,4 +12,9 @@ jobs:
       - name: echo
         run: echo 0
     # TODO: добавить шаг с линтером
+      - name: golang-ci
+        uses: Mushus/golangci-linter@v1
     # TODO: добавить шаг с тестами
+      - name: tests
+        run: |
+          go test ./...

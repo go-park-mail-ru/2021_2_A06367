@@ -1,4 +1,4 @@
-package middleware
+package http
 
 import (
 	"encoding/json"
@@ -32,8 +32,9 @@ func ExtractToken(r *http.Request) string {
 	return strArr[0]
 }
 
-func ExtractTokenFromHeader(r *http.Request) string {
-	token := r.Header.Get("Authorization")
+func ExtractTokenFromCookie(r *http.Request) string {
+	tokenCookie, _ := r.Cookie("SSID")
+	token := tokenCookie.Value
 	strArr := strings.Split(token, " ")
 	if len(strArr) == 2 {
 		return strArr[1]
