@@ -52,3 +52,18 @@ func (u *AuthUsecase) Follow(who, whom uuid.UUID) models.StatusCode {
 	}
 	return u.repo.AddFollowing(who, whom)
 }
+
+func (u *AuthUsecase) Unfollow(who, whom uuid.UUID) models.StatusCode {
+	if who == whom {
+		return models.Forbidden
+	}
+	return u.repo.RemoveFollowing(who, whom)
+}
+
+func (u *AuthUsecase) GetSubscriptions() ([]models.Profile, models.StatusCode){
+	return nil, models.Okey
+}
+
+func (u *AuthUsecase) GetSubscribers()  ([]models.Profile, models.StatusCode){
+	return nil, models.Okey
+}

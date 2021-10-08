@@ -13,6 +13,11 @@ const (
 	CHECK_USER  = "SELECT encrypted_password FROM public.users WHERE login=$1;"
 	CREATE_USER = "INSERT INTO public.users(id, email, login, encrypted_password, created_at) VALUES($1, $2, $3, $4, $5) RETURNING id;"
 	FOLLOW      = "INSERT INTO public.subscriptions (user_id, subscribed_at) VALUES($1, $2) RETURNING id;"
+	UNFOLLOW    = "DELETE FROM public.subscriptions WHERE user_id=$1 AND subscribed_at=$2;"
+	SELECT_FOLLOWING = "SELECT users.id, email, login, encrypted_password, about, avatar, subscriptions, " +
+		"subscribers, created_at FROM users JOIN subscriptions ON users.id = subscriptions.user_id;"
+	SELECT_FOLLOWERS = "SELECT users.id, email, login, encrypted_password, about, avatar, subscriptions, " +
+		"subscribers, created_at FROM users JOIN subscriptions ON users.id = subscriptions.subscribed_at;"
 )
 
 type AuthRepo struct {
@@ -74,6 +79,20 @@ func (r *AuthRepo) AddFollowing(who, whom uuid.UUID) models.StatusCode {
 	if err != nil {
 		//TODO: добавить проверку ошибок
 		return models.InternalError
+	}
+	return models.Okey
+}
+
+func (r *AuthRepo) RemoveFollowing(who, whom uuid.UUID) models.StatusCode {
+
+	exec, err := r.pool.Exec(context.Background(), UNFOLLOW,
+		who, whom)
+	if err != nil {
+		return models.InternalError
+	}
+
+	if exec.RowsAffected() == 0 {
+		return models.NotFound
 	}
 	return models.Okey
 }

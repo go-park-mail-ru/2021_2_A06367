@@ -21,10 +21,10 @@ type LoginUser struct {
 }
 
 type Profile struct {
-	Id uuid.UUID
-	Login string
-	About string
-	Avatar string
+	Id            uuid.UUID
+	Login         string
+	About         string
+	Avatar        string
 	Subscriptions uint
-	Subscribers uint
+	Subscribers   uint
 }

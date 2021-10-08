@@ -9,5 +9,5 @@ type Token struct {
 }
 
 type TokenView struct {
-	Token string`json:"token"`
+	Token string `json:"token"`
 }

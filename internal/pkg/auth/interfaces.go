@@ -19,6 +19,7 @@ type AuthRepo interface {
 	CheckUser(user models.User) models.StatusCode
 	GetProfile(user models.Profile) (models.Profile, models.StatusCode)
 	AddFollowing(who, whom uuid.UUID) models.StatusCode
+	RemoveFollowing(who, whom uuid.UUID) models.StatusCode
 }
 
 type OnlineRepo interface {
