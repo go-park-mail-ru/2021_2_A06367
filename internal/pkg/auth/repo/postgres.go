@@ -10,7 +10,7 @@ import (
 
 const (
 	SElECT_USER = "SELECT id, email, login, encrypted_password, created_at FROM public.users;"
-	CHECK_USER  = "SELECT encrypted_password FROM public.users WHERE login=$1;"
+	CHECK_USER  = "SELECT id, encrypted_password FROM public.users WHERE login=$1;"
 	CREATE_USER = "INSERT INTO public.users(id, email, login, encrypted_password, created_at) VALUES($1, $2, $3, $4, $5) RETURNING id;"
 )
 
@@ -22,31 +22,44 @@ func NewAuthRepo(pool *pgxpool.Pool) *AuthRepo {
 	return &AuthRepo{pool: pool}
 }
 
-func (r *AuthRepo) CreateUser(user models.User)  models.StatusCode {
-
+func (r *AuthRepo) CreateUser(user models.User) (models.User, models.StatusCode) {
 	var id uuid.UUID
 	user.Id = uuid.New()
 	row := r.pool.QueryRow(context.Background(), CREATE_USER,
 		user.Id, user.Email, user.Login, user.EncryptedPassword, time.Now())
 
 	err := row.Scan(&id)
-	if err != nil {
-		return models.InternalError
+	if err != nil && id == user.Id {
+		return models.User{}, models.InternalError
 	}
-	return models.Okey
+	userOut := models.User{
+		Id:                id,
+		Login:             user.Login,
+		EncryptedPassword: user.EncryptedPassword,
+		Email:             user.Email,
+	}
+	return userOut, models.Okey
 }
 
-func (r *AuthRepo) CheckUser(user models.User) models.StatusCode {
-	var pwd string
+func (r *AuthRepo) CheckUser(user models.User) (models.User, models.StatusCode) {
+	var (
+		pwd string
+		id  uuid.UUID
+	)
 	row := r.pool.QueryRow(context.Background(), CHECK_USER, user.Login)
 
-	if err := row.Scan(&pwd); err != nil {
-		return models.InternalError
+	if err := row.Scan(&id, &pwd); err != nil {
+		return models.User{}, models.InternalError
 	}
-
 	if pwd != user.EncryptedPassword {
-		return models.Unauthed
+		return models.User{}, models.Unauthed
 	}
 
-	return models.Okey
+	userOut := models.User{
+		Id:                id,
+		Login:             user.Login,
+		EncryptedPassword: user.EncryptedPassword,
+		Email:             user.Email,
+	}
+	return userOut, models.Okey
 }

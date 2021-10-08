@@ -8,20 +8,23 @@ import (
 type AuthUsecase struct {
 	repo      auth.AuthRepo
 	tokenator auth.TokenGenerator
+	encrypter auth.Encrypter
 }
 
-func NewAuthUsecase(repo auth.AuthRepo, tokenator auth.TokenGenerator) *AuthUsecase {
-	return &AuthUsecase{repo: repo, tokenator: tokenator}
+func NewAuthUsecase(repo auth.AuthRepo, tokenator auth.TokenGenerator, encrypter auth.Encrypter) *AuthUsecase {
+	AuthUC := &AuthUsecase{repo: repo, tokenator: tokenator, encrypter: encrypter}
+	return AuthUC
 }
 
 func (u *AuthUsecase) SignIn(user models.LoginUser) (string, models.StatusCode) {
 	if user.Login == "" || user.EncryptedPassword == "" {
 		return "", models.BadRequest
 	}
-	repoUser := models.User{Login: user.Login, EncryptedPassword: user.EncryptedPassword}
 
-	status := u.repo.CheckUser(repoUser)
-	token := u.tokenator.GetToken(repoUser)
+	user.EncryptedPassword = u.encrypter.EncryptPswd(user.EncryptedPassword)
+	DBUser, status := u.repo.CheckUser(models.User{Login: user.Login, EncryptedPassword: user.EncryptedPassword})
+
+	token := u.tokenator.GetToken(DBUser)
 	if status == models.Okey && token != "" {
 		return token, status
 	}
@@ -29,11 +32,14 @@ func (u *AuthUsecase) SignIn(user models.LoginUser) (string, models.StatusCode) 
 }
 
 func (u *AuthUsecase) SignUp(user models.User) (string, models.StatusCode) {
-	if st := u.repo.CheckUser(user); st == models.Okey {
+	_, st := u.repo.CheckUser(user)
+	if st == models.Okey {
 		return "", models.Conflict
 	}
-	status := u.repo.CreateUser(user)
-	token := u.tokenator.GetToken(user)
+	user.EncryptedPassword = u.encrypter.EncryptPswd(user.EncryptedPassword)
+
+	NewUser, status := u.repo.CreateUser(user)
+	token := u.tokenator.GetToken(NewUser)
 	if status == models.Okey && token != "" {
 		return token, status
 	}

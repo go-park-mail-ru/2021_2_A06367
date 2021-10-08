@@ -10,8 +10,8 @@ type AuthUsecase interface {
 }
 
 type AuthRepo interface {
-	CreateUser(user models.User) models.StatusCode
-	CheckUser(user models.User) models.StatusCode
+	CreateUser(user models.User) (models.User, models.StatusCode)
+	CheckUser(user models.User) (models.User, models.StatusCode)
 }
 
 type OnlineUsecase interface {
@@ -28,4 +28,8 @@ type OnlineRepo interface {
 
 type TokenGenerator interface {
 	GetToken(user models.User) string
+}
+
+type Encrypter interface {
+	EncryptPswd(pswd string) string
 }

@@ -3,7 +3,7 @@ name: Netflix v2 build
 on:
   push:
     branches:
-      - auth-update
+      - dev
 jobs:
   prebuild:
     name: prebuild

@@ -12,10 +12,6 @@ import (
 	"time"
 )
 
-type AccessDetails struct {
-	Login string
-}
-
 type Extracter func(r *http.Request) string
 
 func ExtractToken(r *http.Request) string {
@@ -65,7 +61,7 @@ func VerifyToken(r *http.Request, extracter Extracter) (*models.Token, error) {
 	return nil, errors.New("no auth data")
 }
 
-func ExtractTokenMetadata(r *http.Request, extracter Extracter) (*AccessDetails, error) {
+func ExtractTokenMetadata(r *http.Request, extracter Extracter) (*models.AccessDetails, error) {
 	token, err := VerifyToken(r, extracter)
 	if err != nil {
 		return nil, err
@@ -75,8 +71,8 @@ func ExtractTokenMetadata(r *http.Request, extracter Extracter) (*AccessDetails,
 	if exp < now {
 		return nil, errors.New("token expired")
 	}
-	data := &AccessDetails{Login: token.Login}
-	if data.Login == "" {
+	data := &models.AccessDetails{Login: token.Login, Id: token.Id}
+	if data.Login == "" || data.Id.String() == "" {
 		return nil, errors.New("invalid token")
 	}
 

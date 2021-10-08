@@ -88,11 +88,12 @@ func (m *MockAuthRepo) EXPECT() *MockAuthRepoMockRecorder {
 }
 
 // CheckUser mocks base method.
-func (m *MockAuthRepo) CheckUser(user models.User) models.StatusCode {
+func (m *MockAuthRepo) CheckUser(user models.User) (models.User, models.StatusCode) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CheckUser", user)
-	ret0, _ := ret[0].(models.StatusCode)
-	return ret0
+	ret0, _ := ret[0].(models.User)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
 }
 
 // CheckUser indicates an expected call of CheckUser.
@@ -102,11 +103,12 @@ func (mr *MockAuthRepoMockRecorder) CheckUser(user interface{}) *gomock.Call {
 }
 
 // CreateUser mocks base method.
-func (m *MockAuthRepo) CreateUser(user models.User) models.StatusCode {
+func (m *MockAuthRepo) CreateUser(user models.User) (models.User, models.StatusCode) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", user)
-	ret0, _ := ret[0].(models.StatusCode)
-	return ret0
+	ret0, _ := ret[0].(models.User)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
 }
 
 // CreateUser indicates an expected call of CreateUser.
@@ -280,4 +282,41 @@ func (m *MockTokenGenerator) GetToken(user models.User) string {
 func (mr *MockTokenGeneratorMockRecorder) GetToken(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetToken", reflect.TypeOf((*MockTokenGenerator)(nil).GetToken), user)
+}
+
+// MockEncrypter is a mock of Encrypter interface.
+type MockEncrypter struct {
+	ctrl     *gomock.Controller
+	recorder *MockEncrypterMockRecorder
+}
+
+// MockEncrypterMockRecorder is the mock recorder for MockEncrypter.
+type MockEncrypterMockRecorder struct {
+	mock *MockEncrypter
+}
+
+// NewMockEncrypter creates a new mock instance.
+func NewMockEncrypter(ctrl *gomock.Controller) *MockEncrypter {
+	mock := &MockEncrypter{ctrl: ctrl}
+	mock.recorder = &MockEncrypterMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockEncrypter) EXPECT() *MockEncrypterMockRecorder {
+	return m.recorder
+}
+
+// EncryptPswd mocks base method.
+func (m *MockEncrypter) EncryptPswd(pswd string) string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "EncryptPswd", pswd)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// EncryptPswd indicates an expected call of EncryptPswd.
+func (mr *MockEncrypterMockRecorder) EncryptPswd(pswd interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EncryptPswd", reflect.TypeOf((*MockEncrypter)(nil).EncryptPswd), pswd)
 }

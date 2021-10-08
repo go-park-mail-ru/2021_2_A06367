@@ -7,6 +7,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
 	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -249,7 +250,7 @@ func TestAuthHandler_Logout(t *testing.T) {
 
 	os.Setenv("SECRET", "TEST")
 	tkn := &usecase.Tokenator{}
-	bdy := tkn.GetToken(models.User{Login: testUsers[1].Login})
+	bdy := tkn.GetToken(models.User{Login: testUsers[1].Login, Id: uuid.New()})
 
 	mockOnlineUsecase := auth.NewMockOnlineUsecase(ctl)
 
@@ -288,23 +289,23 @@ func TestAuthHandler_Logout(t *testing.T) {
 	}
 
 	for i := 0; i < len(tests); i++ {
-		if tests[i].args.statusReturn != models.BadRequest {
-			LoginUserCopy := models.LoginUser{Login: testUsers[i].Login}
-			mockOnlineUsecase.EXPECT().Deactivate(LoginUserCopy).Return(tests[i].args.statusReturn)
-			tests[i].args.r.AddCookie(&http.Cookie{
-				Name:     "SSID",
-				Value:    bdy,
-				Expires:  time.Time{},
-				HttpOnly: true,
-			})
-		} else {
+		LoginUserCopy := models.LoginUser{Login: testUsers[i].Login}
+		if tests[i].args.statusReturn == models.BadRequest {
 			tests[i].args.r.AddCookie(&http.Cookie{
 				Name:     "SSID",
 				Value:    "bdy",
 				Expires:  time.Time{},
 				HttpOnly: true,
 			})
+			continue
 		}
+		tests[i].args.r.AddCookie(&http.Cookie{
+			Name:     "SSID",
+			Value:    bdy,
+			Expires:  time.Time{},
+			HttpOnly: true,
+		})
+		mockOnlineUsecase.EXPECT().Deactivate(LoginUserCopy).Return(tests[i].args.statusReturn)
 	}
 
 	for _, tt := range tests {
@@ -332,9 +333,9 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 	os.Setenv("SECRET", "TEST")
 	mockOnlineUsecase := auth.NewMockOnlineUsecase(ctl)
 	tkn := &usecase.Tokenator{}
-	bdy := tkn.GetToken(models.User{Login: "Phi"})
+	bdy := tkn.GetToken(models.User{Login: "Phi", Id: uuid.New()})
 	badBody, _ := json.Marshal(models.TokenView{Token: bdy})
-	bdyOK := tkn.GetToken(models.User{Login: "Phil"})
+	bdyOK := tkn.GetToken(models.User{Login: "Phil", Id: uuid.New()})
 	goodBody, _ := json.Marshal(models.TokenView{Token: bdyOK})
 
 	tests := []struct {
