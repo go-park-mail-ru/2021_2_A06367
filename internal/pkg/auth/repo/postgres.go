@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	SElECT_USER = "SELECT login, about, avatar, subscriptions, subscribers FROM public.users WHERE id=$1;"
-	CHECK_USER  = "SELECT encrypted_password FROM public.users WHERE login=$1;"
-	CREATE_USER = "INSERT INTO public.users(id, email, login, encrypted_password, created_at) VALUES($1, $2, $3, $4, $5) RETURNING id;"
-	FOLLOW      = "INSERT INTO public.subscriptions (user_id, subscribed_at) VALUES($1, $2) RETURNING id;"
-	UNFOLLOW    = "DELETE FROM public.subscriptions WHERE user_id=$1 AND subscribed_at=$2;"
+	SElECT_USER      = "SELECT login, about, avatar, subscriptions, subscribers FROM public.users WHERE id=$1;"
+	CHECK_USER       = "SELECT encrypted_password FROM public.users WHERE login=$1;"
+	CREATE_USER      = "INSERT INTO public.users(id, email, login, encrypted_password, created_at) VALUES($1, $2, $3, $4, $5) RETURNING id;"
+	FOLLOW           = "INSERT INTO public.subscriptions (user_id, subscribed_at) VALUES($1, $2) RETURNING id;"
+	UNFOLLOW         = "DELETE FROM public.subscriptions WHERE user_id=$1 AND subscribed_at=$2;"
 	SELECT_FOLLOWING = "SELECT users.id, email, login, encrypted_password, about, avatar, subscriptions, " +
 		"subscribers, created_at FROM users JOIN subscriptions ON users.id = subscriptions.user_id;"
 	SELECT_FOLLOWERS = "SELECT users.id, email, login, encrypted_password, about, avatar, subscriptions, " +

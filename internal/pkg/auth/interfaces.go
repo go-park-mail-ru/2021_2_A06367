@@ -12,6 +12,7 @@ type AuthUsecase interface {
 	SignUp(user models.User) (string, models.StatusCode)
 	GetProfile(user models.Profile) (models.Profile, models.StatusCode)
 	Follow(who, whom uuid.UUID) models.StatusCode
+	GetByKeyword(keyword string) ([]models.Profile, models.StatusCode)
 }
 
 type AuthRepo interface {

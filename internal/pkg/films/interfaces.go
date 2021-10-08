@@ -7,6 +7,7 @@ import "github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 type FilmsUsecase interface {
 	GetCompilation(topic string) ([]models.Film, models.StatusCode)
 	GetSelection(selection string) ([]models.Film, models.StatusCode)
+	GetByKeyword(keyword string) ([]models.Film, models.StatusCode)
 }
 
 type FilmsRepository interface {
