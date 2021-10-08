@@ -56,7 +56,11 @@ func run() error {
 		auth.HandleFunc("/logout", authHandler.Logout).Methods(http.MethodPost, http.MethodOptions)
 		auth.HandleFunc("/signup", authHandler.SignUp).Methods(http.MethodPost)
 		auth.HandleFunc("/auth", authHandler.AuthStatus).Methods(http.MethodGet)
+		auth.HandleFunc("/profile/{id}", authHandler.GetProfile).Methods(http.MethodGet)
+		auth.HandleFunc("/profile/{id}/follow", authHandler.Follow).Methods(http.MethodPost)
+		auth.HandleFunc("/profile/{id}/unfollow", authHandler.Unfollow).Methods(http.MethodDelete)
 	}
+
 	film := r.PathPrefix("/films").Subrouter()
 	{
 		film.HandleFunc("/genre/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)

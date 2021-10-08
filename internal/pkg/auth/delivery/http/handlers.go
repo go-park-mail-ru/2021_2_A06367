@@ -117,3 +117,36 @@ func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	middleware.Response(w, status, user)
 }
+
+func (h *AuthHandler) Follow(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	id, found := vars["id"]
+	if !found {
+		middleware.Response(w, models.BadRequest, nil)
+	}
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		middleware.Response(w, models.BadRequest, nil)
+	}
+
+	status := h.uc.Follow(uid, uid)
+
+	middleware.Response(w, status, nil)
+}
+
+func (h *AuthHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, found := vars["id"]
+	if !found {
+		middleware.Response(w, models.BadRequest, nil)
+	}
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		middleware.Response(w, models.BadRequest, nil)
+	}
+
+	status := h.uc.Follow(uid, uid)
+
+	middleware.Response(w, status, nil)
+}
