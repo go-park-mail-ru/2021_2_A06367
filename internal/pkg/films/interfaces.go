@@ -14,4 +14,5 @@ type FilmsRepository interface {
 	GetFilmsByTopic(topic string) ([]models.Film, models.StatusCode)
 	GetHottestFilms() ([]models.Film, models.StatusCode)
 	GetNewestFilms() ([]models.Film, models.StatusCode)
+	GetFilmsByKeyword(keyword string) ([]models.Film, models.StatusCode)
 }

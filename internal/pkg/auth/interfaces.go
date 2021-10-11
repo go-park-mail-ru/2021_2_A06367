@@ -21,6 +21,7 @@ type AuthRepo interface {
 	GetProfile(user models.Profile) (models.Profile, models.StatusCode)
 	AddFollowing(who, whom uuid.UUID) models.StatusCode
 	RemoveFollowing(who, whom uuid.UUID) models.StatusCode
+	GetProfileByKeyword(keyword string) ([]models.Profile, models.StatusCode)
 }
 
 type OnlineRepo interface {

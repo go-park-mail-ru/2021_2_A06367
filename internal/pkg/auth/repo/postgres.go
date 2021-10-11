@@ -18,6 +18,9 @@ const (
 		"subscribers, created_at FROM users JOIN subscriptions ON users.id = subscriptions.user_id;"
 	SELECT_FOLLOWERS = "SELECT users.id, email, login, encrypted_password, about, avatar, subscriptions, " +
 		"subscribers, created_at FROM users JOIN subscriptions ON users.id = subscriptions.subscribed_at;"
+
+	SElECT_USER_BY_KEYWORD = "SELECT login, about, avatar, subscriptions, subscribers FROM public.users " +
+		"WHERE  make_tsvector(login)@@ to_tsquery($1)"
 )
 
 type AuthRepo struct {
@@ -95,4 +98,26 @@ func (r *AuthRepo) RemoveFollowing(who, whom uuid.UUID) models.StatusCode {
 		return models.NotFound
 	}
 	return models.Okey
+}
+
+func (r *AuthRepo) GetProfileByKeyword(keyword string) ([]models.Profile, models.StatusCode) {
+
+	rows, err := r.pool.Query(context.Background(), SElECT_USER_BY_KEYWORD, keyword)
+
+	if err != nil {
+		return nil, models.InternalError
+	}
+
+	users := make([]models.Profile, 0, 10)
+
+	for rows.Next() {
+		var user models.Profile
+		err := rows.Scan(&user.Login, &user.About, &user.Avatar, &user.Subscriptions, &user.Subscribers)
+		if err != nil {
+			return nil, models.InternalError
+		}
+		users = append(users, user)
+	}
+
+	return users, models.Okey
 }

@@ -69,5 +69,5 @@ func (u *AuthUsecase) GetSubscribers() ([]models.Profile, models.StatusCode) {
 }
 
 func (u *AuthUsecase) GetByKeyword(keyword string) ([]models.Profile, models.StatusCode) {
-	return nil, models.Okey
+	return u.repo.GetProfileByKeyword(keyword)
 }

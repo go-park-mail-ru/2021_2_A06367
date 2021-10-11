@@ -28,5 +28,5 @@ func (u FilmsUsecase) GetSelection(selection string) ([]models.Film, models.Stat
 }
 
 func (u FilmsUsecase) GetByKeyword(keyword string) ([]models.Film, models.StatusCode) {
-	return nil, 0
+	return u.repo.GetFilmsByKeyword(keyword)
 }
