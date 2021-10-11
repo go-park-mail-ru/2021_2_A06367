@@ -16,6 +16,11 @@ const (
 		" FROM films JOIN rating ON films.id = rating.film_id ORDER BY rating DESC LIMIT 10"
 	SELECT_FILM_BY_DATE = "SELECT id, genres, title, year, director, authors, release, duration, language " +
 		"FROM films  ORDER BY release DESC LIMIT 10"
+
+	SELECT_FILM_BY_KEYWORD = "SELECT id, genres, title, year, director, " +
+		"authors, release, duration, language " +
+		"FROM films " +
+		"WHERE make_tsvector(title) @@ to_tsquery($1) LIMIT 10"
 )
 
 type FilmsRepo struct {
@@ -81,6 +86,29 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 	}
 
 	films := make([]models.Film, 0)
+
+	for rows.Next() {
+		var film models.Film
+		err = rows.Scan(&film.Id, &film.Genres, &film.Title,
+			&film.Year, &film.Director, &film.Authors, &film.Release, &film.Duration,
+			&film.Language)
+		if err != nil {
+			return nil, models.InternalError
+		}
+		films = append(films, film)
+	}
+
+	return films, models.Okey
+}
+
+func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.StatusCode) {
+
+	rows, err := r.pool.Query(context.Background(), SELECT_FILM_BY_KEYWORD, keyword)
+	if err != nil {
+		return nil, models.InternalError
+	}
+
+	films := make([]models.Film, 0, 10)
 
 	for rows.Next() {
 		var film models.Film

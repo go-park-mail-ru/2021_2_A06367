@@ -57,3 +57,11 @@ CREATE TABLE rating
     rating double precision NOT NULL,
     CONSTRAINT rating_pkey PRIMARY KEY (film_id)
 );
+
+CREATE OR REPLACE FUNCTION make_tsvector(title TEXT)
+   RETURNS tsvector AS $$
+BEGIN
+RETURN (setweight(to_tsvector('english', title),'A') ||
+        setweight(to_tsvector('russian', title), 'B'));
+END
+$$ LANGUAGE 'plpgsql' IMMUTABLE;
