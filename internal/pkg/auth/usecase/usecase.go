@@ -32,11 +32,11 @@ func (u *AuthUsecase) SignIn(user models.LoginUser) (string, models.StatusCode) 
 }
 
 func (u *AuthUsecase) SignUp(user models.User) (string, models.StatusCode) {
+	user.EncryptedPassword = u.encrypter.EncryptPswd(user.EncryptedPassword)
 	_, st := u.repo.CheckUser(user)
 	if st == models.Okey {
 		return "", models.Conflict
 	}
-	user.EncryptedPassword = u.encrypter.EncryptPswd(user.EncryptedPassword)
 
 	NewUser, status := u.repo.CreateUser(user)
 	token := u.tokenator.GetToken(NewUser)

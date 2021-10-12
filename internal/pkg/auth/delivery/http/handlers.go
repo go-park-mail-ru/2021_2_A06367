@@ -39,7 +39,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	SSCookie := &http.Cookie{Name: "SSID", Value: token, HttpOnly: true, Secure: true}
 	http.SetCookie(w, SSCookie)
-	Response(w, status, models.TokenView{Token: token})
+	Response(w, status, nil)
 }
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +82,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24)}
 	http.SetCookie(w, SSCookie)
-	Response(w, status, models.TokenView{Token: token})
+	Response(w, status, nil)
 }
 
 func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
