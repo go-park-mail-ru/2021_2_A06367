@@ -131,12 +131,6 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 		returnToken string
 	}{
 		{
-			Login:       testUsers[0].Login,
-			fields:      fields{mockAuthRepo, mockTokenGenereator, mockEncrypter},
-			args:        args{statusReturn: models.Conflict, OnlineStatus: models.Okey},
-			returnToken: "TEST TOKEN",
-		},
-		{
 			Login:       testUsers[1].Login,
 			fields:      fields{mockAuthRepo, mockTokenGenereator, mockEncrypter},
 			args:        args{statusReturn: models.Okey, OnlineStatus: models.Unauthed},

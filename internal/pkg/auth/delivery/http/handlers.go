@@ -4,6 +4,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
 	uuid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/mailru/easyjson"
@@ -29,26 +30,26 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
 	if err != nil || !middleware.LoginUserIsValid(user) {
-		Response(w, models.Forbidden, nil)
+		utils.Response(w, models.Forbidden, nil)
 		return
 	}
 	token, status := h.uc.SignIn(user)
 	if status != models.Okey {
-		Response(w, models.Unauthed, nil)
+		utils.Response(w, models.Unauthed, nil)
 	}
 	if status == models.Okey {
 		status = h.online.Activate(user)
 	}
 	SSCookie := &http.Cookie{Name: "SSID", Value: token, HttpOnly: true, Secure: true}
 	http.SetCookie(w, SSCookie)
-	Response(w, status, nil)
+	utils.Response(w, status, nil)
 }
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	accesToken, err := ExtractTokenMetadata(r, ExtractTokenFromCookie)
 	if err != nil || accesToken == nil {
-		Response(w, models.BadRequest, nil)
+		utils.Response(w, models.BadRequest, nil)
 		return
 	}
 	user.Login = accesToken.Login
@@ -59,19 +60,19 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Expires:  time.Date(0, 0, 0, 0, 0, 0, 0, time.UTC)}
 	http.SetCookie(w, SSCookie)
-	Response(w, status, nil)
+	utils.Response(w, status, nil)
 }
 
 func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
 	if err != nil || !middleware.UserIsValid(user) {
-		Response(w, models.BadRequest, nil)
+		utils.Response(w, models.BadRequest, nil)
 		return
 	}
 	token, status := h.uc.SignUp(user)
 	if token == "" || status != models.Okey {
-		Response(w, status, nil)
+		utils.Response(w, status, nil)
 		return
 	}
 	if status == models.Okey {
@@ -84,7 +85,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24)}
 	http.SetCookie(w, SSCookie)
-	Response(w, status, nil)
+	utils.Response(w, status, nil)
 }
 
 func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
@@ -92,20 +93,20 @@ func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 	user.Login = r.URL.Query().Get("user")
 	jwtData, err := ExtractTokenMetadata(r, ExtractToken)
 	if user.Login == "" || jwtData == nil {
-		Response(w, models.BadRequest, nil)
+		utils.Response(w, models.BadRequest, nil)
 		return
 	}
 
 	if err != nil || jwtData.Login != user.Login {
-		Response(w, models.Unauthed, nil)
+		utils.Response(w, models.Unauthed, nil)
 		return
 	}
 	status := h.online.IsAuthed(user)
 	if !status {
-		Response(w, models.Unauthed, nil)
+		utils.Response(w, models.Unauthed, nil)
 		return
 	}
-	Response(w, models.Okey, nil)
+	utils.Response(w, models.Okey, nil)
 }
 
 func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
@@ -114,17 +115,16 @@ func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, found := vars["id"]
 	if !found {
-		middleware.Response(w, models.BadRequest, nil)
+		utils.Response(w, models.BadRequest, nil)
 	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		middleware.Response(w, models.BadRequest, profile)
+		utils.Response(w, models.BadRequest, profile)
 	}
 	profile.Id = uid
 
 	user, status := h.uc.GetProfile(profile)
-
-	middleware.Response(w, status, user)
+	utils.Response(w, status, user)
 }
 
 func (h *AuthHandler) Follow(w http.ResponseWriter, r *http.Request) {
@@ -132,30 +132,28 @@ func (h *AuthHandler) Follow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, found := vars["id"]
 	if !found {
-		middleware.Response(w, models.BadRequest, nil)
+		utils.Response(w, models.BadRequest, nil)
 	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		middleware.Response(w, models.BadRequest, nil)
+		utils.Response(w, models.BadRequest, nil)
 	}
 
 	status := h.uc.Follow(uid, uid)
-
-	middleware.Response(w, status, nil)
+	utils.Response(w, status, nil)
 }
 
 func (h *AuthHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, found := vars["id"]
 	if !found {
-		middleware.Response(w, models.BadRequest, nil)
+		utils.Response(w, models.BadRequest, nil)
 	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		middleware.Response(w, models.BadRequest, nil)
+		utils.Response(w, models.BadRequest, nil)
 	}
 
 	status := h.uc.Follow(uid, uid)
-
-	middleware.Response(w, status, nil)
+	utils.Response(w, status, nil)
 }

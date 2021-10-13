@@ -9,6 +9,7 @@ import (
 
 	models "github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 )
 
 // MockAuthUsecase is a mock of AuthUsecase interface.
@@ -32,6 +33,50 @@ func NewMockAuthUsecase(ctrl *gomock.Controller) *MockAuthUsecase {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockAuthUsecase) EXPECT() *MockAuthUsecaseMockRecorder {
 	return m.recorder
+}
+
+// Follow mocks base method.
+func (m *MockAuthUsecase) Follow(who, whom uuid.UUID) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Follow", who, whom)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// Follow indicates an expected call of Follow.
+func (mr *MockAuthUsecaseMockRecorder) Follow(who, whom interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Follow", reflect.TypeOf((*MockAuthUsecase)(nil).Follow), who, whom)
+}
+
+// GetByKeyword mocks base method.
+func (m *MockAuthUsecase) GetByKeyword(keyword string) ([]models.Profile, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByKeyword", keyword)
+	ret0, _ := ret[0].([]models.Profile)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetByKeyword indicates an expected call of GetByKeyword.
+func (mr *MockAuthUsecaseMockRecorder) GetByKeyword(keyword interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByKeyword", reflect.TypeOf((*MockAuthUsecase)(nil).GetByKeyword), keyword)
+}
+
+// GetProfile mocks base method.
+func (m *MockAuthUsecase) GetProfile(user models.Profile) (models.Profile, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetProfile", user)
+	ret0, _ := ret[0].(models.Profile)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetProfile indicates an expected call of GetProfile.
+func (mr *MockAuthUsecaseMockRecorder) GetProfile(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProfile", reflect.TypeOf((*MockAuthUsecase)(nil).GetProfile), user)
 }
 
 // SignIn mocks base method.
@@ -87,6 +132,20 @@ func (m *MockAuthRepo) EXPECT() *MockAuthRepoMockRecorder {
 	return m.recorder
 }
 
+// AddFollowing mocks base method.
+func (m *MockAuthRepo) AddFollowing(who, whom uuid.UUID) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddFollowing", who, whom)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// AddFollowing indicates an expected call of AddFollowing.
+func (mr *MockAuthRepoMockRecorder) AddFollowing(who, whom interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFollowing", reflect.TypeOf((*MockAuthRepo)(nil).AddFollowing), who, whom)
+}
+
 // CheckUser mocks base method.
 func (m *MockAuthRepo) CheckUser(user models.User) (models.User, models.StatusCode) {
 	m.ctrl.T.Helper()
@@ -115,6 +174,50 @@ func (m *MockAuthRepo) CreateUser(user models.User) (models.User, models.StatusC
 func (mr *MockAuthRepoMockRecorder) CreateUser(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockAuthRepo)(nil).CreateUser), user)
+}
+
+// GetProfile mocks base method.
+func (m *MockAuthRepo) GetProfile(user models.Profile) (models.Profile, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetProfile", user)
+	ret0, _ := ret[0].(models.Profile)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetProfile indicates an expected call of GetProfile.
+func (mr *MockAuthRepoMockRecorder) GetProfile(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProfile", reflect.TypeOf((*MockAuthRepo)(nil).GetProfile), user)
+}
+
+// GetProfileByKeyword mocks base method.
+func (m *MockAuthRepo) GetProfileByKeyword(keyword string) ([]models.Profile, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetProfileByKeyword", keyword)
+	ret0, _ := ret[0].([]models.Profile)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetProfileByKeyword indicates an expected call of GetProfileByKeyword.
+func (mr *MockAuthRepoMockRecorder) GetProfileByKeyword(keyword interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProfileByKeyword", reflect.TypeOf((*MockAuthRepo)(nil).GetProfileByKeyword), keyword)
+}
+
+// RemoveFollowing mocks base method.
+func (m *MockAuthRepo) RemoveFollowing(who, whom uuid.UUID) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveFollowing", who, whom)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// RemoveFollowing indicates an expected call of RemoveFollowing.
+func (mr *MockAuthRepoMockRecorder) RemoveFollowing(who, whom interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveFollowing", reflect.TypeOf((*MockAuthRepo)(nil).RemoveFollowing), who, whom)
 }
 
 // MockOnlineUsecase is a mock of OnlineUsecase interface.
