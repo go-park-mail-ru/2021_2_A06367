@@ -16,12 +16,18 @@ type AuthUsecase interface {
 }
 
 type AuthRepo interface {
-	CreateUser(user models.User) models.StatusCode
-	CheckUser(user models.User) models.StatusCode
+	CreateUser(user models.User) (models.User, models.StatusCode)
+	CheckUser(user models.User) (models.User, models.StatusCode)
 	GetProfile(user models.Profile) (models.Profile, models.StatusCode)
 	AddFollowing(who, whom uuid.UUID) models.StatusCode
 	RemoveFollowing(who, whom uuid.UUID) models.StatusCode
 	GetProfileByKeyword(keyword string) ([]models.Profile, models.StatusCode)
+}
+
+type OnlineUsecase interface {
+	Activate(user models.LoginUser) models.StatusCode
+	Deactivate(user models.LoginUser) models.StatusCode
+	IsAuthed(user models.LoginUser) bool
 }
 
 type OnlineRepo interface {
@@ -32,4 +38,8 @@ type OnlineRepo interface {
 
 type TokenGenerator interface {
 	GetToken(user models.User) string
+}
+
+type Encrypter interface {
+	EncryptPswd(pswd string) string
 }

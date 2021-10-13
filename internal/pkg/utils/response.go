@@ -1,4 +1,4 @@
-package middleware
+package http
 
 import (
 	"encoding/json"
@@ -7,7 +7,6 @@ import (
 )
 
 func Response(w http.ResponseWriter, status models.StatusCode, body interface{}) {
-
 	switch status {
 	case models.Okey:
 		w.WriteHeader(http.StatusOK)

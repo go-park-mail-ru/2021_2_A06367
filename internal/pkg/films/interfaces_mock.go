@@ -34,6 +34,21 @@ func (m *MockFilmsUsecase) EXPECT() *MockFilmsUsecaseMockRecorder {
 	return m.recorder
 }
 
+// GetByKeyword mocks base method.
+func (m *MockFilmsUsecase) GetByKeyword(keyword string) ([]models.Film, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByKeyword", keyword)
+	ret0, _ := ret[0].([]models.Film)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetByKeyword indicates an expected call of GetByKeyword.
+func (mr *MockFilmsUsecaseMockRecorder) GetByKeyword(keyword interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByKeyword", reflect.TypeOf((*MockFilmsUsecase)(nil).GetByKeyword), keyword)
+}
+
 // GetCompilation mocks base method.
 func (m *MockFilmsUsecase) GetCompilation(topic string) ([]models.Film, models.StatusCode) {
 	m.ctrl.T.Helper()
@@ -85,6 +100,21 @@ func NewMockFilmsRepository(ctrl *gomock.Controller) *MockFilmsRepository {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockFilmsRepository) EXPECT() *MockFilmsRepositoryMockRecorder {
 	return m.recorder
+}
+
+// GetFilmsByKeyword mocks base method.
+func (m *MockFilmsRepository) GetFilmsByKeyword(keyword string) ([]models.Film, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFilmsByKeyword", keyword)
+	ret0, _ := ret[0].([]models.Film)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetFilmsByKeyword indicates an expected call of GetFilmsByKeyword.
+func (mr *MockFilmsRepositoryMockRecorder) GetFilmsByKeyword(keyword interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmsByKeyword", reflect.TypeOf((*MockFilmsRepository)(nil).GetFilmsByKeyword), keyword)
 }
 
 // GetFilmsByTopic mocks base method.
