@@ -36,12 +36,13 @@ CREATE UNIQUE INDEX online_idx ON online_users (login);
 
 CREATE TABLE films
 (
-    id bigserial NOT NULL,
+    id UUID NOT NULL,
     genres text[] NOT NULL,
     title text NOT NULL,
     year integer NOT NULL,
     director text[] NOT NULL,
     authors text[] NOT NULL,
+    actors UUID[] NOT NULL,
     release date NOT NULL,
     duration integer NOT NULL,
     language text NOT NULL,
@@ -50,10 +51,17 @@ CREATE TABLE films
 	Check(duration > 0)
 );
 
+CREATE INDEX films_actors_idx ON table USING gin(actors);
+
+CREATE TABLE watchlist
+(
+    id UUID REFERENCES users(id) NOT NULL,
+    film_id UUID REFERENCES films(id) NOT NULL,
+);
 
 CREATE TABLE rating
 (
-    film_id integer REFERENCES films(id) NOT NULL,
+    film_id UUID REFERENCES films(id) NOT NULL,
     rating double precision NOT NULL,
     CONSTRAINT rating_pkey PRIMARY KEY (film_id)
 );
