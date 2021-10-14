@@ -161,7 +161,7 @@ func (r *FilmsRepo) GetFilmsByActor(actorId uuid.UUID) ([]models.Film, models.St
 	return films, models.Okey
 }
 
-func (r *FilmsRepo) GetFilmById(id uint) (models.Film, models.StatusCode) {
+func (r *FilmsRepo) GetFilmById(id uuid.UUID) (models.Film, models.StatusCode) {
 	row := r.pool.QueryRow(context.Background(), SELECT_FILM_BY_ID, id)
 	film := models.Film{}
 

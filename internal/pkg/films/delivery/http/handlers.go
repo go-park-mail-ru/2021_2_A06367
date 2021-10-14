@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"net/http"
-	"strconv"
 )
 
 type FilmsHandler struct {
@@ -64,11 +63,11 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.NotFound, nil)
 	}
 
-	idFilm, err := strconv.Atoi(idStr)
-	if err != nil || idFilm < 0 {
+	idFilm, err := uuid.Parse(idStr)
+	if err != nil {
 		util.Response(w, models.BadRequest, nil)
 	}
-	film, status := h.uc.GetFilm(uint(idFilm))
+	film, status := h.uc.GetFilm(idFilm)
 	util.Response(w, status, film)
 }
 

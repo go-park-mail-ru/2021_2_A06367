@@ -32,7 +32,7 @@ func (u FilmsUsecase) GetByKeyword(keyword string) ([]models.Film, models.Status
 	return u.repo.GetFilmsByKeyword(keyword)
 }
 
-func (u *FilmsUsecase) GetFilm(id uint) (models.Film, models.StatusCode) {
+func (u *FilmsUsecase) GetFilm(id uuid.UUID) (models.Film, models.StatusCode) {
 	return u.repo.GetFilmById(id)
 }
 

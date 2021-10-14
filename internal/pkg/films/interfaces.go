@@ -11,7 +11,7 @@ type FilmsUsecase interface {
 	GetCompilation(topic string) ([]models.Film, models.StatusCode)
 	GetSelection(selection string) ([]models.Film, models.StatusCode)
 	GetByKeyword(keyword string) ([]models.Film, models.StatusCode)
-	GetFilm(id uint) (models.Film, models.StatusCode)
+	GetFilm(id uuid.UUID) (models.Film, models.StatusCode)
 	GetFilmsOfActor(actorId uuid.UUID) ([]models.Film, models.StatusCode)
 	GetCompilationForUser(userId uuid.UUID) ([]models.Film, models.StatusCode)
 }
@@ -22,6 +22,6 @@ type FilmsRepository interface {
 	GetNewestFilms() ([]models.Film, models.StatusCode)
 	GetFilmsByKeyword(keyword string) ([]models.Film, models.StatusCode)
 	GetFilmsByActor(actorId uuid.UUID) ([]models.Film, models.StatusCode)
-	GetFilmById(id uint) (models.Film, models.StatusCode)
+	GetFilmById(id uuid.UUID) (models.Film, models.StatusCode)
 	GetFilmsByUser(userId uuid.UUID) ([]models.Film, models.StatusCode)
 }
