@@ -66,6 +66,16 @@ CREATE TABLE rating
     CONSTRAINT rating_pkey PRIMARY KEY (film_id)
 );
 
+CREATE TABLE actors
+(
+    id UUID PRIMARY KEY,
+    name text NOT NULL,
+    surname text NOT NULL,
+    height float NOT NULL,
+    DateOfBirth TIMESTAMP NOT NULL,
+    genres text[] NOT NULL
+);
+
 CREATE OR REPLACE FUNCTION make_tsvector(title TEXT)
    RETURNS tsvector AS $$
 BEGIN
