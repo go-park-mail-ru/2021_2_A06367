@@ -3,7 +3,6 @@ package usecase
 import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films"
-	"github.com/google/uuid"
 )
 
 type FilmsUsecase struct {
@@ -32,14 +31,14 @@ func (u FilmsUsecase) GetByKeyword(keyword string) ([]models.Film, models.Status
 	return u.repo.GetFilmsByKeyword(keyword)
 }
 
-func (u *FilmsUsecase) GetFilm(id uuid.UUID) (models.Film, models.StatusCode) {
-	return u.repo.GetFilmById(id)
+func (u *FilmsUsecase) GetFilm(film models.Film) (models.Film, models.StatusCode) {
+	return u.repo.GetFilmById(film)
 }
 
-func (u *FilmsUsecase) GetFilmsOfActor(actor_id uuid.UUID) ([]models.Film, models.StatusCode) {
-	return u.repo.GetFilmsByActor(actor_id)
+func (u *FilmsUsecase) GetFilmsOfActor(actor models.Actors) ([]models.Film, models.StatusCode) {
+	return u.repo.GetFilmsByActor(actor)
 }
 
-func (u *FilmsUsecase) GetCompilationForUser(user_id uuid.UUID) ([]models.Film, models.StatusCode) {
-	return u.repo.GetFilmsByUser(user_id)
+func (u *FilmsUsecase) GetCompilationForUser(user models.User) ([]models.Film, models.StatusCode) {
+	return u.repo.GetFilmsByUser(user)
 }

@@ -54,7 +54,8 @@ func (h FilmsHandler) FilmByActor(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.BadRequest, nil)
 		return
 	}
-	filmSet, status := h.uc.GetFilmsOfActor(idActor)
+	actor := models.Actors{Id: idActor}
+	filmSet, status := h.uc.GetFilmsOfActor(actor)
 	util.Response(w, status, filmSet)
 }
 
@@ -70,7 +71,9 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.BadRequest, nil)
 		return
 	}
-	film, status := h.uc.GetFilm(idFilm)
+
+	filmReq := models.Film{Id: idFilm}
+	film, status := h.uc.GetFilm(filmReq)
 	util.Response(w, status, film)
 }
 
@@ -80,7 +83,7 @@ func (h FilmsHandler) FilmsByUser(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.BadRequest, nil)
 		return
 	}
-	id := access.Id
-	film, status := h.uc.GetCompilationForUser(id)
+	user := models.User{Id: access.Id}
+	film, status := h.uc.GetCompilationForUser(user)
 	util.Response(w, status, film)
 }

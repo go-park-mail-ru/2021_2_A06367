@@ -9,7 +9,6 @@ import (
 
 	models "github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	gomock "github.com/golang/mock/gomock"
-	uuid "github.com/google/uuid"
 )
 
 // MockFilmsUsecase is a mock of FilmsUsecase interface.
@@ -66,48 +65,48 @@ func (mr *MockFilmsUsecaseMockRecorder) GetCompilation(topic interface{}) *gomoc
 }
 
 // GetCompilationForUser mocks base method.
-func (m *MockFilmsUsecase) GetCompilationForUser(user_id uuid.UUID) ([]models.Film, models.StatusCode) {
+func (m *MockFilmsUsecase) GetCompilationForUser(user models.User) ([]models.Film, models.StatusCode) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCompilationForUser", user_id)
+	ret := m.ctrl.Call(m, "GetCompilationForUser", user)
 	ret0, _ := ret[0].([]models.Film)
 	ret1, _ := ret[1].(models.StatusCode)
 	return ret0, ret1
 }
 
 // GetCompilationForUser indicates an expected call of GetCompilationForUser.
-func (mr *MockFilmsUsecaseMockRecorder) GetCompilationForUser(user_id interface{}) *gomock.Call {
+func (mr *MockFilmsUsecaseMockRecorder) GetCompilationForUser(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCompilationForUser", reflect.TypeOf((*MockFilmsUsecase)(nil).GetCompilationForUser), user_id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCompilationForUser", reflect.TypeOf((*MockFilmsUsecase)(nil).GetCompilationForUser), user)
 }
 
 // GetFilm mocks base method.
-func (m *MockFilmsUsecase) GetFilm(id uint) (models.Film, models.StatusCode) {
+func (m *MockFilmsUsecase) GetFilm(film models.Film) (models.Film, models.StatusCode) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetFilm", id)
+	ret := m.ctrl.Call(m, "GetFilm", film)
 	ret0, _ := ret[0].(models.Film)
 	ret1, _ := ret[1].(models.StatusCode)
 	return ret0, ret1
 }
 
 // GetFilm indicates an expected call of GetFilm.
-func (mr *MockFilmsUsecaseMockRecorder) GetFilm(id interface{}) *gomock.Call {
+func (mr *MockFilmsUsecaseMockRecorder) GetFilm(film interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilm", reflect.TypeOf((*MockFilmsUsecase)(nil).GetFilm), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilm", reflect.TypeOf((*MockFilmsUsecase)(nil).GetFilm), film)
 }
 
 // GetFilmsOfActor mocks base method.
-func (m *MockFilmsUsecase) GetFilmsOfActor(actor_id uuid.UUID) ([]models.Film, models.StatusCode) {
+func (m *MockFilmsUsecase) GetFilmsOfActor(actor models.Actors) ([]models.Film, models.StatusCode) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetFilmsOfActor", actor_id)
+	ret := m.ctrl.Call(m, "GetFilmsOfActor", actor)
 	ret0, _ := ret[0].([]models.Film)
 	ret1, _ := ret[1].(models.StatusCode)
 	return ret0, ret1
 }
 
 // GetFilmsOfActor indicates an expected call of GetFilmsOfActor.
-func (mr *MockFilmsUsecaseMockRecorder) GetFilmsOfActor(actor_id interface{}) *gomock.Call {
+func (mr *MockFilmsUsecaseMockRecorder) GetFilmsOfActor(actor interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmsOfActor", reflect.TypeOf((*MockFilmsUsecase)(nil).GetFilmsOfActor), actor_id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmsOfActor", reflect.TypeOf((*MockFilmsUsecase)(nil).GetFilmsOfActor), actor)
 }
 
 // GetSelection mocks base method.
@@ -149,33 +148,33 @@ func (m *MockFilmsRepository) EXPECT() *MockFilmsRepositoryMockRecorder {
 }
 
 // GetFilmById mocks base method.
-func (m *MockFilmsRepository) GetFilmById(id uint) (models.Film, models.StatusCode) {
+func (m *MockFilmsRepository) GetFilmById(film models.Film) (models.Film, models.StatusCode) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetFilmById", id)
+	ret := m.ctrl.Call(m, "GetFilmById", film)
 	ret0, _ := ret[0].(models.Film)
 	ret1, _ := ret[1].(models.StatusCode)
 	return ret0, ret1
 }
 
 // GetFilmById indicates an expected call of GetFilmById.
-func (mr *MockFilmsRepositoryMockRecorder) GetFilmById(id interface{}) *gomock.Call {
+func (mr *MockFilmsRepositoryMockRecorder) GetFilmById(film interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmById", reflect.TypeOf((*MockFilmsRepository)(nil).GetFilmById), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmById", reflect.TypeOf((*MockFilmsRepository)(nil).GetFilmById), film)
 }
 
 // GetFilmsByActor mocks base method.
-func (m *MockFilmsRepository) GetFilmsByActor(actor_id uuid.UUID) ([]models.Film, models.StatusCode) {
+func (m *MockFilmsRepository) GetFilmsByActor(actor models.Actors) ([]models.Film, models.StatusCode) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetFilmsByActor", actor_id)
+	ret := m.ctrl.Call(m, "GetFilmsByActor", actor)
 	ret0, _ := ret[0].([]models.Film)
 	ret1, _ := ret[1].(models.StatusCode)
 	return ret0, ret1
 }
 
 // GetFilmsByActor indicates an expected call of GetFilmsByActor.
-func (mr *MockFilmsRepositoryMockRecorder) GetFilmsByActor(actor_id interface{}) *gomock.Call {
+func (mr *MockFilmsRepositoryMockRecorder) GetFilmsByActor(actor interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmsByActor", reflect.TypeOf((*MockFilmsRepository)(nil).GetFilmsByActor), actor_id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmsByActor", reflect.TypeOf((*MockFilmsRepository)(nil).GetFilmsByActor), actor)
 }
 
 // GetFilmsByKeyword mocks base method.
@@ -209,18 +208,18 @@ func (mr *MockFilmsRepositoryMockRecorder) GetFilmsByTopic(topic interface{}) *g
 }
 
 // GetFilmsByUser mocks base method.
-func (m *MockFilmsRepository) GetFilmsByUser(user_id uuid.UUID) ([]models.Film, models.StatusCode) {
+func (m *MockFilmsRepository) GetFilmsByUser(user models.User) ([]models.Film, models.StatusCode) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetFilmsByUser", user_id)
+	ret := m.ctrl.Call(m, "GetFilmsByUser", user)
 	ret0, _ := ret[0].([]models.Film)
 	ret1, _ := ret[1].(models.StatusCode)
 	return ret0, ret1
 }
 
 // GetFilmsByUser indicates an expected call of GetFilmsByUser.
-func (mr *MockFilmsRepositoryMockRecorder) GetFilmsByUser(user_id interface{}) *gomock.Call {
+func (mr *MockFilmsRepositoryMockRecorder) GetFilmsByUser(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmsByUser", reflect.TypeOf((*MockFilmsRepository)(nil).GetFilmsByUser), user_id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilmsByUser", reflect.TypeOf((*MockFilmsRepository)(nil).GetFilmsByUser), user)
 }
 
 // GetHottestFilms mocks base method.

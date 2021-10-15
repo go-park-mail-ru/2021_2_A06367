@@ -3,7 +3,6 @@ package repo
 import (
 	"context"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
@@ -140,8 +139,8 @@ func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.Sta
 	return films, models.Okey
 }
 
-func (r *FilmsRepo) GetFilmsByActor(actorId uuid.UUID) ([]models.Film, models.StatusCode) {
-	rows, err := r.pool.Query(context.Background(), SELECT_FILM_BY_ACTOR, actorId)
+func (r *FilmsRepo) GetFilmsByActor(actor models.Actors) ([]models.Film, models.StatusCode) {
+	rows, err := r.pool.Query(context.Background(), SELECT_FILM_BY_ACTOR, actor.Id)
 	if err != nil {
 		return nil, models.InternalError
 	}
@@ -161,9 +160,8 @@ func (r *FilmsRepo) GetFilmsByActor(actorId uuid.UUID) ([]models.Film, models.St
 	return films, models.Okey
 }
 
-func (r *FilmsRepo) GetFilmById(id uuid.UUID) (models.Film, models.StatusCode) {
-	row := r.pool.QueryRow(context.Background(), SELECT_FILM_BY_ID, id)
-	film := models.Film{}
+func (r *FilmsRepo) GetFilmById(film models.Film) (models.Film, models.StatusCode) {
+	row := r.pool.QueryRow(context.Background(), SELECT_FILM_BY_ID, film.Id)
 
 	err := row.Scan(&film.Id, &film.Genres, &film.Title,
 		&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
@@ -175,8 +173,8 @@ func (r *FilmsRepo) GetFilmById(id uuid.UUID) (models.Film, models.StatusCode) {
 	return film, models.Okey
 }
 
-func (r *FilmsRepo) GetFilmsByUser(userId uuid.UUID) ([]models.Film, models.StatusCode) {
-	rows, err := r.pool.Query(context.Background(), SELECT_FILM_BY_USER, userId)
+func (r *FilmsRepo) GetFilmsByUser(user models.User) ([]models.Film, models.StatusCode) {
+	rows, err := r.pool.Query(context.Background(), SELECT_FILM_BY_USER, user.Id)
 	if err != nil {
 		return nil, models.InternalError
 	}
