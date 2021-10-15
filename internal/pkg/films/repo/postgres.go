@@ -30,8 +30,8 @@ const (
 		"WHERE id=$1"
 
 	SELECT_FILM_BY_USER = "SELECT f.id, f.genres, f.title, f.year, f.director, " +
-		"f.authors, f.release, f.actors , f.duration, f.language " +
-		"FROM films f INNER JOIN watchlist w ON f.id=w.id" +
+		"f.authors, f.actors , f.release, f.duration, f.language " +
+		"FROM films f INNER JOIN watchlist w ON f.id=w.film_id " +
 		"WHERE w.id=$1"
 
 	SELECT_FILM_BY_ACTOR = "SELECT id, genres, title, year, director, " +

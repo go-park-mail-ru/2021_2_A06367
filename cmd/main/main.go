@@ -68,9 +68,9 @@ func run() error {
 		film.HandleFunc("/genre/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
 		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet,
 			http.MethodOptions)
-		film.HandleFunc("/selection/{film_id}", filmsHandler.FilmById).Methods(http.MethodGet)
-		film.HandleFunc("/selection/{actor_id}", filmsHandler.FilmByActor).Methods(http.MethodGet)
-		film.HandleFunc("/selection/user", filmsHandler.FilmByGenre).Methods(http.MethodGet)
+		film.HandleFunc("/film/{film_id}", filmsHandler.FilmById).Methods(http.MethodGet)
+		film.HandleFunc("/selection/actor/{actor_id}", filmsHandler.FilmByActor).Methods(http.MethodGet)
+		film.HandleFunc("/selection/user/personal", filmsHandler.FilmsByUser).Methods(http.MethodGet)
 	}
 
 	http.Handle("/", r)

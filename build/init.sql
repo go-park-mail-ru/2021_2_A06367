@@ -51,12 +51,12 @@ CREATE TABLE films
 	Check(duration > 0)
 );
 
-CREATE INDEX films_actors_idx ON table USING gin(actors);
+CREATE INDEX films_actors_idx ON films USING gin(actors);
 
 CREATE TABLE watchlist
 (
     id UUID REFERENCES users(id) NOT NULL,
-    film_id UUID REFERENCES films(id) NOT NULL,
+    film_id UUID REFERENCES films(id) NOT NULL
 );
 
 CREATE TABLE rating
@@ -83,3 +83,33 @@ RETURN (setweight(to_tsvector('english', title),'A') ||
         setweight(to_tsvector('russian', title), 'B'));
 END
 $$ LANGUAGE 'plpgsql' IMMUTABLE;
+
+-- Заполнение таблички актеров
+-- CREATE EXTENSION IF NOT EXISTS “uuid—ossp”;
+-- insert into actors (id, name, surname, height, dateofbirth, genres)
+-- values (uuid_generate_v4() , 'Sergei', 'Burunov', 1.78, current_timestamp, '{"Comedy"}'),
+-- 	   (uuid_generate_v4() , 'Alex', 'Petrov', 1.81, current_timestamp, '{"Tragedy"}'),
+-- 	   (uuid_generate_v4() , 'Tom', 'Cruse', 1.68, current_timestamp, '{"Triller"}');
+
+-- Заполнение фильмов
+-- insert into films (id, genres, title, "year" , director, authors, actors, "release", duration, "language")
+-- values (uuid_generate_v4(),
+-- 	'{"Comedy"}',
+-- 	'Policeman from Rublevka',
+-- 	2017,
+-- 	'{"Alex Karamzin"}',
+-- 	'{"Alex Karamzin"}',
+-- 	'{d878758e-763e-45b2-a6a0-746d39df1b43, 60204c4e-b2be-4f06-95fe-6de72e8d22ab}',
+-- 	current_date,
+-- 	127,
+-- 	'russian'),
+-- 	(uuid_generate_v4() ,
+-- 	'{"Triller"}',
+-- 	'Mission Impossible',
+-- 	2017,
+-- 	'{"Joe Rover"}',
+-- 	'{"Tom Tacker"}',
+-- 	'{f68a4740-e24b-4919-ad8c-69184b6633fb}',
+-- 	current_date,
+-- 	120,
+-- 	'english');

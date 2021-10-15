@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
+	"github.com/google/uuid"
 	"net/http"
 	"os"
 	"strings"
@@ -29,7 +30,10 @@ func ExtractToken(r *http.Request) string {
 }
 
 func ExtractTokenFromCookie(r *http.Request) string {
-	tokenCookie, _ := r.Cookie("SSID")
+	tokenCookie, err := r.Cookie("SSID")
+	if err != nil {
+		return ""
+	}
 	token := tokenCookie.Value
 	strArr := strings.Split(token, " ")
 	if len(strArr) == 2 {
@@ -71,7 +75,11 @@ func ExtractTokenMetadata(r *http.Request, extracter Extracter) (*models.AccessD
 	if exp < now {
 		return nil, errors.New("token expired")
 	}
-	data := &models.AccessDetails{Login: token.Login, Id: token.Id}
+	uid, err := uuid.Parse(token.Id)
+	if err != nil {
+		return nil, err
+	}
+	data := &models.AccessDetails{Login: token.Login, Id: uid}
 	if data.Login == "" || data.Id.String() == "" {
 		return nil, errors.New("invalid token")
 	}

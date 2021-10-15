@@ -8,7 +8,7 @@ import (
 // easyjson -all .\internal\models\film.go
 
 type Film struct {
-	Id       int         `json:"id"`
+	Id       uuid.UUID   `json:"id"`
 	Title    string      `json:"title"`
 	Genres   []string    `json:"genres"`
 	Year     int         `json:"year"`

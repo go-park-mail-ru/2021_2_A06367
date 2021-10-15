@@ -46,11 +46,13 @@ func (h FilmsHandler) FilmByActor(w http.ResponseWriter, r *http.Request) {
 	idStr, found := vars["actor_id"]
 	if !found {
 		util.Response(w, models.NotFound, nil)
+		return
 	}
 
 	idActor, err := uuid.Parse(idStr)
 	if err != nil {
 		util.Response(w, models.BadRequest, nil)
+		return
 	}
 	filmSet, status := h.uc.GetFilmsOfActor(idActor)
 	util.Response(w, status, filmSet)
@@ -66,6 +68,7 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 	idFilm, err := uuid.Parse(idStr)
 	if err != nil {
 		util.Response(w, models.BadRequest, nil)
+		return
 	}
 	film, status := h.uc.GetFilm(idFilm)
 	util.Response(w, status, film)
@@ -75,6 +78,7 @@ func (h FilmsHandler) FilmsByUser(w http.ResponseWriter, r *http.Request) {
 	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
 	if err != nil {
 		util.Response(w, models.BadRequest, nil)
+		return
 	}
 	id := access.Id
 	film, status := h.uc.GetCompilationForUser(id)

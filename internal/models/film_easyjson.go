@@ -4,6 +4,7 @@ package models
 
 import (
 	json "encoding/json"
+	uuid "github.com/google/uuid"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -37,7 +38,9 @@ func easyjson14b8084aDecodeGithubComGoParkMailRu20212A06367InternalModels(in *jl
 		}
 		switch key {
 		case "id":
-			out.Id = int(in.Int())
+			if data := in.UnsafeBytes(); in.Ok() {
+				in.AddError((out.Id).UnmarshalText(data))
+			}
 		case "title":
 			out.Title = string(in.String())
 		case "genres":
@@ -111,6 +114,31 @@ func easyjson14b8084aDecodeGithubComGoParkMailRu20212A06367InternalModels(in *jl
 				}
 				in.Delim(']')
 			}
+		case "actors":
+			if in.IsNull() {
+				in.Skip()
+				out.Actors = nil
+			} else {
+				in.Delim('[')
+				if out.Actors == nil {
+					if !in.IsDelim(']') {
+						out.Actors = make([]uuid.UUID, 0, 4)
+					} else {
+						out.Actors = []uuid.UUID{}
+					}
+				} else {
+					out.Actors = (out.Actors)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v4 uuid.UUID
+					if data := in.UnsafeBytes(); in.Ok() {
+						in.AddError((v4).UnmarshalText(data))
+					}
+					out.Actors = append(out.Actors, v4)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		case "release":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.Release).UnmarshalJSON(data))
@@ -136,7 +164,7 @@ func easyjson14b8084aEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 	{
 		const prefix string = ",\"id\":"
 		out.RawString(prefix[1:])
-		out.Int(int(in.Id))
+		out.RawText((in.Id).MarshalText())
 	}
 	{
 		const prefix string = ",\"title\":"
@@ -150,11 +178,11 @@ func easyjson14b8084aEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v4, v5 := range in.Genres {
-				if v4 > 0 {
+			for v5, v6 := range in.Genres {
+				if v5 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v5))
+				out.String(string(v6))
 			}
 			out.RawByte(']')
 		}
@@ -171,11 +199,11 @@ func easyjson14b8084aEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v6, v7 := range in.Director {
-				if v6 > 0 {
+			for v7, v8 := range in.Director {
+				if v7 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v7))
+				out.String(string(v8))
 			}
 			out.RawByte(']')
 		}
@@ -187,11 +215,27 @@ func easyjson14b8084aEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v8, v9 := range in.Authors {
-				if v8 > 0 {
+			for v9, v10 := range in.Authors {
+				if v9 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v9))
+				out.String(string(v10))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"actors\":"
+		out.RawString(prefix)
+		if in.Actors == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v11, v12 := range in.Actors {
+				if v11 > 0 {
+					out.RawByte(',')
+				}
+				out.RawText((v12).MarshalText())
 			}
 			out.RawByte(']')
 		}
