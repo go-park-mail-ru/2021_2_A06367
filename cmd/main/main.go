@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	actorsDelivery "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors/delivery/http"
+	actorsRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors/repo"
+	actorsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors/usecase"
 	authDelivery "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/http"
 	authRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/repo"
 	authUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
@@ -52,6 +55,10 @@ func run() error {
 	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo)
 	filmsHandler := filmsDelivery.NewFilmsHandler(filmsUse)
 
+	actorsRepo := actorsRepository.NewActorsRepo(pool)
+	actorsUse := actorsUsecase.NewActorsUsecase(actorsRepo)
+	actorsHandler := actorsDelivery.NewActorsHandler(actorsUse)
+
 	auth := r.PathPrefix("/user").Subrouter()
 	{
 		auth.HandleFunc("/login", authHandler.Login).Methods(http.MethodPost)
@@ -68,6 +75,11 @@ func run() error {
 		film.HandleFunc("/genre/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
 		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet,
 			http.MethodOptions)
+	}
+
+	actors := r.PathPrefix("/actor").Subrouter()
+	{
+		actors.HandleFunc("/{id}", actorsHandler.ActorsById).Methods(http.MethodGet)
 	}
 
 	http.Handle("/", r)

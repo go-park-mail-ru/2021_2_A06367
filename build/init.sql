@@ -63,8 +63,9 @@ CREATE TABLE actors
     id UUID PRIMARY KEY,
     name text NOT NULL,
     surname text NOT NULL,
+    avatar text NOT NULL,
     height float NOT NULL,
-    DateOfBirth TIMESTAMP NOT NULL,
+    date_of_birth TIMESTAMP NOT NULL,
     genres text[] NOT NULL
 );
 
