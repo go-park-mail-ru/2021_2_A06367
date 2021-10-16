@@ -30,3 +30,15 @@ func (u FilmsUsecase) GetSelection(selection string) ([]models.Film, models.Stat
 func (u FilmsUsecase) GetByKeyword(keyword string) ([]models.Film, models.StatusCode) {
 	return u.repo.GetFilmsByKeyword(keyword)
 }
+
+func (u *FilmsUsecase) GetFilm(film models.Film) (models.Film, models.StatusCode) {
+	return u.repo.GetFilmById(film)
+}
+
+func (u *FilmsUsecase) GetFilmsOfActor(actor models.Actors) ([]models.Film, models.StatusCode) {
+	return u.repo.GetFilmsByActor(actor)
+}
+
+func (u *FilmsUsecase) GetCompilationForUser(user models.User) ([]models.Film, models.StatusCode) {
+	return u.repo.GetFilmsByUser(user)
+}

@@ -8,7 +8,7 @@ import (
 //easyjson:skip
 type Token struct {
 	Login string
-	Id    uuid.UUID
+	Id    string
 	jwt.StandardClaims
 }
 

@@ -17,7 +17,7 @@ func NewTokenator() *Tokenator {
 func (t *Tokenator) GetToken(user models.User) string {
 	tokenModel := models.Token{
 		Login: user.Login,
-		Id:    user.Id,
+		Id:    user.Id.String(),
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 5).Unix(),
 		},
