@@ -23,6 +23,9 @@ func (r *ActorsRepo) GetActorById(id string) (models.Actors, models.StatusCode) 
 	var actor models.Actors
 	err := row.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar, &actor.Height, &actor.DateOfBirth, &actor.Genres)
 	if err != nil {
+		if err.Error() == "no rows in result set" {
+			return models.Actors{}, models.NotFound
+		}
 		return models.Actors{}, models.InternalError
 	}
 	return actor, models.Okey

@@ -13,6 +13,6 @@ func NewActorsUsecase(repo actors.ActorsRepository) *ActorsUsecase {
 	return &ActorsUsecase{repo: repo}
 }
 
-func (u ActorsUsecase) GetById(topic string) (models.Actors, models.StatusCode) {
-	return u.repo.GetActorById(topic)
+func (u ActorsUsecase) GetById(id string) (models.Actors, models.StatusCode) {
+	return u.repo.GetActorById(id)
 }
