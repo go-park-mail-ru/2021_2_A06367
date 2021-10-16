@@ -47,7 +47,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
-	accesToken, err := ExtractTokenMetadata(r, ExtractTokenFromCookie)
+	accesToken, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
 	if err != nil || accesToken == nil {
 		utils.Response(w, models.BadRequest, nil)
 		return
@@ -91,7 +91,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	user.Login = r.URL.Query().Get("user")
-	jwtData, err := ExtractTokenMetadata(r, ExtractToken)
+	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractToken)
 	if user.Login == "" || jwtData == nil {
 		utils.Response(w, models.BadRequest, nil)
 		return
