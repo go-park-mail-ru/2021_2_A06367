@@ -35,18 +35,18 @@ func (m *MockActorsUsecase) EXPECT() *MockActorsUsecaseMockRecorder {
 }
 
 // GetById mocks base method.
-func (m *MockActorsUsecase) GetById(id string) (models.Actors, models.StatusCode) {
+func (m *MockActorsUsecase) GetById(actor models.Actors) (models.Actors, models.StatusCode) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetById", id)
+	ret := m.ctrl.Call(m, "GetById", actor)
 	ret0, _ := ret[0].(models.Actors)
 	ret1, _ := ret[1].(models.StatusCode)
 	return ret0, ret1
 }
 
 // GetById indicates an expected call of GetById.
-func (mr *MockActorsUsecaseMockRecorder) GetById(id interface{}) *gomock.Call {
+func (mr *MockActorsUsecaseMockRecorder) GetById(actor interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockActorsUsecase)(nil).GetById), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockActorsUsecase)(nil).GetById), actor)
 }
 
 // MockActorsRepository is a mock of ActorsRepository interface.
@@ -73,16 +73,16 @@ func (m *MockActorsRepository) EXPECT() *MockActorsRepositoryMockRecorder {
 }
 
 // GetActorById mocks base method.
-func (m *MockActorsRepository) GetActorById(id string) (models.Actors, models.StatusCode) {
+func (m *MockActorsRepository) GetActorById(actor models.Actors) (models.Actors, models.StatusCode) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetActorById", id)
+	ret := m.ctrl.Call(m, "GetActorById", actor)
 	ret0, _ := ret[0].(models.Actors)
 	ret1, _ := ret[1].(models.StatusCode)
 	return ret0, ret1
 }
 
 // GetActorById indicates an expected call of GetActorById.
-func (mr *MockActorsRepositoryMockRecorder) GetActorById(id interface{}) *gomock.Call {
+func (mr *MockActorsRepositoryMockRecorder) GetActorById(actor interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActorById", reflect.TypeOf((*MockActorsRepository)(nil).GetActorById), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActorById", reflect.TypeOf((*MockActorsRepository)(nil).GetActorById), actor)
 }

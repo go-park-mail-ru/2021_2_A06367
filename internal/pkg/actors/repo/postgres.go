@@ -18,9 +18,8 @@ func NewActorsRepo(pool *pgxpool.Pool) *ActorsRepo {
 	return &ActorsRepo{pool: pool}
 }
 
-func (r *ActorsRepo) GetActorById(id string) (models.Actors, models.StatusCode) {
-	row := r.pool.QueryRow(context.Background(), SElECT_ACTOR_BY_ID, id)
-	var actor models.Actors
+func (r *ActorsRepo) GetActorById(actor models.Actors) (models.Actors, models.StatusCode) {
+	row := r.pool.QueryRow(context.Background(), SElECT_ACTOR_BY_ID, actor.Id)
 	err := row.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar, &actor.Height, &actor.DateOfBirth, &actor.Genres)
 	if err != nil {
 		if err.Error() == "no rows in result set" {

@@ -92,9 +92,9 @@ func run() error {
 		film.HandleFunc("/selection/user/personal", filmsHandler.FilmsByUser).Methods(http.MethodGet)
 	}
 
-	actors := r.PathPrefix("/actor").Subrouter()
+	actors := r.PathPrefix("/actors").Subrouter()
 	{
-		actors.HandleFunc("/{id}", actorsHandler.ActorsById).Methods(http.MethodGet)
+		actors.HandleFunc("/actor/{id}", actorsHandler.ActorsById).Methods(http.MethodGet)
 	}
 
 	r.Use(m.LogRequest)

@@ -27,6 +27,7 @@ func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request) {
 	genres, found := vars["genre"]
 	if !found {
 		util.Response(w, models.NotFound, nil)
+		return
 	}
 
 	filmSet, status := h.uc.GetCompilation(genres)
@@ -38,6 +39,7 @@ func (h FilmsHandler) FilmBySelection(w http.ResponseWriter, r *http.Request) {
 	selection, found := vars["selection"]
 	if !found {
 		util.Response(w, models.NotFound, nil)
+		return
 	}
 
 	filmSet, status := h.uc.GetSelection(selection)
@@ -67,6 +69,7 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 	idStr, found := vars["film_id"]
 	if !found {
 		util.Response(w, models.NotFound, nil)
+		return
 	}
 
 	idFilm, err := uuid.Parse(idStr)
