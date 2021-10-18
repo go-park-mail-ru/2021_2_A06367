@@ -8,6 +8,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -72,7 +73,13 @@ func TestNewAuthHandler(t *testing.T) {
 	mockUsecase := auth.NewMockAuthUsecase(ctl)
 	mockOnlineUsecase := auth.NewMockOnlineUsecase(ctl)
 
-	testHandler := NewAuthHandler(mockUsecase, mockOnlineUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		t.Error(err.Error())
+	}
+	defer logger.Sync()
+	zapSugar := logger.Sugar()
+	testHandler := NewAuthHandler(mockUsecase, mockOnlineUsecase, zapSugar)
 	if testHandler.uc != mockUsecase {
 		t.Error("bad constructor")
 	}

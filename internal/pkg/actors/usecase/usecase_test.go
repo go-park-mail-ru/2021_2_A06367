@@ -9,7 +9,7 @@ import (
 )
 
 
-func TestActorsUsecase_GetFilmsOfActor(t *testing.T) {
+func TestActorsUsecase_GetActorsOfActor(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 

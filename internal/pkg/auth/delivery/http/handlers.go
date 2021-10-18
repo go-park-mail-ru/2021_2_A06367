@@ -19,10 +19,11 @@ type AuthHandler struct {
 	online auth.OnlineUsecase
 }
 
-func NewAuthHandler(uc auth.AuthUsecase, ou auth.OnlineUsecase) *AuthHandler {
+func NewAuthHandler(uc auth.AuthUsecase, ou auth.OnlineUsecase, logger *zap.SugaredLogger) *AuthHandler {
 	return &AuthHandler{
 		uc:     uc,
 		online: ou,
+		logger: logger,
 	}
 }
 

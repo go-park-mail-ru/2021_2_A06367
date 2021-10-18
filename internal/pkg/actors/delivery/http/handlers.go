@@ -14,8 +14,11 @@ type ActorHandler struct {
 	logger *zap.SugaredLogger
 }
 
-func NewActorsHandler(uc actors.ActorsUsecase) *ActorHandler {
-	return &ActorHandler{uc: uc}
+func NewActorsHandler(uc actors.ActorsUsecase, logger *zap.SugaredLogger) *ActorHandler {
+	return &ActorHandler{
+		uc: uc,
+		logger: logger,
+	}
 }
 
 func (h ActorHandler) ActorsById(w http.ResponseWriter, r *http.Request) {
