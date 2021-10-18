@@ -15,8 +15,11 @@ type FilmsHandler struct {
 	logger *zap.SugaredLogger
 }
 
-func NewFilmsHandler(uc films.FilmsUsecase) *FilmsHandler {
-	return &FilmsHandler{uc: uc}
+func NewFilmsHandler(uc films.FilmsUsecase, logger *zap.SugaredLogger) *FilmsHandler {
+	return &FilmsHandler{
+		uc: uc,
+		logger: logger,
+	}
 }
 
 func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request) {

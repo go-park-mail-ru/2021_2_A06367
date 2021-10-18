@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -38,7 +39,13 @@ func TestFilmByGenre(t *testing.T) {
 	usecase := films.NewMockFilmsUsecase(ctl)
 	usecase.EXPECT().GetCompilation("topic").Times(1).Return([]models.Film{}, models.Okey)
 
-	handler := NewFilmsHandler(usecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+	zapSugar := logger.Sugar()
+	handler := NewFilmsHandler(usecase, zapSugar)
 
 	r := httptest.NewRequest("GET", "/films/genres", strings.NewReader(fmt.Sprint()))
 	r = mux.SetURLVars(r, map[string]string{
@@ -59,7 +66,13 @@ func TestFilmBySelection(t *testing.T) {
 	usecase := films.NewMockFilmsUsecase(ctl)
 	usecase.EXPECT().GetSelection("hottest").Times(1).Return([]models.Film{}, models.Okey)
 
-	handler := NewFilmsHandler(usecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+	zapSugar := logger.Sugar()
+	handler := NewFilmsHandler(usecase, zapSugar)
 
 	r := httptest.NewRequest("GET", "/films/hottest", strings.NewReader(fmt.Sprint()))
 	r = mux.SetURLVars(r, map[string]string{
@@ -81,7 +94,13 @@ func TestFilmsHandler_FilmByActor(t *testing.T) {
 	usecase := films.NewMockFilmsUsecase(ctl)
 	usecase.EXPECT().GetFilmsOfActor(models.Actors{Id: uid}).Times(1).Return([]models.Film{}, models.Okey)
 
-	handler := NewFilmsHandler(usecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		t.Error(err.Error())
+	}
+	defer logger.Sync()
+	zapSugar := logger.Sugar()
+	handler := NewFilmsHandler(usecase, zapSugar)
 
 	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
 	r = mux.SetURLVars(r, map[string]string{
@@ -103,7 +122,13 @@ func TestFilmsHandler_FilmById(t *testing.T) {
 	usecase := films.NewMockFilmsUsecase(ctl)
 	usecase.EXPECT().GetFilm(models.Film{Id: uid}).Times(1).Return(models.Film{}, models.Okey)
 
-	handler := NewFilmsHandler(usecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+	zapSugar := logger.Sugar()
+	handler := NewFilmsHandler(usecase, zapSugar)
 
 	r := httptest.NewRequest("GET", "/film/"+uid.String(), strings.NewReader(fmt.Sprint()))
 	r = mux.SetURLVars(r, map[string]string{
@@ -120,7 +145,14 @@ func TestFilmsHandler_FilmsByUser(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 	usecase := films.NewMockFilmsUsecase(ctl)
-	handler := NewFilmsHandler(usecase)
+
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+	zapSugar := logger.Sugar()
+	handler := NewFilmsHandler(usecase, zapSugar)
 
 	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
 

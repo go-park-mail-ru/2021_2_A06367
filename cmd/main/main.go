@@ -16,6 +16,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"os"
@@ -33,6 +34,15 @@ func run() error {
 	r.Use(middleware.CORSMiddleware)
 	srv := http.Server{Handler: r, Addr: fmt.Sprintf(":%s", "8000")}
 
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+	logger, err := zap.NewProduction()
+	if err != nil {
+		return err
+	}
+	defer logger.Sync()
+	zapSugar := logger.Sugar()
+
 	conn, err := config.GetConnectionString()
 	if err != nil {
 		return err
@@ -49,15 +59,17 @@ func run() error {
 	onlineUsecase := authUsecase.NewOnlineUsecase(onlineRepo)
 	authRepo := authRepository.NewAuthRepo(pool)
 	authUse := authUsecase.NewAuthUsecase(authRepo, tokenGenerator, encrypter)
-	authHandler := authDelivery.NewAuthHandler(authUse, onlineUsecase)
+	authHandler := authDelivery.NewAuthHandler(authUse, onlineUsecase, zapSugar)
 
 	filmsRepo := filmsRepository.NewFilmsRepo(pool)
 	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo)
-	filmsHandler := filmsDelivery.NewFilmsHandler(filmsUse)
+	filmsHandler := filmsDelivery.NewFilmsHandler(filmsUse, zapSugar)
 
 	actorsRepo := actorsRepository.NewActorsRepo(pool)
 	actorsUse := actorsUsecase.NewActorsUsecase(actorsRepo)
-	actorsHandler := actorsDelivery.NewActorsHandler(actorsUse)
+	actorsHandler := actorsDelivery.NewActorsHandler(actorsUse, zapSugar)
+
+	m := middleware.NewMiddleware(zapSugar)
 
 	auth := r.PathPrefix("/user").Subrouter()
 	{
@@ -84,6 +96,8 @@ func run() error {
 	{
 		actors.HandleFunc("/{id}", actorsHandler.ActorsById).Methods(http.MethodGet)
 	}
+
+	r.Use(m.LogRequest)
 
 	http.Handle("/", r)
 	log.Print("main running on: ", srv.Addr)
