@@ -13,14 +13,16 @@ func TestActorsUsecase_GetActorsOfActor(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	uid := uuid.New().String()
+	uid := uuid.New()
+
+	testActor := models.Actors{Id: uid}
 
 	repo := actors.NewMockActorsRepository(ctl)
-	repo.EXPECT().GetActorById(uid).Times(1).Return(models.Actors{}, models.Okey)
+	repo.EXPECT().GetActorById(testActor).Times(1).Return(models.Actors{}, models.Okey)
 
 	usecase := NewActorsUsecase(repo)
 
-	_, st := usecase.GetById(uid)
+	_, st := usecase.GetById(testActor)
 	if st != models.Okey {
 		t.Error("Wrong work of usecase")
 	}

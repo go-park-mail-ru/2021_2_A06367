@@ -74,6 +74,7 @@ CREATE TABLE actors
     avatar text NOT NULL,
     height float NOT NULL,
     date_of_birth TIMESTAMP NOT NULL,
+    description text NOT NULL,
     genres text[] NOT NULL
 );
 

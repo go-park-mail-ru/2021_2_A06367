@@ -3,7 +3,8 @@ package http
 import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors"
-	http2 "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
+	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"net/http"
@@ -25,9 +26,17 @@ func (h ActorHandler) ActorsById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, found := vars["id"]
 	if !found {
-		http2.Response(w, models.NotFound, nil)
+		util.Response(w, models.NotFound, nil)
+		return
 	}
 
-	actor, status := h.uc.GetById(id)
-	http2.Response(w, status, actor)
+	idActor, err := uuid.Parse(id)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	actor := models.Actors{Id: idActor}
+	actor, status := h.uc.GetById(actor)
+	util.Response(w, status, actor)
 }

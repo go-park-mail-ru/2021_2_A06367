@@ -37,9 +37,11 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	token, status := h.uc.SignIn(user)
 	if status != models.Okey {
 		utils.Response(w, models.Unauthed, nil)
+		return
 	}
 	if status == models.Okey {
 		status = h.online.Activate(user)
+		return
 	}
 	SSCookie := &http.Cookie{Name: "SSID", Value: token, HttpOnly: true, Secure: true}
 	http.SetCookie(w, SSCookie)
@@ -117,10 +119,12 @@ func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	id, found := vars["id"]
 	if !found {
 		utils.Response(w, models.BadRequest, nil)
+		return
 	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		utils.Response(w, models.BadRequest, profile)
+		return
 	}
 	profile.Id = uid
 
@@ -134,10 +138,12 @@ func (h *AuthHandler) Follow(w http.ResponseWriter, r *http.Request) {
 	id, found := vars["id"]
 	if !found {
 		utils.Response(w, models.BadRequest, nil)
+		return
 	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		utils.Response(w, models.BadRequest, nil)
+		return
 	}
 
 	status := h.uc.Follow(uid, uid)
@@ -149,10 +155,12 @@ func (h *AuthHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
 	id, found := vars["id"]
 	if !found {
 		utils.Response(w, models.BadRequest, nil)
+		return
 	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		utils.Response(w, models.BadRequest, nil)
+		return
 	}
 
 	status := h.uc.Follow(uid, uid)
