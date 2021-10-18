@@ -3,13 +3,15 @@ package usecase
 import (
 	"crypto/sha256"
 	"fmt"
+	"os"
 )
 
 type Encrypter struct {
 	salt string
 }
 
-func NewEncrypter(salt string) *Encrypter {
+func NewEncrypter() *Encrypter {
+	salt := os.Getenv("SECRET")
 	return &Encrypter{salt: salt}
 }
 

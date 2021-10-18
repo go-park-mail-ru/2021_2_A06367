@@ -53,7 +53,7 @@ func run() error {
 		return err
 	}
 
-	encrypter := authUsecase.NewEncrypter(os.Getenv("SECRET"))
+	encrypter := authUsecase.NewEncrypter()
 	tokenGenerator := authUsecase.NewTokenator()
 	onlineRepo := authRepository.NewOnlineRepo(pool)
 	onlineUsecase := authUsecase.NewOnlineUsecase(onlineRepo)
