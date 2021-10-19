@@ -1,0 +1,486 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Сервис ответственен за работу с заказом, получение товара со склада (запрос к Warehouse) и создание гарантии (запрос к Warranty).",
+    "title": "Order API",
+    "contact": {
+      "name": "Me",
+      "email": "kochkarova.lelya@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    },
+    "version": "1.0"
+  },
+  "host": "lab2-k-t-l-h-order",
+  "basePath": "/",
+  "paths": {
+    "/api/v1/orders/{UUID}": {
+      "get": {
+        "description": "Just get all info",
+        "tags": [
+          "order"
+        ],
+        "summary": "All orders info",
+        "operationId": "GetOrders",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "user UUID",
+            "name": "UUID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AllOrders"
+          }
+        }
+      },
+      "post": {
+        "description": "Just Make One Order",
+        "tags": [
+          "order"
+        ],
+        "summary": "Make Order",
+        "operationId": "MakeOrder",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "user UUID",
+            "name": "UUID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Order Request",
+            "name": "Request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OrderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/OrderResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "422": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "description": "Return Order",
+        "tags": [
+          "order"
+        ],
+        "summary": "Return Order",
+        "operationId": "returnOrder",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "orders UUID",
+            "name": "UUID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "422": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/orders/{UUID}/{orderUUID}": {
+      "get": {
+        "description": "Just get one order info",
+        "tags": [
+          "order"
+        ],
+        "summary": "One order info",
+        "operationId": "GetOrder",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "user UUID",
+            "name": "UUID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "user order UUID",
+            "name": "orderUUID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Orders"
+          },
+          "404": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/orders/{orderUUID}/warranty": {
+      "post": {
+        "description": "Just take warranty response",
+        "tags": [
+          "order"
+        ],
+        "summary": "Get Warranty",
+        "operationId": "getWarranty",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "order UUID",
+            "name": "orderUUID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Order Request",
+            "name": "Request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WarrantyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/WarrantyOderResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "422": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AllOrders": {
+      "description": "easyjson:json",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/OrderResponse"
+      },
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    },
+    "ErrorMessage": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message"
+        }
+      },
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    },
+    "HealthCheck": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "x-go-name": "Status"
+        }
+      },
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    },
+    "OrderItems": {
+      "type": "object",
+      "properties": {
+        "cancelled": {
+          "type": "boolean",
+          "x-go-name": "Cancelled"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ID"
+        },
+        "item_id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ItemID"
+        },
+        "order_item_uuid": {
+          "$ref": "#/definitions/UUID"
+        },
+        "order_uuid": {
+          "$ref": "#/definitions/UUID"
+        }
+      },
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    },
+    "OrderRequest": {
+      "description": "Order Request",
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "x-go-name": "Model"
+        },
+        "orderUid": {
+          "$ref": "#/definitions/UUID"
+        },
+        "size": {
+          "type": "string",
+          "x-go-name": "Size"
+        }
+      },
+      "x-go-name": "SwaggerOrderRequest",
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    },
+    "OrderResponse": {
+      "type": "object",
+      "properties": {
+        "OrderDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "model": {
+          "type": "string",
+          "x-go-name": "Model"
+        },
+        "orderItemUid": {
+          "$ref": "#/definitions/UUID"
+        },
+        "orderUid": {
+          "$ref": "#/definitions/UUID"
+        },
+        "size": {
+          "type": "string",
+          "x-go-name": "Size"
+        }
+      },
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    },
+    "Orders": {
+      "type": "object",
+      "properties": {
+        "UserUuid": {
+          "$ref": "#/definitions/UUID"
+        },
+        "itemUid": {
+          "$ref": "#/definitions/UUID"
+        },
+        "orderDate": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "OrderDate"
+        },
+        "orderUid": {
+          "$ref": "#/definitions/UUID"
+        },
+        "status": {
+          "type": "string",
+          "x-go-name": "Status"
+        }
+      },
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    },
+    "UUID": {
+      "description": "A UUID is a 128 bit (16 byte) Universal Unique IDentifier as defined in RFC\n4122.",
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "uint8"
+      },
+      "x-go-package": "github.com/google/uuid"
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Id"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "user_uuid": {
+          "$ref": "#/definitions/UUID"
+        }
+      },
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    },
+    "UserOrderResponse": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "Date"
+        },
+        "model": {
+          "type": "string",
+          "x-go-name": "Model"
+        },
+        "orderUid": {
+          "$ref": "#/definitions/UUID"
+        },
+        "size": {
+          "type": "string",
+          "x-go-name": "Size"
+        },
+        "warrantyDate": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "WarrantyDate"
+        },
+        "warrantyStatus": {
+          "type": "string",
+          "x-go-name": "WarrantyStatus"
+        }
+      },
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    },
+    "Warranty": {
+      "description": "Warranty",
+      "type": "object",
+      "properties": {
+        "Comment": {
+          "type": "string"
+        },
+        "ID": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "itemUid": {
+          "$ref": "#/definitions/UUID"
+        },
+        "status": {
+          "type": "string",
+          "x-go-name": "Status"
+        },
+        "warrantyDate": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "Warranty"
+        }
+      },
+      "x-go-name": "SwaggerWarranty",
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    },
+    "WarrantyOderResponse": {
+      "type": "object",
+      "properties": {
+        "decision": {
+          "type": "string",
+          "x-go-name": "Decision"
+        },
+        "orderUid": {
+          "$ref": "#/definitions/UUID"
+        },
+        "warrantyDate": {
+          "type": "string",
+          "x-go-name": "Date"
+        }
+      },
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    },
+    "WarrantyRequest": {
+      "description": "WarrantyRequest",
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Available"
+        },
+        "reason": {
+          "type": "string",
+          "x-go-name": "Reason"
+        }
+      },
+      "x-go-name": "SwaggerWarrantyRequest",
+      "x-go-package": "lab2-microservices-k-t-l-h/internal/models"
+    }
+  },
+  "responses": {
+    "AllOrders": {
+      "description": "All Orders",
+      "schema": {
+        "$ref": "#/definitions/AllOrders"
+      }
+    },
+    "ErrorResponse": {
+      "description": "Error Message",
+      "schema": {
+        "$ref": "#/definitions/ErrorMessage"
+      }
+    },
+    "OrderResponse": {
+      "description": "Order Response",
+      "schema": {
+        "$ref": "#/definitions/OrderResponse"
+      }
+    },
+    "Orders": {
+      "description": "All Orders",
+      "schema": {
+        "$ref": "#/definitions/Orders"
+      }
+    },
+    "UserOrderResponse": {
+      "description": "User Order Response",
+      "schema": {
+        "$ref": "#/definitions/UserOrderResponse"
+      }
+    },
+    "UserOrdersResponse": {
+      "description": "User Order Response",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/UserOrderResponse"
+        }
+      }
+    },
+    "WarrantyOderResponse": {
+      "description": "Warranty Oder Response",
+      "schema": {
+        "$ref": "#/definitions/WarrantyOderResponse"
+      }
+    }
+  }
+}

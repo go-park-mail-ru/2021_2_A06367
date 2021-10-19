@@ -22,6 +22,16 @@ func NewFilmsHandler(uc films.FilmsUsecase, logger *zap.SugaredLogger) *FilmsHan
 	}
 }
 
+// FilmByGenre godoc
+// @Summary Get films of genre
+// @Description Get films of genre
+// @Tags Film
+// @Accept json
+// @Produce json
+// @Success 200 {object} []models.Film
+// @Param genre path string true "Боевик"
+// @Failure 400,404 {string} 1
+// @Router /films/genre/{genre} [get]
 func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	genres, found := vars["genre"]
@@ -34,6 +44,17 @@ func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request) {
 	util.Response(w, status, filmSet)
 }
 
+// FilmBySelection godoc
+// @Summary Get details of films
+// @Description Get details of films
+// @Tags Film
+// @Accept json
+// @Produce json
+// @Success 200 {object} []models.Film
+// @Param selection path string true "КАКАЯ-ТО СТРОКА"
+// @Failure 400,404 {string} 1
+// @Router /films/selection/{selection} [get]
+// @Router /films/selection/{selection} [options]
 func (h FilmsHandler) FilmBySelection(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	selection, found := vars["selection"]
@@ -46,6 +67,16 @@ func (h FilmsHandler) FilmBySelection(w http.ResponseWriter, r *http.Request) {
 	util.Response(w, status, filmSet)
 }
 
+// FilmByActor godoc
+// @Summary Get details of actor from selection
+// @Description Get details of actor from selection
+// @Tags Film
+// @Accept json
+// @Produce json
+// @Param actor_id path string true "768eb570-2e0e-11ec-8d3d-0242ac130004"
+// @Success 200 {object} []models.Film
+// @Failure 400,404 {string} 1
+// @Router /films/selection/actor/{actor_id} [get]
 func (h FilmsHandler) FilmByActor(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr, found := vars["actor_id"]
@@ -64,6 +95,16 @@ func (h FilmsHandler) FilmByActor(w http.ResponseWriter, r *http.Request) {
 	util.Response(w, status, filmSet)
 }
 
+// FilmById godoc
+// @Summary Get details of film
+// @Description Get details of film
+// @Tags Film
+// @Accept json
+// @Produce json
+// @Param film_id path string true "768eb570-2e0e-11ec-8d3d-0242ac130004"
+// @Success 200 {object} models.Film
+// @Failure 400,404 {string} 1
+// @Router /films/film/{film_id} [get]
 func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	idStr, found := vars["film_id"]
@@ -83,6 +124,15 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 	util.Response(w, status, film)
 }
 
+// FilmsByUser godoc
+// @Summary Get details of personal film
+// @Description Get details of personal film
+// @Tags Film
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.Film
+// @Failure 400,404 {string} 1
+// @Router /films/selection/user/personal [get]
 func (h FilmsHandler) FilmsByUser(w http.ResponseWriter, r *http.Request) {
 	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
 	if err != nil {
