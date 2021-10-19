@@ -1,0 +1,557 @@
+basePath: /
+definitions:
+  models.Actors:
+    properties:
+      avatar:
+        example: ./cmd/local/y.png
+        type: string
+      date_of_birth:
+        example: "1968-03-03T02:18:00Z"
+        type: string
+      description:
+        example: Английский актёр, наиболее известный по роли Джеймса Бонда.
+        type: string
+      genres:
+        example:
+        - '{''Достать ножи'''
+        - ' ''Казино рояль'''
+        - ' ''Девушка с татуировкой дракона''}'
+        items:
+          type: string
+        type: array
+      height:
+        example: 1.78
+        type: number
+      id:
+        example: 768eb570-2e0e-11ec-8d3d-0242ac130004
+        type: string
+      name:
+        example: Дэниел
+        type: string
+      surname:
+        example: Крейг
+        type: string
+    type: object
+  models.Film:
+    properties:
+      actors:
+        example:
+        - '{''768eb570-2e0e-11ec-8d3d-0242ac130004'''
+        - ' ''9ebe8b02-30e2-11ec-8d3d-0242ac130003'''
+        - ' ''a62bdb60-30e2-11ec-8d3d-0242ac130003''}'
+        items:
+          type: string
+        type: array
+      authors:
+        example:
+        - '{''Райан Джонсон'''
+        - ' ''Рэм Бергман''}'
+        items:
+          type: string
+        type: array
+      director:
+        example:
+        - '{''Райан Джонсон'''
+        - ' ''Леопольд Хьюз''}'
+        items:
+          type: string
+        type: array
+      duration:
+        example: 130
+        type: integer
+      genres:
+        example:
+        - '{''Боевик'''
+        - ' ''Драма''}'
+        items:
+          type: string
+        type: array
+      id:
+        example: 768eb570-2e0e-11ec-8d3d-0242ac130004
+        type: string
+      language:
+        example: RU
+        type: string
+      release:
+        example: "2019-10-28"
+        type: string
+      title:
+        example: Достать ножи
+        type: string
+      year:
+        example: 2010
+        type: integer
+    type: object
+  models.LoginUser:
+    properties:
+      login:
+        example: Kalim1248
+        type: string
+      password:
+        example: dd81d9f0a8c5e7904931b8c9ccbf429b
+        type: string
+    type: object
+  models.Profile:
+    properties:
+      about:
+        type: string
+      avatar:
+        type: string
+      id:
+        type: string
+      login:
+        type: string
+      subscribers:
+        type: integer
+      subscriptions:
+        type: integer
+    type: object
+host: http://3.67.182.34:8080
+info:
+  contact:
+    email: kochkarova.lelya@gmail.com, chernov-ivan.1998@yandex.ru, slavarianov@yandex.ru
+    name: Lelya Kochkarova, Ivan Chernov, Slava Rianov
+  description: This is a service for LimeTV project "A06367"
+  title: LimeTV API
+  version: v0.1.0
+paths:
+  /actors/actor{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of actor
+      parameters:
+      - description: 768eb570-2e0e-11ec-8d3d-0242ac130004
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Actors'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get details of actor
+      tags:
+      - Actors
+  /films/film/{film_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of film
+      parameters:
+      - description: 768eb570-2e0e-11ec-8d3d-0242ac130004
+        in: path
+        name: film_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Film'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get details of film
+      tags:
+      - Film
+  /films/genre/{genre}:
+    get:
+      consumes:
+      - application/json
+      description: Get films of genre
+      parameters:
+      - description: Боевик
+        in: path
+        name: genre
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Film'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get films of genre
+      tags:
+      - Film
+  /films/selection/{selection}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of films
+      parameters:
+      - description: КАКАЯ-ТО СТРОКА
+        in: path
+        name: selection
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Film'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get details of films
+      tags:
+      - Film
+    options:
+      consumes:
+      - application/json
+      description: Get details of films
+      parameters:
+      - description: КАКАЯ-ТО СТРОКА
+        in: path
+        name: selection
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Film'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get details of films
+      tags:
+      - Film
+  /films/selection/actor/{actor_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of actor from selection
+      parameters:
+      - description: 768eb570-2e0e-11ec-8d3d-0242ac130004
+        in: path
+        name: actor_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Film'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get details of actor from selection
+      tags:
+      - Film
+  /films/selection/user/personal:
+    get:
+      consumes:
+      - application/json
+      description: Get details of personal film
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Film'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get details of personal film
+      tags:
+      - Film
+  /user/auth:
+    get:
+      consumes:
+      - application/json
+      description: Get check auth status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Get check auth status
+      tags:
+      - Users
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Get login
+      parameters:
+      - description: Create order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Token:
+              description: SSID
+              type: string
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get login
+      tags:
+      - Users
+  /user/logout:
+    options:
+      consumes:
+      - application/json
+      description: Get logout
+      parameters:
+      - description: Create order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Token:
+              type: string
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Get logout
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Get logout
+      parameters:
+      - description: Create order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Token:
+              type: string
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Get logout
+      tags:
+      - Users
+  /user/profile/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of profile
+      parameters:
+      - description: 768eb570-2e0e-11ec-8d3d-0242ac130004
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Profile'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get details of profile
+      tags:
+      - Users
+  /user/profile/{id}/follow:
+    post:
+      consumes:
+      - application/json
+      description: Subscribe
+      parameters:
+      - description: 768eb570-2e0e-11ec-8d3d-0242ac130004
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Subscribe
+      tags:
+      - Users
+  /user/profile/{id}/unfollow:
+    delete:
+      consumes:
+      - application/json
+      description: Unsubscribe
+      parameters:
+      - description: 768eb570-2e0e-11ec-8d3d-0242ac130004
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Unsubscribe
+      tags:
+      - Users
+  /user/signup:
+    post:
+      consumes:
+      - application/json
+      description: Get sign up
+      parameters:
+      - description: Create order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Token:
+              description: SSID
+              type: string
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Get sign up
+      tags:
+      - Users
+swagger: "2.0"

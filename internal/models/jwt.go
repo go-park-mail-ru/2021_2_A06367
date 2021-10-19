@@ -5,7 +5,7 @@ import (
 	"github.com/google/uuid"
 )
 
-//easyjson:skip
+// easyjson:skip
 type Token struct {
 	Login string
 	Id    string

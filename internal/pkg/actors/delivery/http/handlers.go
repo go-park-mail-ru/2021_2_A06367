@@ -6,6 +6,7 @@ import (
 	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	_ "github.com/swaggo/swag/example/celler/httputil"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -22,6 +23,16 @@ func NewActorsHandler(uc actors.ActorsUsecase, logger *zap.SugaredLogger) *Actor
 	}
 }
 
+// ActorsById godoc
+// @Summary Get details of actor
+// @Description Get details of actor
+// @Tags Actors
+// @Accept json
+// @Produce json
+// @Param id path string true "768eb570-2e0e-11ec-8d3d-0242ac130004"
+// @Success 200 {array} models.Actors
+// @Failure 400,404 {string} 1
+// @Router /actors/actor{id} [get]
 func (h ActorHandler) ActorsById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, found := vars["id"]

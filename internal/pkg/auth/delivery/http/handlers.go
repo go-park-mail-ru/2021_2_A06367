@@ -27,6 +27,17 @@ func NewAuthHandler(uc auth.AuthUsecase, ou auth.OnlineUsecase, logger *zap.Suga
 	}
 }
 
+// Login godoc
+// @Summary Get login
+// @Description Get login
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param order body models.LoginUser true "Create order"
+// @Success 200 {string} 1
+// @Header 200 {string} Token "SSID"
+// @Failure 400,403,404 {string} 1
+// @Router /user/login [post]
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
@@ -48,6 +59,18 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	utils.Response(w, status, nil)
 }
 
+// Logout godoc
+// @Summary Get logout
+// @Description Get logout
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param order body models.LoginUser true "Create order"
+// @Success 200 {string} 1
+// @Header 200 {string} Token ""
+// @Failure 400 {string} 1
+// @Router /user/logout [post]
+// @Router /user/logout [options]
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	accesToken, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
@@ -66,6 +89,17 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	utils.Response(w, status, nil)
 }
 
+// SignUp godoc
+// @Summary Get sign up
+// @Description Get sign up
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param order body models.LoginUser true "Create order"
+// @Success 200 {string} 1
+// @Header 200 {string} Token "SSID"
+// @Failure 400 {string} 1
+// @Router /user/signup [post]
 func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
@@ -91,6 +125,15 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	utils.Response(w, status, nil)
 }
 
+// AuthStatus godoc
+// @Summary Get check auth status
+// @Description Get check auth status
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Success 200 {string} 1
+// @Failure 400 {string} 1
+// @Router /user/auth [get]
 func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	user.Login = r.URL.Query().Get("user")
@@ -112,6 +155,16 @@ func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 	utils.Response(w, models.Okey, nil)
 }
 
+// GetProfile godoc
+// @Summary Get details of profile
+// @Description Get details of profile
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param id path string true "768eb570-2e0e-11ec-8d3d-0242ac130004"
+// @Success 200 {array} models.Profile
+// @Failure 400,404 {string} 1
+// @Router /user/profile/{id} [get]
 func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	profile := models.Profile{}
 
@@ -132,6 +185,16 @@ func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	utils.Response(w, status, user)
 }
 
+// Follow godoc
+// @Summary Subscribe
+// @Description Subscribe
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param id path string true "768eb570-2e0e-11ec-8d3d-0242ac130004"
+// @Success 200 {string} 1
+// @Failure 400,404 {string} 1
+// @Router /user/profile/{id}/follow [post]
 func (h *AuthHandler) Follow(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -150,6 +213,16 @@ func (h *AuthHandler) Follow(w http.ResponseWriter, r *http.Request) {
 	utils.Response(w, status, nil)
 }
 
+// Unfollow godoc
+// @Summary Unsubscribe
+// @Description Unsubscribe
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param id path string true "768eb570-2e0e-11ec-8d3d-0242ac130004"
+// @Success 200 {string} 1
+// @Failure 400,404 {string} 1
+// @Router /user/profile/{id}/unfollow [delete]
 func (h *AuthHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, found := vars["id"]
