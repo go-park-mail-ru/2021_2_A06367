@@ -106,7 +106,7 @@ func run() error {
 	{
 		actors.HandleFunc("/actor/{id}", actorsHandler.ActorsById).Methods(http.MethodGet)
 	}
-
+	// swag init -g ./cmd/main/main.go
 	r.PathPrefix("/api-docs").Handler(httpSwagger.WrapHandler)
 
 	r.Use(m.LogRequest)
