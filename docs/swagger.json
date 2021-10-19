@@ -326,7 +326,7 @@
         },
         "/user/auth": {
             "get": {
-                "description": "Get details of all actors",
+                "description": "Get check auth status",
                 "consumes": [
                     "application/json"
                 ],
@@ -336,7 +336,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get details of all actors",
+                "summary": "Get check auth status",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -355,7 +355,7 @@
         },
         "/user/login": {
             "post": {
-                "description": "Get details of all actors",
+                "description": "Get login",
                 "consumes": [
                     "application/json"
                 ],
@@ -365,7 +365,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get details of all actors",
+                "summary": "Get login",
                 "parameters": [
                     {
                         "description": "Create order",
@@ -413,7 +413,7 @@
         },
         "/user/logout": {
             "post": {
-                "description": "Get details of all actors",
+                "description": "Get logout",
                 "consumes": [
                     "application/json"
                 ],
@@ -423,7 +423,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get details of all actors",
+                "summary": "Get logout",
                 "parameters": [
                     {
                         "description": "Create order",
@@ -456,7 +456,7 @@
                 }
             },
             "options": {
-                "description": "Get details of all actors",
+                "description": "Get logout",
                 "consumes": [
                     "application/json"
                 ],
@@ -466,7 +466,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get details of all actors",
+                "summary": "Get logout",
                 "parameters": [
                     {
                         "description": "Create order",
@@ -501,7 +501,7 @@
         },
         "/user/profile/{id}": {
             "get": {
-                "description": "Get details of all actors",
+                "description": "Get details of profile",
                 "consumes": [
                     "application/json"
                 ],
@@ -511,7 +511,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get details of all actors",
+                "summary": "Get details of profile",
                 "parameters": [
                     {
                         "type": "string",
@@ -548,7 +548,7 @@
         },
         "/user/profile/{id}/follow": {
             "post": {
-                "description": "Get details of all actors",
+                "description": "Subscribe",
                 "consumes": [
                     "application/json"
                 ],
@@ -558,7 +558,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get details of all actors",
+                "summary": "Subscribe",
                 "parameters": [
                     {
                         "type": "string",
@@ -592,7 +592,7 @@
         },
         "/user/profile/{id}/unfollow": {
             "delete": {
-                "description": "Get details of all actors",
+                "description": "Unsubscribe",
                 "consumes": [
                     "application/json"
                 ],
@@ -602,7 +602,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get details of all actors",
+                "summary": "Unsubscribe",
                 "parameters": [
                     {
                         "type": "string",
@@ -636,7 +636,7 @@
         },
         "/user/signup": {
             "post": {
-                "description": "Get details of all actors",
+                "description": "Get sign up",
                 "consumes": [
                     "application/json"
                 ],
@@ -646,7 +646,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get details of all actors",
+                "summary": "Get sign up",
                 "parameters": [
                     {
                         "description": "Create order",

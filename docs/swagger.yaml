@@ -325,7 +325,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get details of all actors
+      description: Get check auth status
       produces:
       - application/json
       responses:
@@ -337,14 +337,14 @@ paths:
           description: Bad Request
           schema:
             type: string
-      summary: Get details of all actors
+      summary: Get check auth status
       tags:
       - Users
   /user/login:
     post:
       consumes:
       - application/json
-      description: Get details of all actors
+      description: Get login
       parameters:
       - description: Create order
         in: body
@@ -375,14 +375,14 @@ paths:
           description: Not Found
           schema:
             type: string
-      summary: Get details of all actors
+      summary: Get login
       tags:
       - Users
   /user/logout:
     options:
       consumes:
       - application/json
-      description: Get details of all actors
+      description: Get logout
       parameters:
       - description: Create order
         in: body
@@ -404,13 +404,13 @@ paths:
           description: Bad Request
           schema:
             type: string
-      summary: Get details of all actors
+      summary: Get logout
       tags:
       - Users
     post:
       consumes:
       - application/json
-      description: Get details of all actors
+      description: Get logout
       parameters:
       - description: Create order
         in: body
@@ -432,14 +432,14 @@ paths:
           description: Bad Request
           schema:
             type: string
-      summary: Get details of all actors
+      summary: Get logout
       tags:
       - Users
   /user/profile/{id}:
     get:
       consumes:
       - application/json
-      description: Get details of all actors
+      description: Get details of profile
       parameters:
       - description: 768eb570-2e0e-11ec-8d3d-0242ac130004
         in: path
@@ -463,14 +463,14 @@ paths:
           description: Not Found
           schema:
             type: string
-      summary: Get details of all actors
+      summary: Get details of profile
       tags:
       - Users
   /user/profile/{id}/follow:
     post:
       consumes:
       - application/json
-      description: Get details of all actors
+      description: Subscribe
       parameters:
       - description: 768eb570-2e0e-11ec-8d3d-0242ac130004
         in: path
@@ -492,14 +492,14 @@ paths:
           description: Not Found
           schema:
             type: string
-      summary: Get details of all actors
+      summary: Subscribe
       tags:
       - Users
   /user/profile/{id}/unfollow:
     delete:
       consumes:
       - application/json
-      description: Get details of all actors
+      description: Unsubscribe
       parameters:
       - description: 768eb570-2e0e-11ec-8d3d-0242ac130004
         in: path
@@ -521,14 +521,14 @@ paths:
           description: Not Found
           schema:
             type: string
-      summary: Get details of all actors
+      summary: Unsubscribe
       tags:
       - Users
   /user/signup:
     post:
       consumes:
       - application/json
-      description: Get details of all actors
+      description: Get sign up
       parameters:
       - description: Create order
         in: body
@@ -551,7 +551,7 @@ paths:
           description: Bad Request
           schema:
             type: string
-      summary: Get details of all actors
+      summary: Get sign up
       tags:
       - Users
 swagger: "2.0"
