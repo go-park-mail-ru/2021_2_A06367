@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
@@ -11,11 +12,11 @@ import (
 type SearchHandler struct {
 	fu films.FilmsUsecase
 	pu auth.AuthUsecase
-	// TODO: au actors.ActorsUsecase
+	au actors.ActorsUsecase
 }
 
-func NewSearchHandler(fu films.FilmsUsecase, pu auth.AuthUsecase) *SearchHandler {
-	return &SearchHandler{fu: fu, pu: pu}
+func NewSearchHandler(fu films.FilmsUsecase, pu auth.AuthUsecase,  au actors.ActorsUsecase) *SearchHandler {
+	return &SearchHandler{fu: fu, pu: pu, au: au}
 }
 
 func (sh *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
