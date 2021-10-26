@@ -14,7 +14,7 @@ type Film struct {
 	Year     int       `json:"year"`
 	Director []string  `json:"director"`
 	Authors  []string  `json:"authors"`
-	Actors   []uuid.UUID `json:"actors"   example:"{'768eb570-2e0e-11ec-8d3d-0242ac130004', '9ebe8b02-30e2-11ec-8d3d-0242ac130003', 'a62bdb60-30e2-11ec-8d3d-0242ac130003'}"`
+	Actors   []uuid.UUID `json:"actors"`
 	Release  time.Time `json:"release"`
 	Duration int       `json:"duration"`
 	Language string    `json:"language"`
