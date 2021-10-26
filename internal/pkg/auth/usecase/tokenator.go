@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
+	"github.com/golang-jwt/jwt"
 	"os"
 	"time"
 )
