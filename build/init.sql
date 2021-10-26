@@ -46,6 +46,7 @@ CREATE TABLE films
     release date NOT NULL,
     duration integer NOT NULL,
     language text NOT NULL,
+    src text[] NOT NULL,
     PRIMARY KEY (id),
     Check(year > 0),
 	Check(duration > 0)
