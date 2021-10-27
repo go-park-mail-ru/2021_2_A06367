@@ -68,8 +68,12 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	accesToken, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
-	if err != nil || accesToken == nil {
+	if err != nil {
 		utils.Response(w, models.BadRequest, nil)
+		return
+	}
+	if accesToken == nil {
+		utils.Response(w, models.Unauthed, nil)
 		return
 	}
 	user.Login = accesToken.Login
@@ -129,12 +133,12 @@ func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	user.Login = r.URL.Query().Get("user")
 	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
-	if user.Login == "" || jwtData == nil {
+	if err != nil && err.Error() != "no token" { //TODO в константу
 		utils.Response(w, models.BadRequest, nil)
 		return
 	}
 
-	if err != nil || jwtData.Login != user.Login {
+	if err.Error() == "no token" || jwtData.Login != user.Login || user.Login == "" {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}
