@@ -11,7 +11,6 @@ CREATE DATABASE netflix
 
 CREATE TABLE users(
     id UUID PRIMARY KEY,
-    email text NOT NULL,
     login text UNIQUE NOT NULL,
     encrypted_password text NOT NULL,
     about text,

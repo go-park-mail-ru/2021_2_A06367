@@ -41,27 +41,22 @@ var testUsers []models.User = []models.User{
 	models.User{
 		Login:             "Phil",
 		EncryptedPassword: "mancity",
-		Email:             "phil@yandex.ru",
 	},
 	models.User{
 		Login:             "Donald",
 		EncryptedPassword: "maga",
-		Email:             "usa@gmail.com",
 	},
 	models.User{
 		Login:             "Anonym",
 		EncryptedPassword: "",
-		Email:             "",
 	},
 	models.User{
 		Login:             "Bad",
 		EncryptedPassword: "User",
-		Email:             "KKK",
 	},
 	models.User{
 		Login:             "Pom",
 		EncryptedPassword: "Pom",
-		Email:             "Pom",
 	},
 }
 
@@ -216,7 +211,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 			continue
 		}
 		mockUsecase.EXPECT().
-			SignUp(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword, Email: testUsers[i].Email}).
+			SignUp(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).
 			Return("", tests[i].args.statusReturn)
 	}
 

@@ -38,8 +38,6 @@ func easyjson9e1087fdDecodeGithubComGoParkMailRu20212A06367InternalModels(in *jl
 		switch key {
 		case "login":
 			out.Login = string(in.String())
-		case "email":
-			out.Email = string(in.String())
 		case "password":
 			out.EncryptedPassword = string(in.String())
 		default:
@@ -65,11 +63,6 @@ func easyjson9e1087fdEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 			out.RawString(prefix)
 		}
 		out.String(string(in.Login))
-	}
-	{
-		const prefix string = ",\"email\":"
-		out.RawString(prefix)
-		out.String(string(in.Email))
 	}
 	{
 		const prefix string = ",\"password\":"
