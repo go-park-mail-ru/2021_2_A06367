@@ -24,18 +24,6 @@ type AuthRepo interface {
 	GetProfileByKeyword(keyword string) ([]models.Profile, models.StatusCode)
 }
 
-type OnlineUsecase interface {
-	Activate(user models.LoginUser) models.StatusCode
-	Deactivate(user models.LoginUser) models.StatusCode
-	IsAuthed(user models.LoginUser) bool
-}
-
-type OnlineRepo interface {
-	UserOn(user models.LoginUser) models.StatusCode
-	UserOff(user models.LoginUser) models.StatusCode
-	IsAuthed(user models.LoginUser) bool
-}
-
 type TokenGenerator interface {
 	GetToken(user models.User) string
 }

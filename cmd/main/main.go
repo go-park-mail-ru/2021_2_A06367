@@ -65,11 +65,9 @@ func run() error {
 
 	encrypter := authUsecase.NewEncrypter()
 	tokenGenerator := authUsecase.NewTokenator()
-	onlineRepo := authRepository.NewOnlineRepo(pool)
-	onlineUsecase := authUsecase.NewOnlineUsecase(onlineRepo)
 	authRepo := authRepository.NewAuthRepo(pool)
 	authUse := authUsecase.NewAuthUsecase(authRepo, tokenGenerator, encrypter)
-	authHandler := authDelivery.NewAuthHandler(authUse, onlineUsecase, zapSugar)
+	authHandler := authDelivery.NewAuthHandler(authUse, zapSugar)
 
 	filmsRepo := filmsRepository.NewFilmsRepo(pool)
 	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo)

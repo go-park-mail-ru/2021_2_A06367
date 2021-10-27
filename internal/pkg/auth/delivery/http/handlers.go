@@ -16,13 +16,11 @@ import (
 type AuthHandler struct {
 	uc     auth.AuthUsecase
 	logger *zap.SugaredLogger
-	online auth.OnlineUsecase
 }
 
-func NewAuthHandler(uc auth.AuthUsecase, ou auth.OnlineUsecase, logger *zap.SugaredLogger) *AuthHandler {
+func NewAuthHandler(uc auth.AuthUsecase, logger *zap.SugaredLogger) *AuthHandler {
 	return &AuthHandler{
 		uc:     uc,
-		online: ou,
 		logger: logger,
 	}
 }
@@ -50,11 +48,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}
-	if status == models.Okey {
-		status = h.online.Activate(user)
-		return
-	}
-	SSCookie := &http.Cookie{Name: "SSID", Value: token, HttpOnly: true, Secure: true}
+	SSCookie := &http.Cookie{Name: "SSID", Value: token, HttpOnly: true}
 	http.SetCookie(w, SSCookie)
 	utils.Response(w, status, nil)
 }
@@ -79,14 +73,14 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Login = accesToken.Login
-	status := h.online.Deactivate(user)
+
 	SSCookie := &http.Cookie{
 		Name:     "SSID",
 		Value:    "",
 		HttpOnly: true,
 		Expires:  time.Date(0, 0, 0, 0, 0, 0, 0, time.UTC)}
 	http.SetCookie(w, SSCookie)
-	utils.Response(w, status, nil)
+	utils.Response(w, models.Okey, nil)
 }
 
 // SignUp godoc
@@ -108,14 +102,11 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	token, status := h.uc.SignUp(user)
-	if token == "" || status != models.Okey {
+	if token == "" || token == "no secret key" || status != models.Okey { //TODO в константу
 		utils.Response(w, status, nil)
 		return
 	}
-	if status == models.Okey {
-		userCopy := models.LoginUser{Login: user.Login, EncryptedPassword: user.EncryptedPassword}
-		status = h.online.Activate(userCopy)
-	}
+
 	SSCookie := &http.Cookie{
 		Name:     "SSID",
 		Value:    token,
@@ -137,18 +128,13 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	user.Login = r.URL.Query().Get("user")
-	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractToken)
+	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
 	if user.Login == "" || jwtData == nil {
 		utils.Response(w, models.BadRequest, nil)
 		return
 	}
 
 	if err != nil || jwtData.Login != user.Login {
-		utils.Response(w, models.Unauthed, nil)
-		return
-	}
-	status := h.online.IsAuthed(user)
-	if !status {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}

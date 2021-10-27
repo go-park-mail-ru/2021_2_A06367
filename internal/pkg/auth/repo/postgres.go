@@ -31,7 +31,6 @@ func NewAuthRepo(pool *pgxpool.Pool) *AuthRepo {
 	return &AuthRepo{pool: pool}
 }
 
-
 func (r *AuthRepo) CreateUser(user models.User) (models.User, models.StatusCode) {
 	var id uuid.UUID
 	user.Id = uuid.New()
@@ -58,7 +57,7 @@ func (r *AuthRepo) CheckUser(user models.User) (models.User, models.StatusCode) 
 	)
 	row := r.pool.QueryRow(context.Background(), CHECK_USER, user.Login)
 
-	if err := row.Scan(&id, &pwd); err != nil {
+	if err := row.Scan(&pwd); err != nil {
 		return models.User{}, models.InternalError
 	}
 	if pwd != user.EncryptedPassword {
