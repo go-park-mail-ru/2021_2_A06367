@@ -42,3 +42,10 @@ func (u *FilmsUsecase) GetFilmsOfActor(actor models.Actors) ([]models.Film, mode
 func (u *FilmsUsecase) GetCompilationForUser(user models.User) ([]models.Film, models.StatusCode) {
 	return u.repo.GetFilmsByUser(user)
 }
+
+func (u *FilmsUsecase) GetStartSelections(authorized bool, user models.User) ([]models.Film, models.StatusCode) {
+	if authorized {
+		return u.GetCompilationForUser(user)
+	}
+	return u.GetSelection("hottest")
+}

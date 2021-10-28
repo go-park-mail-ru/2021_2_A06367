@@ -98,6 +98,7 @@ func run() error {
 		film.HandleFunc("/film/{film_id}", filmsHandler.FilmById).Methods(http.MethodGet)
 		film.HandleFunc("/selection/actor/{actor_id}", filmsHandler.FilmByActor).Methods(http.MethodGet)
 		film.HandleFunc("/selection/user/personal", filmsHandler.FilmsByUser).Methods(http.MethodGet)
+		film.HandleFunc("/start/selection", filmsHandler.FilmStartSelection).Methods(http.MethodGet)
 	}
 
 	actors := r.PathPrefix("/actors").Subrouter()

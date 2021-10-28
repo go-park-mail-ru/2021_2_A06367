@@ -17,7 +17,7 @@ type FilmsHandler struct {
 
 func NewFilmsHandler(uc films.FilmsUsecase, logger *zap.SugaredLogger) *FilmsHandler {
 	return &FilmsHandler{
-		uc: uc,
+		uc:     uc,
 		logger: logger,
 	}
 }
@@ -141,5 +141,16 @@ func (h FilmsHandler) FilmsByUser(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 	film, status := h.uc.GetCompilationForUser(user)
+	util.Response(w, status, film)
+}
+
+func (h FilmsHandler) FilmStartSelection(w http.ResponseWriter, r *http.Request) {
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		h.uc.GetStartSelections(false, models.User{})
+		return
+	}
+	user := models.User{Id: access.Id}
+	film, status := h.uc.GetStartSelections(true, user)
 	util.Response(w, status, film)
 }

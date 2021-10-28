@@ -13,6 +13,7 @@ type FilmsUsecase interface {
 	GetFilm(film models.Film) (models.Film, models.StatusCode)
 	GetFilmsOfActor(actor models.Actors) ([]models.Film, models.StatusCode)
 	GetCompilationForUser(user models.User) ([]models.Film, models.StatusCode)
+	GetStartSelections(authorized bool, user models.User) ([]models.Film, models.StatusCode)
 }
 
 type FilmsRepository interface {

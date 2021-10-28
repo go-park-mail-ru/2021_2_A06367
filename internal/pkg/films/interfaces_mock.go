@@ -124,6 +124,21 @@ func (mr *MockFilmsUsecaseMockRecorder) GetSelection(selection interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSelection", reflect.TypeOf((*MockFilmsUsecase)(nil).GetSelection), selection)
 }
 
+// GetStartSelections mocks base method.
+func (m *MockFilmsUsecase) GetStartSelections(authorized bool, user models.User) ([]models.Film, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStartSelections", authorized, user)
+	ret0, _ := ret[0].([]models.Film)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetStartSelections indicates an expected call of GetStartSelections.
+func (mr *MockFilmsUsecaseMockRecorder) GetStartSelections(authorized, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStartSelections", reflect.TypeOf((*MockFilmsUsecase)(nil).GetStartSelections), authorized, user)
+}
+
 // MockFilmsRepository is a mock of FilmsRepository interface.
 type MockFilmsRepository struct {
 	ctrl     *gomock.Controller
