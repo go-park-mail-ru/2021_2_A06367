@@ -147,7 +147,8 @@ func (h FilmsHandler) FilmsByUser(w http.ResponseWriter, r *http.Request) {
 func (h FilmsHandler) FilmStartSelection(w http.ResponseWriter, r *http.Request) {
 	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
 	if err != nil {
-		h.uc.GetStartSelections(false, models.User{})
+		film, status := h.uc.GetStartSelections(false, models.User{})
+		util.Response(w, status, film)
 		return
 	}
 	user := models.User{Id: access.Id}
