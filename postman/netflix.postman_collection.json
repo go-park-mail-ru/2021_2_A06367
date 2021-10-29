@@ -15,7 +15,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Получить список библиотек в городе\", () => {",
+									"pm.test(\"\", () => {",
 									"    pm.response.to.have.status(200)",
 									"})"
 								],
@@ -36,15 +36,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/user/signup",
-							"protocol": "http",
+							"raw": "{{baseUrl}}/user/signup",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{baseUrl}}"
 							],
-							"port": "8000",
 							"path": [
 								"user",
 								"signup"
@@ -60,7 +55,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Получить список библиотек в городе\", () => {",
+									"pm.test(\"\", () => {",
 									"    pm.response.to.have.status(409)",
 									"})"
 								],
@@ -81,15 +76,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/user/signup",
-							"protocol": "http",
+							"raw": "{{baseUrl}}/user/signup",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{baseUrl}}"
 							],
-							"port": "8000",
 							"path": [
 								"user",
 								"signup"
@@ -105,7 +95,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Получить список библиотек в городе\", () => {",
+									"pm.test(\"\", () => {",
 									"    pm.response.to.have.status(200)",
 									"})"
 								],
@@ -126,15 +116,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/user/login",
-							"protocol": "http",
+							"raw": "{{baseUrl}}/user/login",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{baseUrl}}"
 							],
-							"port": "8000",
 							"path": [
 								"user",
 								"login"
@@ -150,7 +135,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Получить список библиотек в городе\", () => {",
+									"pm.test(\"\", () => {",
 									"    pm.response.to.have.status(200)",
 									"})"
 								],
@@ -162,15 +147,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/user/auth?user=tester2",
-							"protocol": "http",
+							"raw": "{{baseUrl}}/user/auth?user=tester2",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{baseUrl}}"
 							],
-							"port": "8000",
 							"path": [
 								"user",
 								"auth"
@@ -192,7 +172,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Получить список библиотек в городе\", () => {",
+									"pm.test(\"\", () => {",
 									"    pm.response.to.have.status(200)",
 									"})"
 								],
@@ -204,15 +184,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/user/logout",
-							"protocol": "http",
+							"raw": "{{baseUrl}}/user/logout",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{baseUrl}}"
 							],
-							"port": "8000",
 							"path": [
 								"user",
 								"logout"
@@ -228,7 +203,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Получить список библиотек в городе\", () => {",
+									"pm.test(\"\", () => {",
 									"    pm.response.to.have.status(401)",
 									"})"
 								],
@@ -255,15 +230,6 @@
 								}
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "New Request",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": null
 					},
 					"response": []
 				}
@@ -297,13 +263,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/films/start/selection",
+							"raw": "{{baseUrl}}/films/selection",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"films",
-								"start",
 								"selection"
 							]
 						}
