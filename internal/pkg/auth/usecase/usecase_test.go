@@ -27,19 +27,16 @@ var testUsers []models.User = []models.User{
 		Id:                uuid.New(),
 		Login:             "Phil",
 		EncryptedPassword: "mancity",
-		Email:             "phil@yandex.ru",
 	},
 	models.User{
 		Id:                uuid.New(),
 		Login:             "Donald",
 		EncryptedPassword: "maga",
-		Email:             "usa@gmail.com",
 	},
 	models.User{
 		Id:                uuid.New(),
 		Login:             "Anonym",
 		EncryptedPassword: "",
-		Email:             "",
 	},
 }
 
@@ -148,21 +145,20 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 		CreateUser := models.User{
 			Login:             testUsers[i].Login,
 			EncryptedPassword: testUsers[i].EncryptedPassword,
-			Email:             testUsers[i].Email,
 		}
 		if tests[i].args.statusReturn == models.BadRequest {
 			continue
 		}
 
 		if tests[i].args.statusReturn == models.Conflict && tests[i].args.OnlineStatus == models.Okey {
-			mockAuthRepo.EXPECT().CheckUser(models.User{Login: testUsers[i].Login, Email: testUsers[i].Email,
+			mockAuthRepo.EXPECT().CheckUser(models.User{Login: testUsers[i].Login,
 				EncryptedPassword: testUsers[i].EncryptedPassword}).Return(testUsers[i], tests[i].args.OnlineStatus)
 			continue
 		}
 		mockAuthRepo.EXPECT().CreateUser(CreateUser).Return(testUsers[i], tests[i].args.statusReturn)
 		mockTokenGenereator.EXPECT().GetToken(testUsers[i]).Return(tests[i].returnToken)
 		mockEncrypter.EXPECT().EncryptPswd(testUsers[i].EncryptedPassword).Return(testUsers[i].EncryptedPassword)
-		mockAuthRepo.EXPECT().CheckUser(models.User{Login: testUsers[i].Login, Email: testUsers[i].Email, EncryptedPassword: testUsers[i].EncryptedPassword}).Return(testUsers[i], tests[i].args.OnlineStatus)
+		mockAuthRepo.EXPECT().CheckUser(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).Return(testUsers[i], tests[i].args.OnlineStatus)
 	}
 
 	for i, tt := range tests {
@@ -178,7 +174,6 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 			CreateUser := models.User{
 				Login:             testUsers[i].Login,
 				EncryptedPassword: testUsers[i].EncryptedPassword,
-				Email:             testUsers[i].Email,
 			}
 
 			_, code := h.SignUp(CreateUser)

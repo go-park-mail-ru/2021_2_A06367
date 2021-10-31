@@ -26,26 +26,27 @@ func prepare(t *testing.T) (*FilmsRepo, uuid.UUID) { // mock on repo and uid use
 }
 
 func TestFilmsRepo_GetFilmById(t *testing.T) {
-	//ctl := gomock.NewController(t)
-	//
-	//mockPool := pgxpoolmock.NewMockPgxPool(ctl)
-	//uidStr := "40266371-008c-4911-813d-65d222eb4d47"
-	//uid, _ := uuid.Parse(uidStr)
-	//filmRepo := NewFilmsRepo(mockPool)
-	//columns := []string{"id", "genres", "title", "year", "director", "authors", "actors", "release", "duration", "language", "src"}
-	//pgxRows := pgxpoolmock.NewRows(columns).
-	//	AddRow(uid, []string{"comedy"}, "Policeman from Rublevka",
-	//		2017, []string{"Alex"}, []string{"Alex"},
-	//		[]uuid.UUID{uid},time.Now(), 120, "russian",[]string{"img.png"}).ToPgxRows()
-	//mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows)
-	//filmRequest := models.Film{
-	//	Id: uid,
-	//}
-	//film, status := filmRepo.GetFilmById(filmRequest)
-	//if status != models.Okey {
-	//	t.Error("Wrong result")
-	//}
-	//assert.NotNil(t, film.Id)
+	ctl := gomock.NewController(t)
+
+	mockPool := pgxpoolmock.NewMockPgxPool(ctl)
+	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
+	uid, _ := uuid.Parse(uidStr)
+	filmRepo := NewFilmsRepo(mockPool)
+	columns := []string{"id", "genres", "title", "year", "director", "authors", "actors", "release", "duration", "language", "src"}
+	pgxRows := pgxpoolmock.NewRows(columns).
+		AddRow(uid, []string{"comedy"}, "Policeman from Rublevka",
+			2017, []string{"Alex"}, []string{"Alex"},
+			[]uuid.UUID{uid}, time.Now(), 120, "russian", []string{"img.png"}).ToPgxRows()
+	pgxRows.Next()
+	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows)
+	filmRequest := models.Film{
+		Id: uid,
+	}
+	film, status := filmRepo.GetFilmById(filmRequest)
+	if status != models.Okey {
+		t.Error("Wrong result")
+	}
+	assert.NotNil(t, film.Id)
 }
 
 func TestFilmsRepo_GetFilmsByActor(t *testing.T) {

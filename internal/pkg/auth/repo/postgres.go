@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgtype/pgxtype"
 	"time"
 )
 
@@ -24,10 +24,10 @@ const (
 )
 
 type AuthRepo struct {
-	pool *pgxpool.Pool
+	pool pgxtype.Querier
 }
 
-func NewAuthRepo(pool *pgxpool.Pool) *AuthRepo {
+func NewAuthRepo(pool pgxtype.Querier) *AuthRepo {
 	return &AuthRepo{pool: pool}
 }
 
