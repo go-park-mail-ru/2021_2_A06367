@@ -64,3 +64,79 @@ func TestFilmsUsecase_GetCompilationForUser(t *testing.T) {
 		t.Error("Wrong work of usecase")
 	}
 }
+
+func TestFilmsUsecase_GetCompilation(t *testing.T) {
+	topic := "tests"
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := films.NewMockFilmsRepository(ctl)
+	repo.EXPECT().GetFilmsByTopic(topic).Times(1).Return([]models.Film{}, models.Okey)
+
+	usecase := NewFilmsUsecase(repo)
+
+	_, st := usecase.GetCompilation(topic)
+	if st != models.Okey {
+		t.Error("Wrong work of usecase")
+	}
+}
+
+func TestFilmsUsecase_GetByKeyword(t *testing.T) {
+	keyword := "tests"
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := films.NewMockFilmsRepository(ctl)
+	repo.EXPECT().GetFilmsByKeyword(keyword).Times(1).Return([]models.Film{}, models.Okey)
+
+	usecase := NewFilmsUsecase(repo)
+
+	_, st := usecase.GetByKeyword(keyword)
+	if st != models.Okey {
+		t.Error("Wrong work of usecase")
+	}
+}
+
+func TestFilmsUsecase_GetSelection(t *testing.T) {
+	selection1 := "hottest"
+	selection2 := "not hottest"
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := films.NewMockFilmsRepository(ctl)
+	repo.EXPECT().GetHottestFilms().Times(1).Return([]models.Film{}, models.Okey)
+	repo.EXPECT().GetNewestFilms().Times(1).Return([]models.Film{}, models.Okey)
+
+	usecase := NewFilmsUsecase(repo)
+
+	_, st := usecase.GetSelection(selection1)
+	if st != models.Okey {
+		t.Error("Wrong work of usecase")
+	}
+
+	_, st2 := usecase.GetSelection(selection2)
+	if st2 != models.Okey {
+		t.Error("Wrong work of usecase")
+	}
+}
+
+func TestFilmsUsecase_GetStartSelections(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := films.NewMockFilmsRepository(ctl)
+	repo.EXPECT().GetHottestFilms().Times(1).Return([]models.Film{}, models.Okey)
+
+	usecase := NewFilmsUsecase(repo)
+
+	_, st := usecase.GetStartSelections(false, models.User{})
+	if st != models.Okey {
+		t.Error("Wrong work of usecase")
+	}
+
+	repo.EXPECT().GetFilmsByUser(models.User{}).Return([]models.Film{}, models.Okey)
+	_, st2 := usecase.GetStartSelections(true, models.User{})
+	if st2 != models.Okey {
+		t.Error("Wrong work of usecase")
+	}
+}
