@@ -183,3 +183,62 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 		})
 	}
 }
+
+func TestAuthUsecase_Follow(t *testing.T) {
+	who := uuid.New()
+	whom := uuid.New()
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	os.Setenv("SECRET", "TESTS")
+	mockAuthRepo := auth.NewMockAuthRepo(ctl)
+	mockAuthRepo.EXPECT().AddFollowing(who, whom).Return(models.Okey)
+	usecase := NewAuthUsecase(mockAuthRepo, nil, nil)
+	st := usecase.Follow(who, whom)
+	if st != models.Okey {
+		t.Error("wrong status code returned")
+	}
+}
+
+func TestAuthUsecase_GetProfile(t *testing.T) {
+	who := uuid.New()
+	whom := uuid.New()
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	os.Setenv("SECRET", "TESTS")
+	mockAuthRepo := auth.NewMockAuthRepo(ctl)
+	mockAuthRepo.EXPECT().RemoveFollowing(who, whom).Return(models.Okey)
+	usecase := NewAuthUsecase(mockAuthRepo, nil, nil)
+	st := usecase.Unfollow(who, whom)
+	if st != models.Okey {
+		t.Error("wrong status code returned")
+	}
+}
+
+func TestAuthUsecase_GetSubscribers(t *testing.T) {
+	usecase := NewAuthUsecase(nil, nil, nil)
+	_, st := usecase.GetSubscribers()
+	if st != models.Okey {
+		t.Error("wrong status code returned")
+	}
+}
+
+func TestAuthUsecase_GetSubscriptions(t *testing.T) {
+	usecase := NewAuthUsecase(nil, nil, nil)
+	_, st := usecase.GetSubscriptions()
+	if st != models.Okey {
+		t.Error("wrong status code returned")
+	}
+}
+
+func TestAuthUsecase_GetByKeyword(t *testing.T) {
+	keyword := "test"
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	mockAuthRepo := auth.NewMockAuthRepo(ctl)
+	mockAuthRepo.EXPECT().GetProfileByKeyword(keyword).Return(nil, models.Okey)
+	usecase := NewAuthUsecase(mockAuthRepo, nil, nil)
+	_, st := usecase.repo.GetProfileByKeyword(keyword)
+	if st != models.Okey {
+		t.Error("wrong status code returned")
+	}
+}
