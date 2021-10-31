@@ -10,7 +10,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
-	"log"
 	"net/http"
 	"time"
 )
@@ -39,7 +38,6 @@ func NewAuthHandler(uc auth.AuthUsecase, logger *zap.SugaredLogger) *AuthHandler
 // @Failure 400,403,404 {string} 1
 // @Router /user/login [post]
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	log.Print(csrf.Token(r))
 	user := models.LoginUser{}
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
 	if err != nil || !middleware.LoginUserIsValid(user) {
@@ -56,13 +54,11 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	utils.Response(w, status, nil)
 }
 
-
-
 func (h *AuthHandler) Token(w http.ResponseWriter, r *http.Request) {
-	log.Print(csrf.Token(r))
 	w.Header().Set("X-CSRF-Token", csrf.Token(r))
 	utils.Response(w, models.Okey, nil)
 }
+
 // Logout godoc
 // @Summary Get logout
 // @Description Get logout
@@ -109,7 +105,6 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {string} 1
 // @Router /user/signup [post]
 func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
-	log.Print(csrf.Token(r))
 	var user models.User
 	err := easyjson.UnmarshalFromReader(r.Body, &user)
 	if err != nil || !middleware.UserIsValid(user) {
@@ -128,12 +123,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24)}
 
-	CSRF := &http.Cookie{
-		Name:     "CSRF",
-		Value:    csrf.Token(r),
-		HttpOnly: true}
 	http.SetCookie(w, SSCookie)
-	http.SetCookie(w, CSRF)
 	utils.Response(w, status, nil)
 }
 
