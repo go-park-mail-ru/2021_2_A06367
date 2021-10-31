@@ -3,7 +3,7 @@ package repo
 import (
 	"context"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgtype/pgxtype"
 )
 
 const (
@@ -40,10 +40,10 @@ const (
 )
 
 type FilmsRepo struct {
-	pool *pgxpool.Pool
+	pool pgxtype.Querier
 }
 
-func NewFilmsRepo(pool *pgxpool.Pool) *FilmsRepo {
+func NewFilmsRepo(pool pgxtype.Querier) *FilmsRepo {
 	return &FilmsRepo{pool: pool}
 }
 
