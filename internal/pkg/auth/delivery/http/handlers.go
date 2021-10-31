@@ -6,6 +6,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
 	uuid "github.com/google/uuid"
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
@@ -51,6 +52,11 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	SSCookie := &http.Cookie{Name: "SSID", Value: token, HttpOnly: true}
 	http.SetCookie(w, SSCookie)
 	utils.Response(w, status, nil)
+}
+
+func (h *AuthHandler) Token(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("X-CSRF-Token", csrf.Token(r))
+	utils.Response(w, models.Okey, nil)
 }
 
 // Logout godoc
@@ -116,6 +122,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		Value:    token,
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24)}
+
 	http.SetCookie(w, SSCookie)
 	utils.Response(w, status, nil)
 }
