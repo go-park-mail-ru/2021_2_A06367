@@ -3,15 +3,18 @@ package http
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 	"time"
 )
@@ -374,5 +377,100 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 				t.Error(tt.Login)
 			}
 		})
+	}
+}
+
+func TestAuthHandler_GetProfile(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+
+	handler := NewAuthHandler(nil, nil)
+
+	handler.GetProfile(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
+	}
+}
+
+func TestAuthHandler_GetProfile2(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "uid.String()",
+	})
+	handler := NewAuthHandler(nil, nil)
+
+	handler.GetProfile(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
+	}
+}
+
+func TestAuthHandler_Follow(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "uid.String()",
+	})
+	handler := NewAuthHandler(nil, nil)
+
+	handler.Follow(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
+	}
+}
+
+func TestAuthHandler_Follow2(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+	handler := NewAuthHandler(nil, nil)
+
+	handler.Follow(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
+	}
+}
+
+func TestAuthHandler_Unfollow(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "uid.String()",
+	})
+	handler := NewAuthHandler(nil, nil)
+
+	handler.Unfollow(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
+	}
+}
+
+func TestAuthHandler_Unfollow2(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+
+	handler := NewAuthHandler(nil, nil)
+
+	handler.Unfollow(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
 	}
 }
