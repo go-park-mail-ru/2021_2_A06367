@@ -7,6 +7,13 @@ import (
 )
 
 func Response(w http.ResponseWriter, status models.StatusCode, body interface{}) {
+
+	if body != nil {
+		w.Header().Set("Content-Type", "application/json")
+		jsn, _ := json.Marshal(body)
+		_, _ = w.Write(jsn)
+	}
+
 	switch status {
 	case models.Okey:
 		w.WriteHeader(http.StatusOK)
@@ -25,9 +32,5 @@ func Response(w http.ResponseWriter, status models.StatusCode, body interface{})
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	if body != nil {
-		w.Header().Set("Content-Type", "application/json")
-		jsn, _ := json.Marshal(body)
-		_, _ = w.Write(jsn)
-	}
+
 }
