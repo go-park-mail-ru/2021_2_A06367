@@ -580,7 +580,7 @@
 			"name": "actors",
 			"item": [
 				{
-					"name": "New Request",
+					"name": "Actor info",
 					"event": [
 						{
 							"listen": "test",
