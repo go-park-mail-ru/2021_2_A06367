@@ -5,7 +5,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films"
-	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
+	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
 	"net/http"
 )
 
@@ -32,5 +32,5 @@ func (sh *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
 	profiles, _ := sh.pu.GetByKeyword(keyword)
 	result.Profiles = profiles
 
-	utils.Response(w, models.Okey, result)
+	util.Response(w, models.Okey, result)
 }
