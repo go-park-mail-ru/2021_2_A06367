@@ -18,7 +18,7 @@ type ActorHandler struct {
 
 func NewActorsHandler(uc actors.ActorsUsecase, logger *zap.SugaredLogger) *ActorHandler {
 	return &ActorHandler{
-		uc: uc,
+		uc:     uc,
 		logger: logger,
 	}
 }

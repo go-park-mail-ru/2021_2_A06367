@@ -16,10 +16,10 @@ type AuthUsecase struct {
 
 func NewAuthUsecase(repo auth.AuthRepo, tokenator auth.TokenGenerator, encrypter auth.Encrypter, logger *zap.SugaredLogger) *AuthUsecase {
 	AuthUC := &AuthUsecase{
-		repo: repo,
+		repo:      repo,
 		tokenator: tokenator,
 		encrypter: encrypter,
-		logger: logger,
+		logger:    logger,
 	}
 	return AuthUC
 }

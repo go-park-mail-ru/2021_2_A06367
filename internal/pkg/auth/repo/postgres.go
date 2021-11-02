@@ -31,7 +31,7 @@ type AuthRepo struct {
 
 func NewAuthRepo(pool pgxtype.Querier, logger *zap.SugaredLogger) *AuthRepo {
 	return &AuthRepo{
-		pool: pool,
+		pool:   pool,
 		logger: logger,
 	}
 }

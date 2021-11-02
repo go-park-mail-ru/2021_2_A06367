@@ -13,7 +13,7 @@ type FilmsUsecase struct {
 
 func NewFilmsUsecase(repo films.FilmsRepository, logger *zap.SugaredLogger) *FilmsUsecase {
 	return &FilmsUsecase{
-		repo: repo,
+		repo:   repo,
 		logger: logger,
 	}
 }
