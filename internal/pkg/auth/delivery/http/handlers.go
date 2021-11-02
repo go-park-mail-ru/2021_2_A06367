@@ -112,7 +112,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	token, status := h.uc.SignUp(user)
-	if token == "" || token == "no secret key" || status != models.Okey { //TODO в константу
+	if token == "" || token == models.ErrNoSecretKey || status != models.Okey { //TODO в константу
 		utils.Response(w, status, nil)
 		return
 	}
@@ -140,12 +140,12 @@ func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 	user := models.LoginUser{}
 	user.Login = r.URL.Query().Get("user")
 	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
-	if err != nil && err.Error() != "no token" { //TODO в константу
+	if err != nil && err.Error() != models.ErrNoToken {
 		utils.Response(w, models.BadRequest, nil)
 		return
 	}
 
-	if err.Error() == "no token" || jwtData.Login != user.Login || user.Login == "" {
+	if err.Error() == models.ErrNoToken || jwtData.Login != user.Login || user.Login == "" {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}
