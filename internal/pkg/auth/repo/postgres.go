@@ -118,10 +118,10 @@ func (r *AuthRepo) RemoveFollowing(who, whom uuid.UUID) models.StatusCode {
 func (r *AuthRepo) GetProfileByKeyword(keyword string) ([]models.Profile, models.StatusCode) {
 
 	rows, err := r.pool.Query(context.Background(), SElECT_USER_BY_KEYWORD, keyword)
-
 	if err != nil {
 		return nil, models.InternalError
 	}
+	defer rows.Close()
 
 	users := make([]models.Profile, 0, 10)
 

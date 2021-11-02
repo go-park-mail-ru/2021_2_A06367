@@ -59,7 +59,7 @@ func (r *FilmsRepo) GetFilmsByTopic(topic string) ([]models.Film, models.StatusC
 	if err != nil {
 		return nil, models.InternalError
 	}
-
+	defer rows.Close()
 	films := make([]models.Film, 0)
 
 	for rows.Next() {
@@ -82,6 +82,7 @@ func (r *FilmsRepo) GetHottestFilms() ([]models.Film, models.StatusCode) {
 	if err != nil {
 		return nil, models.InternalError
 	}
+	defer rows.Close()
 
 	films := make([]models.Film, 0)
 
@@ -105,6 +106,7 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 	if err != nil {
 		return nil, models.InternalError
 	}
+	defer rows.Close()
 
 	films := make([]models.Film, 0)
 
@@ -127,6 +129,7 @@ func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.Sta
 	if err != nil {
 		return nil, models.InternalError
 	}
+	defer rows.Close()
 
 	films := make([]models.Film, 0, 10)
 
@@ -149,6 +152,7 @@ func (r *FilmsRepo) GetFilmsByActor(actor models.Actors) ([]models.Film, models.
 	if err != nil {
 		return nil, models.InternalError
 	}
+	defer rows.Close()
 
 	films := make([]models.Film, 0)
 
@@ -183,7 +187,7 @@ func (r *FilmsRepo) GetFilmsByUser(user models.User) ([]models.Film, models.Stat
 	if err != nil {
 		return nil, models.InternalError
 	}
-
+	defer rows.Close()
 	films := make([]models.Film, 0)
 
 	for rows.Next() {
