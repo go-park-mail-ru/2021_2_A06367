@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/jackc/pgtype/pgxtype"
+	"go.uber.org/zap"
 )
 
 const (
@@ -40,11 +41,15 @@ const (
 )
 
 type FilmsRepo struct {
-	pool pgxtype.Querier
+	pool   pgxtype.Querier
+	logger *zap.SugaredLogger
 }
 
-func NewFilmsRepo(pool pgxtype.Querier) *FilmsRepo {
-	return &FilmsRepo{pool: pool}
+func NewFilmsRepo(pool pgxtype.Querier, logger *zap.SugaredLogger) *FilmsRepo {
+	return &FilmsRepo{
+		pool:   pool,
+		logger: logger,
+	}
 }
 
 func (r *FilmsRepo) GetFilmsByTopic(topic string) ([]models.Film, models.StatusCode) {

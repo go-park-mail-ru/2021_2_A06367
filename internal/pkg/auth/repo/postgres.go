@@ -5,6 +5,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/google/uuid"
 	"github.com/jackc/pgtype/pgxtype"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -24,11 +25,15 @@ const (
 )
 
 type AuthRepo struct {
-	pool pgxtype.Querier
+	pool   pgxtype.Querier
+	logger *zap.SugaredLogger
 }
 
-func NewAuthRepo(pool pgxtype.Querier) *AuthRepo {
-	return &AuthRepo{pool: pool}
+func NewAuthRepo(pool pgxtype.Querier, logger *zap.SugaredLogger) *AuthRepo {
+	return &AuthRepo{
+		pool:   pool,
+		logger: logger,
+	}
 }
 
 func (r *AuthRepo) CreateUser(user models.User) (models.User, models.StatusCode) {

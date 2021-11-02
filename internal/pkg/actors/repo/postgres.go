@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/jackc/pgtype/pgxtype"
+	"go.uber.org/zap"
+	"net/http"
 )
 
 const (
@@ -11,11 +13,15 @@ const (
 )
 
 type ActorsRepo struct {
-	pool pgxtype.Querier
+	pool   pgxtype.Querier
+	logger *zap.SugaredLogger
 }
 
-func NewActorsRepo(pool pgxtype.Querier) *ActorsRepo {
-	return &ActorsRepo{pool: pool}
+func NewActorsRepo(pool pgxtype.Querier, logger *zap.SugaredLogger) *ActorsRepo {
+	return &ActorsRepo{
+		pool:   pool,
+		logger: logger,
+	}
 }
 
 func (r *ActorsRepo) GetActorById(actor models.Actors) (models.Actors, models.StatusCode) {
@@ -27,5 +33,6 @@ func (r *ActorsRepo) GetActorById(actor models.Actors) (models.Actors, models.St
 		}
 		return models.Actors{}, models.InternalError
 	}
+	r.logger.Info(zap.String("Status:", string(rune(http.StatusOK))))
 	return actor, models.Okey
 }
