@@ -26,13 +26,16 @@ func NewActorsRepo(pool pgxtype.Querier, logger *zap.SugaredLogger) *ActorsRepo 
 
 func (r *ActorsRepo) GetActorById(actor models.Actors) (models.Actors, models.StatusCode) {
 	row := r.pool.QueryRow(context.Background(), SElECT_ACTOR_BY_ID, actor.Id)
-	err := row.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar, &actor.Height, &actor.DateOfBirth, &actor.Description, &actor.Genres)
+	err := row.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar, &actor.Height, &actor.DateOfBirth, &actor.Genres)
 	if err != nil {
 		if err.Error() == "no rows in result set" {
 			return models.Actors{}, models.NotFound
 		}
 		return models.Actors{}, models.InternalError
 	}
-	r.logger.Info(zap.String("Status:", string(rune(http.StatusOK))))
+	if r.logger != nil {
+		r.logger.Info(zap.String("Status:", string(rune(http.StatusOK))))
+	}
+
 	return actor, models.Okey
 }

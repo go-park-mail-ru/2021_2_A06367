@@ -46,7 +46,7 @@ func TestNewAuthUsecase(t *testing.T) {
 	mockAuthRepo := auth.NewMockAuthRepo(ctl)
 	mockTokenGen := auth.NewMockTokenGenerator(ctl)
 	mockEncrypter := auth.NewMockEncrypter(ctl)
-	testUC := NewAuthUsecase(mockAuthRepo, mockTokenGen, mockEncrypter)
+	testUC := NewAuthUsecase(mockAuthRepo, mockTokenGen, mockEncrypter, nil)
 	if testUC.repo != mockAuthRepo {
 		t.Error("bad constructor")
 	}
@@ -192,7 +192,7 @@ func TestAuthUsecase_Follow(t *testing.T) {
 	os.Setenv("SECRET", "TESTS")
 	mockAuthRepo := auth.NewMockAuthRepo(ctl)
 	mockAuthRepo.EXPECT().AddFollowing(who, whom).Return(models.Okey)
-	usecase := NewAuthUsecase(mockAuthRepo, nil, nil)
+	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
 	st := usecase.Follow(who, whom)
 	if st != models.Okey {
 		t.Error("wrong status code returned")
@@ -207,7 +207,7 @@ func TestAuthUsecase_GetProfile(t *testing.T) {
 	os.Setenv("SECRET", "TESTS")
 	mockAuthRepo := auth.NewMockAuthRepo(ctl)
 	mockAuthRepo.EXPECT().RemoveFollowing(who, whom).Return(models.Okey)
-	usecase := NewAuthUsecase(mockAuthRepo, nil, nil)
+	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
 	st := usecase.Unfollow(who, whom)
 	if st != models.Okey {
 		t.Error("wrong status code returned")
@@ -215,7 +215,7 @@ func TestAuthUsecase_GetProfile(t *testing.T) {
 }
 
 func TestAuthUsecase_GetSubscribers(t *testing.T) {
-	usecase := NewAuthUsecase(nil, nil, nil)
+	usecase := NewAuthUsecase(nil, nil, nil, nil)
 	_, st := usecase.GetSubscribers()
 	if st != models.Okey {
 		t.Error("wrong status code returned")
@@ -223,7 +223,7 @@ func TestAuthUsecase_GetSubscribers(t *testing.T) {
 }
 
 func TestAuthUsecase_GetSubscriptions(t *testing.T) {
-	usecase := NewAuthUsecase(nil, nil, nil)
+	usecase := NewAuthUsecase(nil, nil, nil, nil)
 	_, st := usecase.GetSubscriptions()
 	if st != models.Okey {
 		t.Error("wrong status code returned")
@@ -236,7 +236,7 @@ func TestAuthUsecase_GetByKeyword(t *testing.T) {
 	defer ctl.Finish()
 	mockAuthRepo := auth.NewMockAuthRepo(ctl)
 	mockAuthRepo.EXPECT().GetProfileByKeyword(keyword).Return(nil, models.Okey)
-	usecase := NewAuthUsecase(mockAuthRepo, nil, nil)
+	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
 	_, st := usecase.repo.GetProfileByKeyword(keyword)
 	if st != models.Okey {
 		t.Error("wrong status code returned")
