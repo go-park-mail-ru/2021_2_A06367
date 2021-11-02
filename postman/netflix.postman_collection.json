@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7a0c6ffc-aabe-49c5-b5d0-41bc6642b96c",
+		"_postman_id": "12d100ba-32e9-41f7-b44f-d92b6688df6f",
 		"name": "netflix",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -10,6 +10,46 @@
 			"item": [
 				{
 					"name": "Sign up",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"login\": \"tester2\",\n    \"password\": \"tester2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "secure",
 					"event": [
 						{
 							"listen": "test",
@@ -226,7 +266,44 @@
 							"query": [
 								{
 									"key": "tester2",
-									"value": null
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auth stats after log out Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"\", () => {",
+									"    pm.response.to.have.status(401)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/auth?tester2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"auth"
+							],
+							"query": [
+								{
+									"key": "tester2",
+									"value": ""
 								}
 							]
 						}
@@ -237,6 +314,270 @@
 		},
 		{
 			"name": "films",
+			"item": [
+				{
+					"name": "Film Start Selection",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "SSID=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJMb2dpbiI6InRlc3RlcjIiLCJJZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImV4cCI6MTYzNTQ2MjkxNn0.c9ndkRcrJYYXx1YCndV4OcyIAEPjfz4hx98gnDBqapE; HttpOnly",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/films/selection",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"films",
+								"selection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "One fillm",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "SSID=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJMb2dpbiI6InRlc3RlcjIiLCJJZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImV4cCI6MTYzNTQ2MjkxNn0.c9ndkRcrJYYXx1YCndV4OcyIAEPjfz4hx98gnDBqapE; HttpOnly",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/films/selection",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"films",
+								"selection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "One fillm fall",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "SSID=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJMb2dpbiI6InRlc3RlcjIiLCJJZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImV4cCI6MTYzNTQ2MjkxNn0.c9ndkRcrJYYXx1YCndV4OcyIAEPjfz4hx98gnDBqapE; HttpOnly",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/films/selection",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"films",
+								"selection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fillms by actor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "SSID=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJMb2dpbiI6InRlc3RlcjIiLCJJZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImV4cCI6MTYzNTQ2MjkxNn0.c9ndkRcrJYYXx1YCndV4OcyIAEPjfz4hx98gnDBqapE; HttpOnly",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/films/selection",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"films",
+								"selection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fillms by genres",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "SSID=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJMb2dpbiI6InRlc3RlcjIiLCJJZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImV4cCI6MTYzNTQ2MjkxNn0.c9ndkRcrJYYXx1YCndV4OcyIAEPjfz4hx98gnDBqapE; HttpOnly",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/films/selection",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"films",
+								"selection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fillms by personal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "SSID=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJMb2dpbiI6InRlc3RlcjIiLCJJZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImV4cCI6MTYzNTQ2MjkxNn0.c9ndkRcrJYYXx1YCndV4OcyIAEPjfz4hx98gnDBqapE; HttpOnly",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/films/selection",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"films",
+								"selection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fillms by popular",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"\", () => {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "SSID=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJMb2dpbiI6InRlc3RlcjIiLCJJZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImV4cCI6MTYzNTQ2MjkxNn0.c9ndkRcrJYYXx1YCndV4OcyIAEPjfz4hx98gnDBqapE; HttpOnly",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/films/selection",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"films",
+								"selection"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "actors",
 			"item": [
 				{
 					"name": "New Request",

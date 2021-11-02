@@ -73,8 +73,7 @@ func (r *AuthRepo) CheckUser(user models.User) (models.User, models.StatusCode) 
 
 func (r *AuthRepo) GetProfile(user models.Profile) (models.Profile, models.StatusCode) {
 
-	row := r.pool.QueryRow(context.Background(), SElECT_USER,
-		user.Id)
+	row := r.pool.QueryRow(context.Background(), SElECT_USER, user.Id)
 
 	err := row.Scan(&user.Login, &user.About, &user.Avatar, &user.Subscriptions, &user.Subscribers)
 	if err != nil {

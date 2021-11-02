@@ -3,6 +3,7 @@ package http
 import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
 	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -141,7 +142,7 @@ func (h FilmsHandler) FilmsByUser(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 	film, status := h.uc.GetCompilationForUser(user)
-	util.Response(w, status, film)
+	utils.Response(w, status, film)
 }
 
 func (h FilmsHandler) FilmStartSelection(w http.ResponseWriter, r *http.Request) {

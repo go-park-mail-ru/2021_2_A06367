@@ -16,6 +16,8 @@ import (
 	filmsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/usecase"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
 	"github.com/gorilla/csrf"
+
+	//"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"go.uber.org/zap"
@@ -85,7 +87,7 @@ func run() error {
 
 	m := middleware.NewMiddleware(zapSugar)
 
-	auth := r.PathPrefix("/user").Subrouter()
+	auth := r.PathPrefix("/users").Subrouter()
 	auth.Use(protect)
 	{
 		auth.HandleFunc("/secure", authHandler.Token).Methods(http.MethodGet)
@@ -101,8 +103,7 @@ func run() error {
 	film := r.PathPrefix("/films").Subrouter()
 	{
 		film.HandleFunc("/genre/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
-		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet,
-			http.MethodOptions)
+		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet)
 		film.HandleFunc("/film/{film_id}", filmsHandler.FilmById).Methods(http.MethodGet)
 		film.HandleFunc("/selection/actor/{actor_id}", filmsHandler.FilmByActor).Methods(http.MethodGet)
 		film.HandleFunc("/selection/user/personal", filmsHandler.FilmsByUser).Methods(http.MethodGet)
