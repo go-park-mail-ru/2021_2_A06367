@@ -4,16 +4,23 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 )
 
 type AuthUsecase struct {
 	repo      auth.AuthRepo
 	tokenator auth.TokenGenerator
 	encrypter auth.Encrypter
+	logger    *zap.SugaredLogger
 }
 
-func NewAuthUsecase(repo auth.AuthRepo, tokenator auth.TokenGenerator, encrypter auth.Encrypter) *AuthUsecase {
-	AuthUC := &AuthUsecase{repo: repo, tokenator: tokenator, encrypter: encrypter}
+func NewAuthUsecase(repo auth.AuthRepo, tokenator auth.TokenGenerator, encrypter auth.Encrypter, logger *zap.SugaredLogger) *AuthUsecase {
+	AuthUC := &AuthUsecase{
+		repo: repo,
+		tokenator: tokenator,
+		encrypter: encrypter,
+		logger: logger,
+	}
 	return AuthUC
 }
 
