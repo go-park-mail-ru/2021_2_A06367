@@ -27,3 +27,11 @@ type Profile struct {
 	Subscriptions uint
 	Subscribers   uint
 }
+
+type PassUpdate struct {
+	Password string `json:"password"`
+}
+
+type BioUpdate struct {
+	About string `json:"about"`
+}

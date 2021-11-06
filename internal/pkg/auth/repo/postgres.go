@@ -9,6 +9,9 @@ import (
 )
 
 const (
+	UPDATE_USER_PIC = "UPDATE public.users SET avatar=$1 WHERE id=$2;"
+	UPDATE_USER_BIO = "UPDATE public.users SET about=$1 WHERE id=$2;"
+	UPDATE_USER_PASS = "UPDATE public.users SET encrypted_password=md5($1) WHERE id=$2;"
 	SElECT_USER      = "SELECT login, about, avatar, subscriptions, subscribers FROM public.users WHERE id=$1;"
 	CHECK_USER       = "SELECT encrypted_password FROM public.users WHERE login=$1;"
 	CREATE_USER      = "INSERT INTO public.users(id, login, encrypted_password, created_at) VALUES($1, $2, $3, $4) RETURNING id;"
@@ -132,3 +135,46 @@ func (r *AuthRepo) GetProfileByKeyword(keyword string) ([]models.Profile, models
 
 	return users, models.Okey
 }
+
+func (r *AuthRepo) UpdateBio(profile models.Profile) models.StatusCode {
+
+	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_BIO, profile.Id, profile.About)
+
+	if err != nil {
+		return  models.InternalError
+	}
+	if tag.RowsAffected() != 0 {
+		return models.NotFound
+	}
+
+	return models.Okey
+}
+
+func (r *AuthRepo) UpdateAvatar(profile models.Profile) models.StatusCode {
+
+	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_BIO, profile.Id, profile.Avatar)
+
+	if err != nil {
+		return  models.InternalError
+	}
+	if tag.RowsAffected() != 0 {
+		return models.NotFound
+	}
+
+	return models.Okey
+}
+
+func (r *AuthRepo) UpdatePass(profile models.User) models.StatusCode {
+
+	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_PASS, profile.Id, profile.EncryptedPassword)
+
+	if err != nil {
+		return  models.InternalError
+	}
+	if tag.RowsAffected() != 0 {
+		return models.NotFound
+	}
+
+	return models.Okey
+}
+

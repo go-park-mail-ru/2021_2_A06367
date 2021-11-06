@@ -76,3 +76,16 @@ func (u *AuthUsecase) GetSubscribers() ([]models.Profile, models.StatusCode) {
 func (u *AuthUsecase) GetByKeyword(keyword string) ([]models.Profile, models.StatusCode) {
 	return u.repo.GetProfileByKeyword(keyword)
 }
+
+
+func (u *AuthUsecase) SetBio(profile models.Profile) models.StatusCode {
+	return u.repo.UpdateBio(profile)
+}
+
+func (u *AuthUsecase) SetPass(profile models.User) models.StatusCode {
+	return u.repo.UpdatePass(profile)
+}
+
+func (u *AuthUsecase) SetAvatar(profile models.Profile) models.StatusCode {
+	return u.repo.UpdateAvatar(profile)
+}
