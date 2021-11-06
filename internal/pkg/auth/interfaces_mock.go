@@ -79,6 +79,48 @@ func (mr *MockAuthUsecaseMockRecorder) GetProfile(user interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProfile", reflect.TypeOf((*MockAuthUsecase)(nil).GetProfile), user)
 }
 
+// SetAvatar mocks base method.
+func (m *MockAuthUsecase) SetAvatar(profile models.Profile) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetAvatar", profile)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// SetAvatar indicates an expected call of SetAvatar.
+func (mr *MockAuthUsecaseMockRecorder) SetAvatar(profile interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetAvatar", reflect.TypeOf((*MockAuthUsecase)(nil).SetAvatar), profile)
+}
+
+// SetBio mocks base method.
+func (m *MockAuthUsecase) SetBio(profile models.Profile) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetBio", profile)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// SetBio indicates an expected call of SetBio.
+func (mr *MockAuthUsecaseMockRecorder) SetBio(profile interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetBio", reflect.TypeOf((*MockAuthUsecase)(nil).SetBio), profile)
+}
+
+// SetPass mocks base method.
+func (m *MockAuthUsecase) SetPass(profile models.User) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetPass", profile)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// SetPass indicates an expected call of SetPass.
+func (mr *MockAuthUsecaseMockRecorder) SetPass(profile interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetPass", reflect.TypeOf((*MockAuthUsecase)(nil).SetPass), profile)
+}
+
 // SignIn mocks base method.
 func (m *MockAuthUsecase) SignIn(user models.LoginUser) (string, models.StatusCode) {
 	m.ctrl.T.Helper()
@@ -218,6 +260,48 @@ func (m *MockAuthRepo) RemoveFollowing(who, whom uuid.UUID) models.StatusCode {
 func (mr *MockAuthRepoMockRecorder) RemoveFollowing(who, whom interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveFollowing", reflect.TypeOf((*MockAuthRepo)(nil).RemoveFollowing), who, whom)
+}
+
+// UpdateAvatar mocks base method.
+func (m *MockAuthRepo) UpdateAvatar(profile models.Profile) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateAvatar", profile)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// UpdateAvatar indicates an expected call of UpdateAvatar.
+func (mr *MockAuthRepoMockRecorder) UpdateAvatar(profile interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAvatar", reflect.TypeOf((*MockAuthRepo)(nil).UpdateAvatar), profile)
+}
+
+// UpdateBio mocks base method.
+func (m *MockAuthRepo) UpdateBio(profile models.Profile) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateBio", profile)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// UpdateBio indicates an expected call of UpdateBio.
+func (mr *MockAuthRepoMockRecorder) UpdateBio(profile interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBio", reflect.TypeOf((*MockAuthRepo)(nil).UpdateBio), profile)
+}
+
+// UpdatePass mocks base method.
+func (m *MockAuthRepo) UpdatePass(profile models.User) models.StatusCode {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePass", profile)
+	ret0, _ := ret[0].(models.StatusCode)
+	return ret0
+}
+
+// UpdatePass indicates an expected call of UpdatePass.
+func (mr *MockAuthRepoMockRecorder) UpdatePass(profile interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePass", reflect.TypeOf((*MockAuthRepo)(nil).UpdatePass), profile)
 }
 
 // MockTokenGenerator is a mock of TokenGenerator interface.
