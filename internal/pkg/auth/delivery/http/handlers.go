@@ -149,7 +149,7 @@ func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err.Error() == "no token" || jwtData.Login != user.Login || user.Login == "" {
+	if (err != nil && err.Error() == "no token") || jwtData.Login != user.Login || user.Login == "" {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}
