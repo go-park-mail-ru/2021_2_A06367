@@ -20,7 +20,7 @@ func TestActorsRepo_GetActorById(t *testing.T) {
 	ctl := gomock.NewController(t)
 	mockPool := pgxpoolmock.NewMockPgxPool(ctl)
 
-	repo := NewActorsRepo(mockPool)
+	repo := NewActorsRepo(mockPool, nil)
 	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows)
 
 	actor := models.Actors{Id: uid}

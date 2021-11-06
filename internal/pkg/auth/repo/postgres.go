@@ -5,6 +5,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/google/uuid"
 	"github.com/jackc/pgtype/pgxtype"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -27,11 +28,15 @@ const (
 )
 
 type AuthRepo struct {
-	pool pgxtype.Querier
+	pool   pgxtype.Querier
+	logger *zap.SugaredLogger
 }
 
-func NewAuthRepo(pool pgxtype.Querier) *AuthRepo {
-	return &AuthRepo{pool: pool}
+func NewAuthRepo(pool pgxtype.Querier, logger *zap.SugaredLogger) *AuthRepo {
+	return &AuthRepo{
+		pool:   pool,
+		logger: logger,
+	}
 }
 
 func (r *AuthRepo) CreateUser(user models.User) (models.User, models.StatusCode) {
@@ -76,8 +81,7 @@ func (r *AuthRepo) CheckUser(user models.User) (models.User, models.StatusCode) 
 
 func (r *AuthRepo) GetProfile(user models.Profile) (models.Profile, models.StatusCode) {
 
-	row := r.pool.QueryRow(context.Background(), SElECT_USER,
-		user.Id)
+	row := r.pool.QueryRow(context.Background(), SElECT_USER, user.Id)
 
 	err := row.Scan(&user.Login, &user.About, &user.Avatar, &user.Subscriptions, &user.Subscribers)
 	if err != nil {
@@ -117,10 +121,10 @@ func (r *AuthRepo) RemoveFollowing(who, whom uuid.UUID) models.StatusCode {
 func (r *AuthRepo) GetProfileByKeyword(keyword string) ([]models.Profile, models.StatusCode) {
 
 	rows, err := r.pool.Query(context.Background(), SElECT_USER_BY_KEYWORD, keyword)
-
 	if err != nil {
 		return nil, models.InternalError
 	}
+	defer rows.Close()
 
 	users := make([]models.Profile, 0, 10)
 

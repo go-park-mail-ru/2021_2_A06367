@@ -8,7 +8,6 @@ import (
 	"testing"
 )
 
-
 func TestActorsUsecase_GetActorsOfActor(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -20,7 +19,7 @@ func TestActorsUsecase_GetActorsOfActor(t *testing.T) {
 	repo := actors.NewMockActorsRepository(ctl)
 	repo.EXPECT().GetActorById(testActor).Times(1).Return(models.Actors{}, models.Okey)
 
-	usecase := NewActorsUsecase(repo)
+	usecase := NewActorsUsecase(repo, nil)
 
 	_, st := usecase.GetById(testActor)
 	if st != models.Okey {

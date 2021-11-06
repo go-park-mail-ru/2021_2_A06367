@@ -20,7 +20,7 @@ func prepare(t *testing.T, pgxRows pgx.Rows) *AuthRepo { // mock on repo and uid
 	ctl := gomock.NewController(t)
 	mockPool := pgxpoolmock.NewMockPgxPool(ctl)
 
-	repo := NewAuthRepo(mockPool)
+	repo := NewAuthRepo(mockPool, nil)
 	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows)
 	return repo
 }
@@ -106,7 +106,7 @@ func TestAuthRepo_GetProfileByKeyword(t *testing.T) {
 	ctl := gomock.NewController(t)
 	mockPool := pgxpoolmock.NewMockPgxPool(ctl)
 
-	repo := NewAuthRepo(mockPool)
+	repo := NewAuthRepo(mockPool, nil)
 	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows, nil)
 
 	userCheck, st := repo.GetProfileByKeyword(keyword)
@@ -128,7 +128,7 @@ func TestAuthRepo_RemoveFollowing(t *testing.T) {
 	ctl := gomock.NewController(t)
 	mockPool := pgxpoolmock.NewMockPgxPool(ctl)
 
-	repo := NewAuthRepo(mockPool)
+	repo := NewAuthRepo(mockPool, nil)
 	mockPool.EXPECT().Exec(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgconn.CommandTag{}, nil)
 
 	st := repo.RemoveFollowing(uid, uuid.New())

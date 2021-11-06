@@ -45,7 +45,7 @@ func ExtractTokenFromCookie(r *http.Request) string {
 func VerifyToken(r *http.Request, extracter Extracter) (*models.Token, error) {
 	tokenStr := extracter(r)
 	if tokenStr == "" {
-		return nil, errors.New("no token")
+		return nil, errors.New(models.ErrNoToken)
 	}
 
 	token, err := jwt.ParseWithClaims(tokenStr, &models.Token{}, func(token *jwt.Token) (interface{}, error) {
@@ -62,7 +62,7 @@ func VerifyToken(r *http.Request, extracter Extracter) (*models.Token, error) {
 	if ok && token.Valid {
 		return claims, nil
 	}
-	return nil, errors.New("no auth data")
+	return nil, errors.New(models.ErrNoAuthData)
 }
 
 func ExtractTokenMetadata(r *http.Request, extracter Extracter) (*models.AccessDetails, error) {
@@ -73,7 +73,7 @@ func ExtractTokenMetadata(r *http.Request, extracter Extracter) (*models.AccessD
 	exp := token.ExpiresAt
 	now := time.Now().Unix()
 	if exp < now {
-		return nil, errors.New("token expired")
+		return nil, errors.New(models.ErrExpiredToken)
 	}
 	uid, err := uuid.Parse(token.Id)
 	if err != nil {
@@ -81,7 +81,7 @@ func ExtractTokenMetadata(r *http.Request, extracter Extracter) (*models.AccessD
 	}
 	data := &models.AccessDetails{Login: token.Login, Id: uid}
 	if data.Login == "" || data.Id.String() == "" {
-		return nil, errors.New("invalid token")
+		return nil, errors.New(models.ErrInvalidToken)
 	}
 
 	return data, err

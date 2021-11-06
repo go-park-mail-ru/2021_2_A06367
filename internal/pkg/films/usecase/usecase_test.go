@@ -19,7 +19,7 @@ func TestFilmsUsecase_GetFilm(t *testing.T) {
 	repo := films.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetFilmById(testFilm).Times(1).Return(models.Film{}, models.Okey)
 
-	usecase := NewFilmsUsecase(repo)
+	usecase := NewFilmsUsecase(repo, nil)
 
 	_, st := usecase.GetFilm(testFilm)
 	if st != models.Okey {
@@ -38,7 +38,7 @@ func TestFilmsUsecase_GetFilmsOfActor(t *testing.T) {
 	repo := films.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetFilmsByActor(testActor).Times(1).Return([]models.Film{}, models.Okey)
 
-	usecase := NewFilmsUsecase(repo)
+	usecase := NewFilmsUsecase(repo, nil)
 
 	_, st := usecase.GetFilmsOfActor(testActor)
 	if st != models.Okey {
@@ -57,7 +57,7 @@ func TestFilmsUsecase_GetCompilationForUser(t *testing.T) {
 	repo := films.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetFilmsByUser(testUser).Times(1).Return([]models.Film{}, models.Okey)
 
-	usecase := NewFilmsUsecase(repo)
+	usecase := NewFilmsUsecase(repo, nil)
 
 	_, st := usecase.GetCompilationForUser(testUser)
 	if st != models.Okey {
@@ -73,7 +73,7 @@ func TestFilmsUsecase_GetCompilation(t *testing.T) {
 	repo := films.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetFilmsByTopic(topic).Times(1).Return([]models.Film{}, models.Okey)
 
-	usecase := NewFilmsUsecase(repo)
+	usecase := NewFilmsUsecase(repo, nil)
 
 	_, st := usecase.GetCompilation(topic)
 	if st != models.Okey {
@@ -89,7 +89,7 @@ func TestFilmsUsecase_GetByKeyword(t *testing.T) {
 	repo := films.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetFilmsByKeyword(keyword).Times(1).Return([]models.Film{}, models.Okey)
 
-	usecase := NewFilmsUsecase(repo)
+	usecase := NewFilmsUsecase(repo, nil)
 
 	_, st := usecase.GetByKeyword(keyword)
 	if st != models.Okey {
@@ -107,7 +107,7 @@ func TestFilmsUsecase_GetSelection(t *testing.T) {
 	repo.EXPECT().GetHottestFilms().Times(1).Return([]models.Film{}, models.Okey)
 	repo.EXPECT().GetNewestFilms().Times(1).Return([]models.Film{}, models.Okey)
 
-	usecase := NewFilmsUsecase(repo)
+	usecase := NewFilmsUsecase(repo, nil)
 
 	_, st := usecase.GetSelection(selection1)
 	if st != models.Okey {
@@ -127,7 +127,7 @@ func TestFilmsUsecase_GetStartSelections(t *testing.T) {
 	repo := films.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetHottestFilms().Times(1).Return([]models.Film{}, models.Okey)
 
-	usecase := NewFilmsUsecase(repo)
+	usecase := NewFilmsUsecase(repo, nil)
 
 	_, st := usecase.GetStartSelections(false, models.User{})
 	if st != models.Okey {

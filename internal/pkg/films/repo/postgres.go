@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/jackc/pgtype/pgxtype"
+	"go.uber.org/zap"
 )
 
 const (
@@ -40,11 +41,15 @@ const (
 )
 
 type FilmsRepo struct {
-	pool pgxtype.Querier
+	pool   pgxtype.Querier
+	logger *zap.SugaredLogger
 }
 
-func NewFilmsRepo(pool pgxtype.Querier) *FilmsRepo {
-	return &FilmsRepo{pool: pool}
+func NewFilmsRepo(pool pgxtype.Querier, logger *zap.SugaredLogger) *FilmsRepo {
+	return &FilmsRepo{
+		pool:   pool,
+		logger: logger,
+	}
 }
 
 func (r *FilmsRepo) GetFilmsByTopic(topic string) ([]models.Film, models.StatusCode) {
@@ -54,7 +59,7 @@ func (r *FilmsRepo) GetFilmsByTopic(topic string) ([]models.Film, models.StatusC
 	if err != nil {
 		return nil, models.InternalError
 	}
-
+	defer rows.Close()
 	films := make([]models.Film, 0)
 
 	for rows.Next() {
@@ -77,6 +82,7 @@ func (r *FilmsRepo) GetHottestFilms() ([]models.Film, models.StatusCode) {
 	if err != nil {
 		return nil, models.InternalError
 	}
+	defer rows.Close()
 
 	films := make([]models.Film, 0)
 
@@ -100,6 +106,7 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 	if err != nil {
 		return nil, models.InternalError
 	}
+	defer rows.Close()
 
 	films := make([]models.Film, 0)
 
@@ -122,6 +129,7 @@ func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.Sta
 	if err != nil {
 		return nil, models.InternalError
 	}
+	defer rows.Close()
 
 	films := make([]models.Film, 0, 10)
 
@@ -144,6 +152,7 @@ func (r *FilmsRepo) GetFilmsByActor(actor models.Actors) ([]models.Film, models.
 	if err != nil {
 		return nil, models.InternalError
 	}
+	defer rows.Close()
 
 	films := make([]models.Film, 0)
 
@@ -178,7 +187,7 @@ func (r *FilmsRepo) GetFilmsByUser(user models.User) ([]models.Film, models.Stat
 	if err != nil {
 		return nil, models.InternalError
 	}
-
+	defer rows.Close()
 	films := make([]models.Film, 0)
 
 	for rows.Next() {

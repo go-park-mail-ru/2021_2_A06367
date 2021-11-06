@@ -16,6 +16,8 @@ import (
 	filmsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/usecase"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
 	"github.com/gorilla/csrf"
+
+	//"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"go.uber.org/zap"
@@ -71,21 +73,21 @@ func run() error {
 
 	encrypter := authUsecase.NewEncrypter()
 	tokenGenerator := authUsecase.NewTokenator()
-	authRepo := authRepository.NewAuthRepo(pool)
-	authUse := authUsecase.NewAuthUsecase(authRepo, tokenGenerator, encrypter)
+	authRepo := authRepository.NewAuthRepo(pool, zapSugar)
+	authUse := authUsecase.NewAuthUsecase(authRepo, tokenGenerator, encrypter, zapSugar)
 	authHandler := authDelivery.NewAuthHandler(authUse, zapSugar)
 
-	filmsRepo := filmsRepository.NewFilmsRepo(pool)
-	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo)
+	filmsRepo := filmsRepository.NewFilmsRepo(pool, zapSugar)
+	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo, zapSugar)
 	filmsHandler := filmsDelivery.NewFilmsHandler(filmsUse, zapSugar)
 
-	actorsRepo := actorsRepository.NewActorsRepo(pool)
-	actorsUse := actorsUsecase.NewActorsUsecase(actorsRepo)
+	actorsRepo := actorsRepository.NewActorsRepo(pool, zapSugar)
+	actorsUse := actorsUsecase.NewActorsUsecase(actorsRepo, zapSugar)
 	actorsHandler := actorsDelivery.NewActorsHandler(actorsUse, zapSugar)
 
 	m := middleware.NewMiddleware(zapSugar)
 
-	auth := r.PathPrefix("/user").Subrouter()
+	auth := r.PathPrefix("/users").Subrouter()
 	auth.Use(protect)
 	{
 		auth.HandleFunc("/secure", authHandler.Token).Methods(http.MethodGet, http.MethodOptions)
@@ -104,8 +106,7 @@ func run() error {
 	film := r.PathPrefix("/films").Subrouter()
 	{
 		film.HandleFunc("/genre/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
-		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet,
-			http.MethodOptions)
+		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet)
 		film.HandleFunc("/film/{film_id}", filmsHandler.FilmById).Methods(http.MethodGet)
 		film.HandleFunc("/selection/actor/{actor_id}", filmsHandler.FilmByActor).Methods(http.MethodGet)
 		film.HandleFunc("/selection/user/personal", filmsHandler.FilmsByUser).Methods(http.MethodGet)
