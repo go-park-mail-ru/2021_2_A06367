@@ -2,14 +2,18 @@ package repo
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
+	"github.com/google/uuid"
 	"github.com/jackc/pgtype/pgxtype"
 	"go.uber.org/zap"
 	"net/http"
+	"strings"
 )
 
 const (
-	SElECT_ACTOR_BY_ID = "SELECT * FROM actors WHERE id = $1"
+	SElECT_ACTOR_BY_ID  = "SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id = $1"
+	SELECT_ACTORS_BY_ID = "SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id IN ($1)"
 )
 
 type ActorsRepo struct {
@@ -38,4 +42,43 @@ func (r *ActorsRepo) GetActorById(actor models.Actors) (models.Actors, models.St
 	}
 
 	return actor, models.Okey
+}
+
+func (r *ActorsRepo) GetActors(actors []models.Actors) ([]models.Actors, models.StatusCode) {
+	uids := []uuid.UUID{}
+	for _, actor := range actors {
+		uids = append(uids, actor.Id)
+	}
+
+	args := []string{}
+	for _, el := range uids {
+		args = append(args, fmt.Sprintf("'%v'", el))
+	}
+	arg := strings.Join(args, ",")
+
+	rows, err := r.pool.Query(context.Background(), fmt.Sprintf("SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id IN (%s)", arg))
+	if err != nil {
+		return nil, models.InternalError
+	}
+
+	i := 0
+	for rows.Next() {
+		actor := models.Actors{}
+		err = rows.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar,
+			&actor.Height, &actor.DateOfBirth, &actor.Genres)
+		if err != nil {
+			return nil, models.InternalError
+		}
+		actors[i] = actor
+		i++
+	}
+
+	if i == 0 {
+		return nil, models.NotFound
+	}
+
+	if r.logger != nil {
+		r.logger.Info(zap.String("Status:", string(rune(http.StatusOK))))
+	}
+	return actors, models.Okey
 }
