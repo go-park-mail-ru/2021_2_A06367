@@ -15,8 +15,6 @@ import (
 	filmsRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/repo"
 	filmsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/usecase"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
-	"github.com/gorilla/csrf"
-
 	//"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -44,11 +42,11 @@ func main() {
 func run() error {
 	r := mux.NewRouter()
 
-	key, err := config.GetCsrfToken()
-	if err != nil {
-		return err
-	}
-	protect := csrf.Protect(key, csrf.Secure(false))
+	//key, err := config.GetCsrfToken()
+	//if err != nil {
+	//	return err
+	//}
+	//protect := csrf.Protect(key, csrf.Secure(false))
 
 	r.Use(middleware.CORSMiddleware)
 	srv := http.Server{Handler: r, Addr: fmt.Sprintf(":%s", "8000")}
@@ -88,7 +86,7 @@ func run() error {
 	m := middleware.NewMiddleware(zapSugar)
 
 	auth := r.PathPrefix("/users").Subrouter()
-	auth.Use(protect)
+	//auth.Use(protect)
 	{
 		auth.HandleFunc("/secure", authHandler.Token).Methods(http.MethodGet, http.MethodOptions)
 		auth.HandleFunc("/login", authHandler.Login).Methods(http.MethodPost)
@@ -116,13 +114,14 @@ func run() error {
 	actors := r.PathPrefix("/actors").Subrouter()
 	{
 		actors.HandleFunc("/actor/{id}", actorsHandler.ActorsById).Methods(http.MethodGet)
+		actors.HandleFunc("/film", actorsHandler.FetchActors).Methods(http.MethodPost, http.MethodGet)
 	}
 	// swag init -g ./cmd/main/main.go
 	r.PathPrefix("/api-docs").Handler(httpSwagger.WrapHandler)
 
 	r.Use(m.LogRequest)
 
-	http.Handle("/", protect(r))
+	//http.Handle("/", protect(r))
 	log.Print("main running on: ", srv.Addr)
 	return srv.ListenAndServe()
 }
