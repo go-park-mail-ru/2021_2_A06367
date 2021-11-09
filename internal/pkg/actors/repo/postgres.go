@@ -65,7 +65,7 @@ func (r *ActorsRepo) GetActors(actors []models.Actors) ([]models.Actors, models.
 	for rows.Next() {
 		actor := models.Actors{}
 		err = rows.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar,
-			&actor.Height, &actor.DateOfBirth, &actor.Genres)
+			&actor.Height, &actor.DateOfBirth, &actor.Description, &actor.Genres)
 		if err != nil {
 			return nil, models.InternalError
 		}
