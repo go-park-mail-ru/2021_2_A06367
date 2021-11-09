@@ -13,6 +13,9 @@ type AuthUsecase interface {
 	GetProfile(user models.Profile) (models.Profile, models.StatusCode)
 	Follow(who, whom uuid.UUID) models.StatusCode
 	GetByKeyword(keyword string) ([]models.Profile, models.StatusCode)
+	SetBio(profile models.Profile) models.StatusCode
+	SetPass(profile models.User) models.StatusCode
+	SetAvatar(profile models.Profile) models.StatusCode
 }
 
 type AuthRepo interface {
@@ -22,6 +25,9 @@ type AuthRepo interface {
 	AddFollowing(who, whom uuid.UUID) models.StatusCode
 	RemoveFollowing(who, whom uuid.UUID) models.StatusCode
 	GetProfileByKeyword(keyword string) ([]models.Profile, models.StatusCode)
+	UpdateBio(profile models.Profile) models.StatusCode
+	UpdatePass(profile models.User) models.StatusCode
+	UpdateAvatar(profile models.Profile) models.StatusCode
 }
 
 type TokenGenerator interface {

@@ -1,6 +1,8 @@
 package http
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
@@ -10,7 +12,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -145,7 +149,7 @@ func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err.Error() == "no token" || jwtData.Login != user.Login || user.Login == "" {
+	if (err != nil && err.Error() == "no token") || jwtData.Login != user.Login || user.Login == "" {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}
@@ -234,5 +238,91 @@ func (h *AuthHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	status := h.uc.Follow(uid, uid)
+	utils.Response(w, status, nil)
+}
+
+func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
+	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
+	if err != nil && err.Error() != "no token" {
+		utils.Response(w, models.Unauthed, nil)
+		return
+	}
+
+	err = r.ParseMultipartForm(5 * 1024 * 1025)
+	if err != nil {
+		utils.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	file, _, err := r.FormFile("pic")
+	if err != nil {
+
+		utils.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	all, err := ioutil.ReadAll(file)
+	if err != nil {
+		utils.Response(w, models.InternalError, nil)
+		return
+	}
+	hash := md5.New()
+	hash.Write(all)
+	name := hash.Sum(nil)
+
+	err = os.WriteFile(hex.EncodeToString(name[:])+".png", all, 0644)
+	if err != nil {
+		utils.Response(w, models.InternalError, nil)
+		return
+	}
+	user := models.Profile{
+		Id:     jwtData.Id,
+		Login:  jwtData.Login,
+		Avatar: hex.EncodeToString(name[:]) + ".png",
+	}
+
+	status := h.uc.SetAvatar(user)
+	utils.Response(w, status, nil)
+}
+
+func (h *AuthHandler) UpdateProfilePass(w http.ResponseWriter, r *http.Request) {
+
+	var pass models.PassUpdate
+	err := easyjson.UnmarshalFromReader(r.Body, &pass)
+
+	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
+	if err != nil && err.Error() != "no token" {
+		utils.Response(w, models.Unauthed, nil)
+		return
+	}
+
+	user := models.User{
+		EncryptedPassword: pass.Password,
+		Id:                jwtData.Id,
+		Login:             jwtData.Login,
+	}
+
+	status := h.uc.SetPass(user)
+	utils.Response(w, status, nil)
+}
+
+func (h *AuthHandler) UpdateProfileBio(w http.ResponseWriter, r *http.Request) {
+
+	var bio models.BioUpdate
+	err := easyjson.UnmarshalFromReader(r.Body, &bio)
+
+	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
+	if err != nil && err.Error() != "no token" {
+		utils.Response(w, models.Unauthed, nil)
+		return
+	}
+
+	user := models.Profile{
+		About: bio.About,
+		Id:    jwtData.Id,
+		Login: jwtData.Login,
+	}
+
+	status := h.uc.SetBio(user)
 	utils.Response(w, status, nil)
 }

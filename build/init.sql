@@ -27,9 +27,6 @@ CREATE TABLE subscriptions (
     UNIQUE (user_id, subscribed_at)
 );
 
-CREATE TABLE online_users(
-    login text UNIQUE NOT NULL
-);
 
 CREATE UNIQUE INDEX online_idx ON online_users (login);
 
@@ -88,9 +85,11 @@ $$ LANGUAGE 'plpgsql' IMMUTABLE;
 
 -- actors
 INSERT INTO public.actors (id, name, surname, avatar, height, date_of_birth, description, genres)
-VALUES ('3e06d4e4-3b47-11ec-8d3d-0242ac130003', 'James', 'Bond', '/ewf/xxx/xxx', 1.78, '1985-11-01 22:10:57.000000', 'some text', '{Comedy,Thriller}');
+VALUES ('3e06d4e4-3b47-11ec-8d3d-0242ac130003', 'James', 'Bond', '/ewf/xxx/xxx', 1.78,
+        '1985-11-01 22:10:57.000000', 'some text', '{Comedy,Thriller}');
 INSERT INTO public.actors (id, name, surname, avatar, height, date_of_birth, description, genres)
-VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 'Nick', 'Ivanov', '/ewf/xxx/xxx', 1.78, '1985-11-01 22:10:57.000000', 'some text', '{Comedy,Thriller}');
+VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 'Nick', 'Ivanov', '/ewf/xxx/xxx', 1.78,
+        '1985-11-01 22:10:57.000000', 'some text', '{Comedy,Thriller}');
 
 -- films
 INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, src)

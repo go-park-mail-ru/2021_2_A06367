@@ -21,3 +21,7 @@ func NewActorsUsecase(repo actors.ActorsRepository, logger *zap.SugaredLogger) *
 func (u ActorsUsecase) GetById(actor models.Actors) (models.Actors, models.StatusCode) {
 	return u.repo.GetActorById(actor)
 }
+
+func (u ActorsUsecase) GetByActors(actors []models.Actors) ([]models.Actors, models.StatusCode) {
+	return u.repo.GetActors(actors)
+}

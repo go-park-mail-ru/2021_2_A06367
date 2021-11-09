@@ -26,3 +26,24 @@ func TestActorsUsecase_GetActorsOfActor(t *testing.T) {
 		t.Error("Wrong work of usecase")
 	}
 }
+
+func TestActorsUsecase_GetByActors(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	uid := uuid.New()
+
+	testActor := models.Actors{Id: uid}
+
+	actorsArr := []models.Actors{testActor}
+
+	repo := actors.NewMockActorsRepository(ctl)
+	repo.EXPECT().GetActors(actorsArr).Times(1).Return(actorsArr, models.Okey)
+
+	usecase := NewActorsUsecase(repo, nil)
+
+	_, st := usecase.GetByActors(actorsArr)
+	if st != models.Okey {
+		t.Error("Wrong work of usecase")
+	}
+}

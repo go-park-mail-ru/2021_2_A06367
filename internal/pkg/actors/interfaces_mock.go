@@ -34,6 +34,21 @@ func (m *MockActorsUsecase) EXPECT() *MockActorsUsecaseMockRecorder {
 	return m.recorder
 }
 
+// GetByActors mocks base method.
+func (m *MockActorsUsecase) GetByActors(actor []models.Actors) ([]models.Actors, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByActors", actor)
+	ret0, _ := ret[0].([]models.Actors)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetByActors indicates an expected call of GetByActors.
+func (mr *MockActorsUsecaseMockRecorder) GetByActors(actor interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByActors", reflect.TypeOf((*MockActorsUsecase)(nil).GetByActors), actor)
+}
+
 // GetById mocks base method.
 func (m *MockActorsUsecase) GetById(actor models.Actors) (models.Actors, models.StatusCode) {
 	m.ctrl.T.Helper()
@@ -85,4 +100,19 @@ func (m *MockActorsRepository) GetActorById(actor models.Actors) (models.Actors,
 func (mr *MockActorsRepositoryMockRecorder) GetActorById(actor interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActorById", reflect.TypeOf((*MockActorsRepository)(nil).GetActorById), actor)
+}
+
+// GetActors mocks base method.
+func (m *MockActorsRepository) GetActors(actor []models.Actors) ([]models.Actors, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetActors", actor)
+	ret0, _ := ret[0].([]models.Actors)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetActors indicates an expected call of GetActors.
+func (mr *MockActorsRepositoryMockRecorder) GetActors(actor interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActors", reflect.TypeOf((*MockActorsRepository)(nil).GetActors), actor)
 }

@@ -33,3 +33,26 @@ func TestActorsRepo_GetActorById(t *testing.T) {
 		t.Error("wrong actor returned")
 	}
 }
+
+func TestActorsRepo_GetActors(t *testing.T) {
+	uid := uuid.New()
+
+	columns := []string{"id", "name", "surname", "avatar", "height", "date_of_birth", "genres"}
+	pgxRows := pgxpoolmock.NewRows(columns).
+		AddRow(uid, "tester2",
+			"tester2", "img.png", float32(178),
+			time.Now(), []string{"Comedy"}).ToPgxRows()
+
+	ctl := gomock.NewController(t)
+	mockPool := pgxpoolmock.NewMockPgxPool(ctl)
+
+	repo := NewActorsRepo(mockPool, nil)
+	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows, nil)
+
+	actor := models.Actors{Id: uid}
+	_, st := repo.GetActors([]models.Actors{actor})
+
+	if st != models.Okey {
+		t.Error("wrong status returned")
+	}
+}

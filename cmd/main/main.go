@@ -53,7 +53,7 @@ func run() error {
 	r.Use(middleware.CORSMiddleware)
 	srv := http.Server{Handler: r, Addr: fmt.Sprintf(":%s", "8000")}
 
-	logger, _ := zap.NewProduction()
+	logger, err := zap.NewProduction()
 	defer logger.Sync()
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func run() error {
 	auth := r.PathPrefix("/users").Subrouter()
 	auth.Use(protect)
 	{
-		auth.HandleFunc("/secure", authHandler.Token).Methods(http.MethodGet)
+		auth.HandleFunc("/secure", authHandler.Token).Methods(http.MethodGet, http.MethodOptions)
 		auth.HandleFunc("/login", authHandler.Login).Methods(http.MethodPost)
 		auth.HandleFunc("/logout", authHandler.Logout).Methods(http.MethodPost, http.MethodOptions)
 		auth.HandleFunc("/signup", authHandler.SignUp).Methods(http.MethodPost)
@@ -98,6 +98,9 @@ func run() error {
 		auth.HandleFunc("/profile/{id}", authHandler.GetProfile).Methods(http.MethodGet)
 		auth.HandleFunc("/profile/{id}/follow", authHandler.Follow).Methods(http.MethodPost)
 		auth.HandleFunc("/profile/{id}/unfollow", authHandler.Unfollow).Methods(http.MethodDelete)
+		auth.HandleFunc("/profile/settings/pic", authHandler.UpdateProfilePic).Methods(http.MethodPost)
+		auth.HandleFunc("/profile/settings/pass", authHandler.UpdateProfilePass).Methods(http.MethodPost)
+		auth.HandleFunc("/profile/settings/bio", authHandler.UpdateProfileBio).Methods(http.MethodPost)
 	}
 
 	film := r.PathPrefix("/films").Subrouter()

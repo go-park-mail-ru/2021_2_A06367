@@ -96,42 +96,40 @@ func easyjsonB8a1138eEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 		out.RawString(prefix[1:])
 		out.RawText((in.Id).MarshalText())
 	}
-	{
+	if in.Name != "" {
 		const prefix string = ",\"name\":"
 		out.RawString(prefix)
 		out.String(string(in.Name))
 	}
-	{
+	if in.Surname != "" {
 		const prefix string = ",\"surname\":"
 		out.RawString(prefix)
 		out.String(string(in.Surname))
 	}
-	{
+	if in.Avatar != "" {
 		const prefix string = ",\"avatar\":"
 		out.RawString(prefix)
 		out.String(string(in.Avatar))
 	}
-	{
+	if in.Height != 0 {
 		const prefix string = ",\"height\":"
 		out.RawString(prefix)
 		out.Float32(float32(in.Height))
 	}
-	{
+	if true {
 		const prefix string = ",\"date_of_birth\":"
 		out.RawString(prefix)
 		out.Raw((in.DateOfBirth).MarshalJSON())
 	}
-	{
+	if in.Description != "" {
 		const prefix string = ",\"description\":"
 		out.RawString(prefix)
 		out.String(string(in.Description))
 	}
-	{
+	if len(in.Genres) != 0 {
 		const prefix string = ",\"genres\":"
 		out.RawString(prefix)
-		if in.Genres == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
+		{
 			out.RawByte('[')
 			for v2, v3 := range in.Genres {
 				if v2 > 0 {
