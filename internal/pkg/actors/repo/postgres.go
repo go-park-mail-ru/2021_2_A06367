@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	SElECT_ACTOR_BY_ID  = "SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id = $1"
+	SElECT_ACTOR_BY_ID  = "SELECT id, name, surname, avatar, height, date_of_birth, description, genres FROM actors WHERE id = $1"
 	SELECT_ACTORS_BY_ID = "SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id IN ($1)"
 )
 
@@ -56,7 +56,7 @@ func (r *ActorsRepo) GetActors(actors []models.Actors) ([]models.Actors, models.
 	}
 	arg := strings.Join(args, ",")
 
-	rows, err := r.pool.Query(context.Background(), fmt.Sprintf("SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id IN (%s)", arg))
+	rows, err := r.pool.Query(context.Background(), fmt.Sprintf("SELECT id, name, surname, avatar, height, date_of_birth, description, genres FROM actors WHERE id IN (%s)", arg))
 	if err != nil {
 		return nil, models.InternalError
 	}
