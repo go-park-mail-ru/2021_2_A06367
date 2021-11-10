@@ -53,7 +53,15 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}
-	SSCookie := &http.Cookie{Name: "SSID", Value: token, HttpOnly: true}
+	SSCookie := &http.Cookie{
+		Name:   "SSID",
+		Value:  token,
+		Path:   "/",
+		Domain: "localhost:8000",
+		//SameSite: http.SameSiteNoneMode,
+		HttpOnly: true,
+		Expires:  time.Now().Add(time.Hour * 24),
+	}
 	http.SetCookie(w, SSCookie)
 	utils.Response(w, status, nil)
 }
@@ -76,23 +84,25 @@ func (h *AuthHandler) Token(w http.ResponseWriter, r *http.Request) {
 // @Router /user/logout [post]
 // @Router /user/logout [options]
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	user := models.LoginUser{}
-	accesToken, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
-	if err != nil {
-		utils.Response(w, models.BadRequest, nil)
-		return
-	}
-	if accesToken == nil {
-		utils.Response(w, models.Unauthed, nil)
-		return
-	}
-	user.Login = accesToken.Login
+	//user := models.LoginUser{}
+	//accesToken, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
+	//if err != nil {
+	//	utils.Response(w, models.BadRequest, nil)
+	//	return
+	//}
+	//if accesToken == nil {
+	//	utils.Response(w, models.Unauthed, nil)
+	//	return
+	//}
+	//user.Login = accesToken.Login
 
 	SSCookie := &http.Cookie{
 		Name:     "SSID",
 		Value:    "",
+		Path:     "/",
 		HttpOnly: true,
-		Expires:  time.Date(0, 0, 0, 0, 0, 0, 0, time.UTC)}
+		Expires:  time.Unix(0, 0),
+	}
 	http.SetCookie(w, SSCookie)
 	utils.Response(w, models.Okey, nil)
 }
@@ -173,17 +183,24 @@ func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	profile := models.Profile{}
 
-	vars := mux.Vars(r)
-	id, found := vars["id"]
-	if !found {
+	accesToken, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
+	if err != nil {
 		utils.Response(w, models.BadRequest, nil)
 		return
 	}
-	uid, err := uuid.Parse(id)
-	if err != nil {
-		utils.Response(w, models.BadRequest, profile)
+	if accesToken == nil {
+		utils.Response(w, models.Unauthed, nil)
 		return
 	}
+	uid := accesToken.Id
+
+	//vars := mux.Vars(r)
+	//id, found := vars["id"]
+	//if !found {
+	//	utils.Response(w, models.BadRequest, nil)
+	//	return
+	//}
+
 	profile.Id = uid
 
 	user, status := h.uc.GetProfile(profile)

@@ -13,10 +13,10 @@ CREATE TABLE users(
     id UUID PRIMARY KEY,
     login text UNIQUE NOT NULL,
     encrypted_password text NOT NULL,
-    about text,
-    avatar text,
-    subscriptions int,
-    subscribers int,
+    about text DEFAULT 'no data',
+    avatar text DEFAULT 'no data',
+    subscriptions int DEFAULT 0,
+    subscribers int int DEFAULT 0,
     created_at TIMESTAMP NOT NULL
 );
 

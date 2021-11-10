@@ -10,11 +10,11 @@ import (
 )
 
 const (
-	UPDATE_USER_PIC = "UPDATE public.users SET avatar=$1 WHERE id=$2;"
-	UPDATE_USER_BIO = "UPDATE public.users SET about=$1 WHERE id=$2;"
+	UPDATE_USER_PIC  = "UPDATE public.users SET avatar=$1 WHERE id=$2;"
+	UPDATE_USER_BIO  = "UPDATE public.users SET about=$1 WHERE id=$2;"
 	UPDATE_USER_PASS = "UPDATE public.users SET encrypted_password=md5($1) WHERE id=$2;"
 	SElECT_USER      = "SELECT login, about, avatar, subscriptions, subscribers FROM public.users WHERE id=$1;"
-	CHECK_USER       = "SELECT encrypted_password FROM public.users WHERE login=$1;"
+	CHECK_USER       = "SELECT id, encrypted_password FROM public.users WHERE login=$1;"
 	CREATE_USER      = "INSERT INTO public.users(id, login, encrypted_password, created_at) VALUES($1, $2, $3, $4) RETURNING id;"
 	FOLLOW           = "INSERT INTO public.subscriptions (user_id, subscribed_at) VALUES($1, $2) RETURNING id;"
 	UNFOLLOW         = "DELETE FROM public.subscriptions WHERE user_id=$1 AND subscribed_at=$2;"
@@ -64,7 +64,7 @@ func (r *AuthRepo) CheckUser(user models.User) (models.User, models.StatusCode) 
 	)
 	row := r.pool.QueryRow(context.Background(), CHECK_USER, user.Login)
 
-	if err := row.Scan(&pwd); err != nil {
+	if err := row.Scan(&id, &pwd); err != nil {
 		return models.User{}, models.InternalError
 	}
 	if pwd != user.EncryptedPassword {
@@ -145,7 +145,7 @@ func (r *AuthRepo) UpdateBio(profile models.Profile) models.StatusCode {
 	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_BIO, profile.Id, profile.About)
 
 	if err != nil {
-		return  models.InternalError
+		return models.InternalError
 	}
 	if tag.RowsAffected() != 0 {
 		return models.NotFound
@@ -159,7 +159,7 @@ func (r *AuthRepo) UpdateAvatar(profile models.Profile) models.StatusCode {
 	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_BIO, profile.Id, profile.Avatar)
 
 	if err != nil {
-		return  models.InternalError
+		return models.InternalError
 	}
 	if tag.RowsAffected() != 0 {
 		return models.NotFound
@@ -173,7 +173,7 @@ func (r *AuthRepo) UpdatePass(profile models.User) models.StatusCode {
 	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_PASS, profile.Id, profile.EncryptedPassword)
 
 	if err != nil {
-		return  models.InternalError
+		return models.InternalError
 	}
 	if tag.RowsAffected() != 0 {
 		return models.NotFound
@@ -181,4 +181,3 @@ func (r *AuthRepo) UpdatePass(profile models.User) models.StatusCode {
 
 	return models.Okey
 }
-
