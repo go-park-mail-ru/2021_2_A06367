@@ -122,13 +122,17 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	SSCookie := &http.Cookie{
-		Name:     "SSID",
-		Value:    token,
+		Name:   "SSID",
+		Value:  token,
+		Path:   "/",
+		Domain: "localhost:8000",
+		//SameSite: http.SameSiteNoneMode,
 		HttpOnly: true,
-		Expires:  time.Now().Add(time.Hour * 24)}
+		Expires:  time.Now().Add(time.Hour * 24),
+	}
 
 	http.SetCookie(w, SSCookie)
-	utils.Response(w, status, nil)
+	w.WriteHeader(http.StatusOK)
 }
 
 // AuthStatus godoc
@@ -149,7 +153,7 @@ func (h *AuthHandler) AuthStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if (err != nil && err.Error() == "no token") || jwtData.Login != user.Login || user.Login == "" {
+	if (err != nil && err.Error() == "no token") || jwtData.Login == "" {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}
