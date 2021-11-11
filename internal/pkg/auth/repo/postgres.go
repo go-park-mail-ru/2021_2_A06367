@@ -142,12 +142,12 @@ func (r *AuthRepo) GetProfileByKeyword(keyword string) ([]models.Profile, models
 
 func (r *AuthRepo) UpdateBio(profile models.Profile) models.StatusCode {
 
-	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_BIO, profile.Id, profile.About)
+	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_BIO, profile.About, profile.Id)
 
 	if err != nil {
 		return models.InternalError
 	}
-	if tag.RowsAffected() != 0 {
+	if tag.RowsAffected() == 0 {
 		return models.NotFound
 	}
 
@@ -156,12 +156,12 @@ func (r *AuthRepo) UpdateBio(profile models.Profile) models.StatusCode {
 
 func (r *AuthRepo) UpdateAvatar(profile models.Profile) models.StatusCode {
 
-	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_BIO, profile.Id, profile.Avatar)
+	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_BIO, profile.Avatar, profile.Id)
 
 	if err != nil {
 		return models.InternalError
 	}
-	if tag.RowsAffected() != 0 {
+	if tag.RowsAffected() == 0 {
 		return models.NotFound
 	}
 
@@ -170,12 +170,12 @@ func (r *AuthRepo) UpdateAvatar(profile models.Profile) models.StatusCode {
 
 func (r *AuthRepo) UpdatePass(profile models.User) models.StatusCode {
 
-	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_PASS, profile.Id, profile.EncryptedPassword)
+	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_PASS, profile.EncryptedPassword, profile.Id)
 
 	if err != nil {
 		return models.InternalError
 	}
-	if tag.RowsAffected() != 0 {
+	if tag.RowsAffected() == 0 {
 		return models.NotFound
 	}
 

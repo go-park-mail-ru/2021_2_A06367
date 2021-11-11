@@ -42,7 +42,7 @@ func (u *AuthUsecase) SignIn(user models.LoginUser) (string, models.StatusCode) 
 func (u *AuthUsecase) SignUp(user models.User) (string, models.StatusCode) {
 	user.EncryptedPassword = u.encrypter.EncryptPswd(user.EncryptedPassword)
 	_, st := u.repo.CheckUser(user)
-	if st == models.Okey {
+	if st == models.Okey || st == models.Unauthed {
 		return "", models.Conflict
 	}
 
@@ -83,7 +83,6 @@ func (u *AuthUsecase) GetSubscribers() ([]models.Profile, models.StatusCode) {
 func (u *AuthUsecase) GetByKeyword(keyword string) ([]models.Profile, models.StatusCode) {
 	return u.repo.GetProfileByKeyword(keyword)
 }
-
 
 func (u *AuthUsecase) SetBio(profile models.Profile) models.StatusCode {
 	return u.repo.UpdateBio(profile)
