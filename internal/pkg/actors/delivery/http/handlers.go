@@ -54,7 +54,7 @@ func (h ActorHandler) ActorsById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h ActorHandler) FetchActors(w http.ResponseWriter, r *http.Request) {
-	actorsArr := []models.Actors{}
+	var actorsArr []models.Actors
 
 	err := json.NewDecoder(r.Body).Decode(&actorsArr)
 	if err != nil {

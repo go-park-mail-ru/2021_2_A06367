@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	SElECT_ACTOR_BY_ID  = "SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id = $1"
+	SElECT_ACTOR_BY_ID  = "SELECT id, name, surname, avatar, height, date_of_birth, description, genres FROM actors WHERE id = $1"
 	SELECT_ACTORS_BY_ID = "SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id IN ($1)"
 )
 
@@ -30,7 +30,7 @@ func NewActorsRepo(pool pgxtype.Querier, logger *zap.SugaredLogger) *ActorsRepo 
 
 func (r *ActorsRepo) GetActorById(actor models.Actors) (models.Actors, models.StatusCode) {
 	row := r.pool.QueryRow(context.Background(), SElECT_ACTOR_BY_ID, actor.Id)
-	err := row.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar, &actor.Height, &actor.DateOfBirth, &actor.Genres)
+	err := row.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar, &actor.Height, &actor.DateOfBirth, &actor.Description, &actor.Genres)
 	if err != nil {
 		if err.Error() == "no rows in result set" {
 			return models.Actors{}, models.NotFound
@@ -56,7 +56,7 @@ func (r *ActorsRepo) GetActors(actors []models.Actors) ([]models.Actors, models.
 	}
 	arg := strings.Join(args, ",")
 
-	rows, err := r.pool.Query(context.Background(), fmt.Sprintf("SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id IN (%s)", arg))
+	rows, err := r.pool.Query(context.Background(), fmt.Sprintf("SELECT id, name, surname, avatar, height, date_of_birth, description, genres FROM actors WHERE id IN (%s)", arg))
 	if err != nil {
 		return nil, models.InternalError
 	}
@@ -65,7 +65,7 @@ func (r *ActorsRepo) GetActors(actors []models.Actors) ([]models.Actors, models.
 	for rows.Next() {
 		actor := models.Actors{}
 		err = rows.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar,
-			&actor.Height, &actor.DateOfBirth, &actor.Genres)
+			&actor.Height, &actor.DateOfBirth, &actor.Description, &actor.Genres)
 		if err != nil {
 			return nil, models.InternalError
 		}
