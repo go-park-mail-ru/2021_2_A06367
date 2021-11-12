@@ -12,7 +12,7 @@ import (
 const (
 	UPDATE_USER_PIC  = "UPDATE public.users SET avatar=$1 WHERE id=$2;"
 	UPDATE_USER_BIO  = "UPDATE public.users SET about=$1 WHERE id=$2;"
-	UPDATE_USER_PASS = "UPDATE public.users SET encrypted_password=md5($1) WHERE id=$2;"
+	UPDATE_USER_PASS = "UPDATE public.users SET encrypted_password=$1 WHERE id=$2;"
 	SElECT_USER      = "SELECT login, about, avatar, subscriptions, subscribers FROM public.users WHERE id=$1;"
 	CHECK_USER       = "SELECT id, encrypted_password FROM public.users WHERE login=$1;"
 	CREATE_USER      = "INSERT INTO public.users(id, login, encrypted_password, created_at) VALUES($1, $2, $3, $4) RETURNING id;"

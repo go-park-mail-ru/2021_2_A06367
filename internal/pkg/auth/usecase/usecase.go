@@ -89,6 +89,7 @@ func (u *AuthUsecase) SetBio(profile models.Profile) models.StatusCode {
 }
 
 func (u *AuthUsecase) SetPass(profile models.User) models.StatusCode {
+	profile.EncryptedPassword = u.encrypter.EncryptPswd(profile.EncryptedPassword)
 	return u.repo.UpdatePass(profile)
 }
 
