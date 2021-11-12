@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors"
 	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
@@ -50,4 +51,17 @@ func (h ActorHandler) ActorsById(w http.ResponseWriter, r *http.Request) {
 	actor := models.Actors{Id: idActor}
 	actor, status := h.uc.GetById(actor)
 	util.Response(w, status, actor)
+}
+
+func (h ActorHandler) FetchActors(w http.ResponseWriter, r *http.Request) {
+	var actorsArr []models.Actors
+
+	err := json.NewDecoder(r.Body).Decode(&actorsArr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	out, status := h.uc.GetByActors(actorsArr)
+	util.Response(w, status, out)
 }

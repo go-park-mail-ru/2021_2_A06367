@@ -71,3 +71,7 @@ func TestActorByIdNotFound(t *testing.T) {
 	require.Equal(t, w.Code, http.StatusNotFound)
 	log.Print(w.Body.String())
 }
+
+func TestActorHandler_FetchActors(t *testing.T) {
+
+}

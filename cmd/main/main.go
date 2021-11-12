@@ -16,16 +16,13 @@ import (
 	filmsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/usecase"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
 	"github.com/gorilla/csrf"
-
-	//"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"os"
-
-	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 // @title LimeTV API
@@ -116,6 +113,7 @@ func run() error {
 	actors := r.PathPrefix("/actors").Subrouter()
 	{
 		actors.HandleFunc("/actor/{id}", actorsHandler.ActorsById).Methods(http.MethodGet)
+		actors.HandleFunc("/film", actorsHandler.FetchActors).Methods(http.MethodPost, http.MethodGet)
 	}
 	// swag init -g ./cmd/main/main.go
 	r.PathPrefix("/api-docs").Handler(httpSwagger.WrapHandler)
