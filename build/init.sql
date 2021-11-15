@@ -16,7 +16,7 @@ CREATE TABLE users(
     about text DEFAULT 'no data',
     avatar text DEFAULT 'no data',
     subscriptions int DEFAULT 0,
-    subscribers int int DEFAULT 0,
+    subscribers int DEFAULT 0,
     created_at TIMESTAMP NOT NULL
 );
 
