@@ -18,5 +18,6 @@ type Film struct {
 	Release  time.Time   `json:"release"`
 	Duration int         `json:"duration"`
 	Language string      `json:"language"`
+	Pic      []string    `json:"pic"`
 	Src      []string    `json:"src"`
 }

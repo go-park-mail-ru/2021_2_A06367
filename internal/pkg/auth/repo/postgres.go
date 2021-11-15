@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgtype/pgxtype"
 	"go.uber.org/zap"
+	"log"
 	"time"
 )
 
@@ -85,13 +86,13 @@ func (r *AuthRepo) GetProfile(user models.Profile) (models.Profile, models.Statu
 
 	err := row.Scan(&user.Login, &user.About, &user.Avatar, &user.Subscriptions, &user.Subscribers)
 	if err != nil {
+		log.Println(err)
 		return models.Profile{}, models.InternalError
 	}
 	return user, models.Okey
 }
 
 func (r *AuthRepo) AddFollowing(who, whom uuid.UUID) models.StatusCode {
-
 	var id int
 	row := r.pool.QueryRow(context.Background(), FOLLOW,
 		who, whom)

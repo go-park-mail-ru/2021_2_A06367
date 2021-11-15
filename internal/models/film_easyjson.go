@@ -147,6 +147,29 @@ func easyjson14b8084aDecodeGithubComGoParkMailRu20212A06367InternalModels(in *jl
 			out.Duration = int(in.Int())
 		case "language":
 			out.Language = string(in.String())
+		case "pic":
+			if in.IsNull() {
+				in.Skip()
+				out.Pic = nil
+			} else {
+				in.Delim('[')
+				if out.Pic == nil {
+					if !in.IsDelim(']') {
+						out.Pic = make([]string, 0, 4)
+					} else {
+						out.Pic = []string{}
+					}
+				} else {
+					out.Pic = (out.Pic)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v5 string
+					v5 = string(in.String())
+					out.Pic = append(out.Pic, v5)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		case "src":
 			if in.IsNull() {
 				in.Skip()
@@ -163,9 +186,9 @@ func easyjson14b8084aDecodeGithubComGoParkMailRu20212A06367InternalModels(in *jl
 					out.Src = (out.Src)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v5 string
-					v5 = string(in.String())
-					out.Src = append(out.Src, v5)
+					var v6 string
+					v6 = string(in.String())
+					out.Src = append(out.Src, v6)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -201,11 +224,11 @@ func easyjson14b8084aEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v6, v7 := range in.Genres {
-				if v6 > 0 {
+			for v7, v8 := range in.Genres {
+				if v7 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v7))
+				out.String(string(v8))
 			}
 			out.RawByte(']')
 		}
@@ -222,11 +245,11 @@ func easyjson14b8084aEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v8, v9 := range in.Director {
-				if v8 > 0 {
+			for v9, v10 := range in.Director {
+				if v9 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v9))
+				out.String(string(v10))
 			}
 			out.RawByte(']')
 		}
@@ -238,11 +261,11 @@ func easyjson14b8084aEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v10, v11 := range in.Authors {
-				if v10 > 0 {
+			for v11, v12 := range in.Authors {
+				if v11 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v11))
+				out.String(string(v12))
 			}
 			out.RawByte(']')
 		}
@@ -254,11 +277,11 @@ func easyjson14b8084aEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v12, v13 := range in.Actors {
-				if v12 > 0 {
+			for v13, v14 := range in.Actors {
+				if v13 > 0 {
 					out.RawByte(',')
 				}
-				out.RawText((v13).MarshalText())
+				out.RawText((v14).MarshalText())
 			}
 			out.RawByte(']')
 		}
@@ -279,17 +302,33 @@ func easyjson14b8084aEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 		out.String(string(in.Language))
 	}
 	{
+		const prefix string = ",\"pic\":"
+		out.RawString(prefix)
+		if in.Pic == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v15, v16 := range in.Pic {
+				if v15 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v16))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
 		const prefix string = ",\"src\":"
 		out.RawString(prefix)
 		if in.Src == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v14, v15 := range in.Src {
-				if v14 > 0 {
+			for v17, v18 := range in.Src {
+				if v17 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v15))
+				out.String(string(v18))
 			}
 			out.RawByte(']')
 		}

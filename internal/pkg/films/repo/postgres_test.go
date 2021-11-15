@@ -16,11 +16,11 @@ func prepare(t *testing.T) (*FilmsRepo, uuid.UUID) { // mock on repo and uid use
 	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
 	uid, _ := uuid.Parse(uidStr)
 	filmRepo := NewFilmsRepo(mockPool, nil)
-	columns := []string{"id", "genres", "title", "year", "director", "authors", "actors", "release", "duration", "language", "src"}
+	columns := []string{"id", "genres", "title", "year", "director", "authors", "actors", "release", "duration", "language", "pic", "src"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "Policeman from Rublevka",
 			2017, []string{"Alex"}, []string{"Alex"},
-			[]uuid.UUID{uid}, time.Now(), 120, "russian", []string{"img.png"}).ToPgxRows()
+			[]uuid.UUID{uid}, time.Now(), 120, "russian", []string{"img.png"}, []string{"img.png"}).ToPgxRows()
 	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows, nil)
 	return filmRepo, uid
 }
@@ -32,11 +32,11 @@ func TestFilmsRepo_GetFilmById(t *testing.T) {
 	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
 	uid, _ := uuid.Parse(uidStr)
 	filmRepo := NewFilmsRepo(mockPool, nil)
-	columns := []string{"id", "genres", "title", "year", "director", "authors", "actors", "release", "duration", "language", "src"}
+	columns := []string{"id", "genres", "title", "year", "director", "authors", "actors", "release", "duration", "language", "pic", "src"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "Policeman from Rublevka",
 			2017, []string{"Alex"}, []string{"Alex"},
-			[]uuid.UUID{uid}, time.Now(), 120, "russian", []string{"img.png"}).ToPgxRows()
+			[]uuid.UUID{uid}, time.Now(), 120, "russian", []string{"img.png"}, []string{"img.png"}).ToPgxRows()
 	pgxRows.Next()
 	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows)
 	filmRequest := models.Film{

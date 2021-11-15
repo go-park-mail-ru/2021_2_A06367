@@ -9,33 +9,33 @@ import (
 
 const (
 	SElECT_FILM_BY_TOPIC = "SELECT id, genres, title, year, director, " +
-		"authors, actors, release, duration, language, src " +
+		"authors, actors, release, duration, language, pic, src " +
 		"FROM films " +
 		"WHERE $1 = ANY(genres)"
 
-	SELECT_FILM_BY_RATING = "SELECT id, genres, title, year, director, authors, actors, release, duration, language, src " +
+	SELECT_FILM_BY_RATING = "SELECT id, genres, title, year, director, authors, actors, release, duration, language, pic, src " +
 		" FROM films JOIN rating ON films.id = rating.film_id ORDER BY rating DESC LIMIT 10"
 
-	SELECT_FILM_BY_DATE = "SELECT id, genres, title, year, director, authors, actors, release, duration, language, src " +
+	SELECT_FILM_BY_DATE = "SELECT id, genres, title, year, director, authors, actors, release, duration, language, pic, src " +
 		"FROM films  ORDER BY release DESC LIMIT 10"
 
 	SELECT_FILM_BY_KEYWORD = "SELECT id, genres, title, year, director, " +
-		"authors, actors, release, duration, language, src " +
+		"authors, actors, release, duration, language, pic, src " +
 		"FROM films " +
 		"WHERE make_tsvector(title) @@ to_tsquery($1) LIMIT 10"
 
 	SELECT_FILM_BY_ID = "SELECT id, genres, title, year, director, " +
-		"authors, actors, release, duration, language, src " +
+		"authors, actors, release, duration, language, pic, src " +
 		"FROM films " +
 		"WHERE id=$1"
 
 	SELECT_FILM_BY_USER = "SELECT f.id, f.genres, f.title, f.year, f.director, " +
-		"f.authors, f.actors , f.release, f.duration, f.language, f.src " +
+		"f.authors, f.actors , f.release, f.duration, f.language, f.pic, f.src " +
 		"FROM films f INNER JOIN watchlist w ON f.id=w.film_id " +
 		"WHERE w.id=$1"
 
 	SELECT_FILM_BY_ACTOR = "SELECT id, genres, title, year, director, " +
-		"authors, actors, release, duration, language, src " +
+		"authors, actors, release, duration, language, pic, src " +
 		"FROM films " +
 		"WHERE $1=ANY(actors)"
 )
@@ -66,7 +66,7 @@ func (r *FilmsRepo) GetFilmsByTopic(topic string) ([]models.Film, models.StatusC
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Src)
+			&film.Language, &film.Pic, &film.Src)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -90,7 +90,7 @@ func (r *FilmsRepo) GetHottestFilms() ([]models.Film, models.StatusCode) {
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Src)
+			&film.Language, &film.Pic, &film.Src)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -114,7 +114,7 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Src)
+			&film.Language, &film.Pic, &film.Src)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -137,7 +137,7 @@ func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.Sta
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Src)
+			&film.Language, &film.Pic, &film.Src)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -160,7 +160,7 @@ func (r *FilmsRepo) GetFilmsByActor(actor models.Actors) ([]models.Film, models.
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Src)
+			&film.Language, &film.Pic, &film.Src)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -174,7 +174,7 @@ func (r *FilmsRepo) GetFilmById(film models.Film) (models.Film, models.StatusCod
 
 	err := row.Scan(&film.Id, &film.Genres, &film.Title,
 		&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-		&film.Language, &film.Src)
+		&film.Language, &film.Pic, &film.Src)
 
 	if err != nil {
 		return models.Film{}, models.InternalError
@@ -194,7 +194,7 @@ func (r *FilmsRepo) GetFilmsByUser(user models.User) ([]models.Film, models.Stat
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Src)
+			&film.Language, &film.Pic, &film.Src)
 		if err != nil {
 			return nil, models.InternalError
 		}
