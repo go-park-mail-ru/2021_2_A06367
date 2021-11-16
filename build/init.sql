@@ -42,6 +42,8 @@ CREATE TABLE films
     release date NOT NULL,
     duration integer NOT NULL,
     language text NOT NULL,
+    budget text NOT NULL,
+    age integer NOT NULL,
     pic text[] NOT NULL,
     src text[] NOT NULL,
     PRIMARY KEY (id),
@@ -106,14 +108,14 @@ VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 'Nick', 'Ivanov', '/ewf/xxx/xxx'
         '1985-11-01 22:10:57.000000', 'some text', '{Comedy,Thriller}');
 
 -- films
-INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, pic, src)
+INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('c7020e69-6a77-4153-97bc-54dc905321a4', '{Comedy}', '007', 2019, '{B. Spiars,
         K. Nolan}', '{Natalio Portman, Sergay Borunov}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1970-01-01', 18, 'ru', '{img.png}', '{video.mp4}');
-INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, pic, src)
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1970-01-01', 120, 'ru', '₽ 460 000 000', 16, '{img.png}', '{video.mp4}');
+INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('f8405178-3b47-11ec-8d3d-0242ac130003', '{Thriller}', 'Friday 13', 2015, '{S. Borunov,
         K. Torantino}', '{Megan Fox, Jarald Lito}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 18, 'ru', '{img.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 118, 'ru', '$ 250 000 000', 18,'{img.png}', '{video.mp4}');
 
 -- rating
 INSERT INTO public.rating (film_id, rating) VALUES ('c7020e69-6a77-4153-97bc-54dc905321a4', 4.7);
