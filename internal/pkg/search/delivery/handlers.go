@@ -26,6 +26,9 @@ func (sh *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
 	keyword := r.URL.Query().Get("search")
 	result := models.SearchResult{}
 
+	actors, _ := sh.au.GetByKeyword(keyword)
+	result.Actors = actors
+
 	films, _ := sh.fu.GetByKeyword(keyword)
 	result.Films = films
 

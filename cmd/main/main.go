@@ -15,6 +15,7 @@ import (
 	filmsRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/repo"
 	filmsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/usecase"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/search/delivery"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -81,6 +82,9 @@ func run() error {
 	actorsUse := actorsUsecase.NewActorsUsecase(actorsRepo, zapSugar)
 	actorsHandler := actorsDelivery.NewActorsHandler(actorsUse, zapSugar)
 
+	search := delivery.NewSearchHandler(filmsUse, authUse, actorsUse)
+
+
 	m := middleware.NewMiddleware(zapSugar)
 
 	auth := r.PathPrefix("/users").Subrouter()
@@ -114,6 +118,13 @@ func run() error {
 		actors.HandleFunc("/actor/{id}", actorsHandler.ActorsById).Methods(http.MethodGet)
 		actors.HandleFunc("/film", actorsHandler.FetchActors).Methods(http.MethodPost, http.MethodGet)
 	}
+
+	seraching := r.PathPrefix("/search").Subrouter()
+	{
+		seraching.HandleFunc("/{keyword}", search.Search).Methods(http.MethodGet)
+	}
+
+
 	// swag init -g ./cmd/main/main.go
 	r.PathPrefix("/api-docs").Handler(httpSwagger.WrapHandler)
 

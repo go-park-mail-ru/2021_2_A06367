@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	SElECT_ACTOR_BY_ID  = "SELECT id, name, surname, avatar, height, date_of_birth, description, genres FROM actors WHERE id = $1"
-	SELECT_ACTORS_BY_ID = "SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id IN ($1)"
+	SElECT_ACTOR_BY_ID       = "SELECT id, name, surname, avatar, height, date_of_birth, description, genres FROM actors WHERE id = $1"
+	SELECT_ACTORS_BY_ID      = "SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id IN ($1)"
+	SELECT_ACTORS_BY_KEYWORD = "SELECT * FROM actors WHERE make_tsvector(name) @@ to_tsquery($1) LIMIT 10"
 )
 
 type ActorsRepo struct {
@@ -57,6 +58,7 @@ func (r *ActorsRepo) GetActors(actors []models.Actors) ([]models.Actors, models.
 	arg := strings.Join(args, ",")
 
 	rows, err := r.pool.Query(context.Background(), fmt.Sprintf("SELECT id, name, surname, avatar, height, date_of_birth, description, genres FROM actors WHERE id IN (%s)", arg))
+
 	if err != nil {
 		return nil, models.InternalError
 	}
@@ -79,6 +81,22 @@ func (r *ActorsRepo) GetActors(actors []models.Actors) ([]models.Actors, models.
 
 	if r.logger != nil {
 		r.logger.Info(zap.String("Status:", string(rune(http.StatusOK))))
+	}
+
+	return actors, models.Okey
+}
+
+func (r *ActorsRepo) GetActorsByKeyword(keyword string) ([]models.Actors, models.StatusCode) {
+	rows, err := r.pool.Query(context.Background(), SELECT_ACTORS_BY_KEYWORD, keyword)
+	actors := make([]models.Actors, 0, 10)
+
+	for rows.Next() {
+		var actor models.Actors
+		err = rows.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar, &actor.Height, &actor.DateOfBirth, &actor.Genres)
+		if err != nil {
+			return nil, models.InternalError
+		}
+		actors = append(actors, actor)
 	}
 	return actors, models.Okey
 }

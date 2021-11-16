@@ -113,13 +113,13 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idFilm, err := uuid.Parse(idStr)
+	id, err := uuid.Parse(idStr)
 	if err != nil {
 		util.Response(w, models.BadRequest, nil)
 		return
 	}
 
-	filmReq := models.Film{Id: idFilm}
+	filmReq := models.Film{Id: id}
 	film, status := h.uc.GetFilm(filmReq)
 	util.Response(w, status, film)
 }

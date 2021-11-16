@@ -64,6 +64,21 @@ func (mr *MockActorsUsecaseMockRecorder) GetById(actor interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockActorsUsecase)(nil).GetById), actor)
 }
 
+// GetByKeyword mocks base method.
+func (m *MockActorsUsecase) GetByKeyword(keyword string) ([]models.Actors, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByKeyword", keyword)
+	ret0, _ := ret[0].([]models.Actors)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetByKeyword indicates an expected call of GetByKeyword.
+func (mr *MockActorsUsecaseMockRecorder) GetByKeyword(keyword interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByKeyword", reflect.TypeOf((*MockActorsUsecase)(nil).GetByKeyword), keyword)
+}
+
 // MockActorsRepository is a mock of ActorsRepository interface.
 type MockActorsRepository struct {
 	ctrl     *gomock.Controller
@@ -115,4 +130,19 @@ func (m *MockActorsRepository) GetActors(actor []models.Actors) ([]models.Actors
 func (mr *MockActorsRepositoryMockRecorder) GetActors(actor interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActors", reflect.TypeOf((*MockActorsRepository)(nil).GetActors), actor)
+}
+
+// GetActorsByKeyword mocks base method.
+func (m *MockActorsRepository) GetActorsByKeyword(keyword string) ([]models.Actors, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetActorsByKeyword", keyword)
+	ret0, _ := ret[0].([]models.Actors)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetActorsByKeyword indicates an expected call of GetActorsByKeyword.
+func (mr *MockActorsRepositoryMockRecorder) GetActorsByKeyword(keyword interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActorsByKeyword", reflect.TypeOf((*MockActorsRepository)(nil).GetActorsByKeyword), keyword)
 }
