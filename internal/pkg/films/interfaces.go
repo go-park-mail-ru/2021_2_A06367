@@ -14,6 +14,14 @@ type FilmsUsecase interface {
 	GetFilmsOfActor(actor models.Actors) ([]models.Film, models.StatusCode)
 	GetCompilationForUser(user models.User) ([]models.Film, models.StatusCode)
 	GetStartSelections(authorized bool, user models.User) ([]models.Film, models.StatusCode)
+
+	GetStarred(user models.User) ([]models.Film, models.StatusCode)
+	AddStarred(film models.Film, user models.User) models.StatusCode
+	RemoveStarred(film models.Film, user models.User) models.StatusCode
+
+	GetWatchlist(user models.User) ([]models.Film, models.StatusCode)
+	AddWatchlist(film models.Film, user models.User) models.StatusCode
+	RemoveWatchlist(film models.Film, user models.User) models.StatusCode
 }
 
 type FilmsRepository interface {
@@ -24,4 +32,12 @@ type FilmsRepository interface {
 	GetFilmById(film models.Film) (models.Film, models.StatusCode)
 	GetFilmsByActor(actor models.Actors) ([]models.Film, models.StatusCode)
 	GetFilmsByUser(user models.User) ([]models.Film, models.StatusCode)
+
+	GetStarredFilms(user models.User) ([]models.Film, models.StatusCode)
+	InsertStarred(film models.Film, user models.User) models.StatusCode
+	DeleteStarred(film models.Film, user models.User) models.StatusCode
+
+	GetWatchlistFilms(user models.User) ([]models.Film, models.StatusCode)
+	InsertWatchlist(film models.Film, user models.User) models.StatusCode
+	DeleteWatchlist(film models.Film, user models.User) models.StatusCode
 }

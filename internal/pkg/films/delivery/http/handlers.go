@@ -155,3 +155,139 @@ func (h FilmsHandler) FilmStartSelection(w http.ResponseWriter, r *http.Request)
 	film, status := h.uc.GetStartSelections(true, user)
 	util.Response(w, status, film)
 }
+
+func (h FilmsHandler) AddStarred(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	status := h.uc.AddStarred(film, user)
+	util.Response(w, status, film)
+}
+
+func (h FilmsHandler) RemoveStarred(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	status := h.uc.RemoveStarred(film, user)
+	util.Response(w, status, film)
+}
+
+func (h FilmsHandler) AddWatchlist(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	status := h.uc.AddWatchlist(film, user)
+	util.Response(w, status, film)
+}
+
+func (h FilmsHandler) RemoveWatchlist(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	status := h.uc.RemoveWatchlist(film, user)
+	util.Response(w, status, film)
+}
+
+func (h FilmsHandler) GetStarred(w http.ResponseWriter, r *http.Request) {
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	films, status := h.uc.GetStarred(user)
+	util.Response(w, status, films)
+}
+func (h FilmsHandler) GetWatchlist(w http.ResponseWriter, r *http.Request) {
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+	films, status := h.uc.GetWatchlist(user)
+	util.Response(w, status, films)
+}

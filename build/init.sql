@@ -49,6 +49,15 @@ CREATE TABLE films
 	Check(duration > 0)
 );
 
+CREATE TABLE starred_films
+(
+    film_id UUID NOT NULL,
+    user_id UUID NOT NULL
+);
+
+ALTER TABLE starred_films
+    ADD CONSTRAINT uniq_list UNIQUE(film_id, user_id);
+
 CREATE INDEX films_actors_idx ON films USING gin(actors);
 
 CREATE TABLE watchlist
@@ -56,6 +65,10 @@ CREATE TABLE watchlist
     id UUID REFERENCES users(id) NOT NULL,
     film_id UUID REFERENCES films(id) NOT NULL
 );
+
+ALTER TABLE watchlist
+    ADD CONSTRAINT watchlist_uniq_list UNIQUE(id,film_id);
+
 
 CREATE TABLE rating
 (

@@ -84,7 +84,6 @@ func run() error {
 
 	search := delivery.NewSearchHandler(filmsUse, authUse, actorsUse)
 
-
 	m := middleware.NewMiddleware(zapSugar)
 
 	auth := r.PathPrefix("/users").Subrouter()
@@ -111,6 +110,14 @@ func run() error {
 		film.HandleFunc("/selection/actor/{actor_id}", filmsHandler.FilmByActor).Methods(http.MethodGet)
 		film.HandleFunc("/selection/user/personal", filmsHandler.FilmsByUser).Methods(http.MethodGet)
 		film.HandleFunc("/selection", filmsHandler.FilmStartSelection).Methods(http.MethodGet)
+
+		film.HandleFunc("/starred", filmsHandler.GetStarred).Methods(http.MethodGet)
+		film.HandleFunc("/starred/{id}", filmsHandler.AddStarred).Methods(http.MethodPost)
+		film.HandleFunc("/starred/{id}", filmsHandler.RemoveStarred).Methods(http.MethodDelete)
+
+		film.HandleFunc("/wl", filmsHandler.GetWatchlist).Methods(http.MethodGet)
+		film.HandleFunc("/wl/{id}", filmsHandler.AddWatchlist).Methods(http.MethodPost)
+		film.HandleFunc("/wl/{id}", filmsHandler.RemoveWatchlist).Methods(http.MethodDelete)
 	}
 
 	actors := r.PathPrefix("/actors").Subrouter()
@@ -123,7 +130,6 @@ func run() error {
 	{
 		seraching.HandleFunc("/{keyword}", search.Search).Methods(http.MethodGet)
 	}
-
 
 	// swag init -g ./cmd/main/main.go
 	r.PathPrefix("/api-docs").Handler(httpSwagger.WrapHandler)

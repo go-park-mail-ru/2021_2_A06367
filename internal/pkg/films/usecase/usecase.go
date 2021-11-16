@@ -54,3 +54,27 @@ func (u *FilmsUsecase) GetStartSelections(authorized bool, user models.User) ([]
 	}
 	return u.GetSelection("hottest")
 }
+
+func (u *FilmsUsecase) AddStarred(film models.Film, user models.User) models.StatusCode {
+	return u.repo.InsertStarred(film, user)
+}
+
+func (u *FilmsUsecase) RemoveStarred(film models.Film, user models.User) models.StatusCode {
+	return u.repo.DeleteStarred(film, user)
+}
+
+func (u *FilmsUsecase) AddWatchlist(film models.Film, user models.User) models.StatusCode {
+	return u.repo.InsertWatchlist(film, user)
+}
+
+func (u *FilmsUsecase) RemoveWatchlist(film models.Film, user models.User) models.StatusCode {
+	return u.repo.DeleteWatchlist(film, user)
+}
+
+func (u FilmsUsecase) GetStarred(user models.User) ([]models.Film, models.StatusCode) {
+	return u.repo.GetStarredFilms(user)
+}
+
+func (u FilmsUsecase) GetWatchlist(user models.User) ([]models.Film, models.StatusCode) {
+	return u.repo.GetWatchlistFilms(user)
+}
