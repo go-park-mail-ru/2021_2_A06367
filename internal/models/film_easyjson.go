@@ -147,6 +147,10 @@ func easyjson14b8084aDecodeGithubComGoParkMailRu20212A06367InternalModels(in *jl
 			out.Duration = int(in.Int())
 		case "language":
 			out.Language = string(in.String())
+		case "budget":
+			out.Budget = string(in.String())
+		case "age":
+			out.Age = int(in.Int())
 		case "pic":
 			if in.IsNull() {
 				in.Skip()
@@ -300,6 +304,16 @@ func easyjson14b8084aEncodeGithubComGoParkMailRu20212A06367InternalModels(out *j
 		const prefix string = ",\"language\":"
 		out.RawString(prefix)
 		out.String(string(in.Language))
+	}
+	{
+		const prefix string = ",\"budget\":"
+		out.RawString(prefix)
+		out.String(string(in.Budget))
+	}
+	{
+		const prefix string = ",\"age\":"
+		out.RawString(prefix)
+		out.Int(int(in.Age))
 	}
 	{
 		const prefix string = ",\"pic\":"

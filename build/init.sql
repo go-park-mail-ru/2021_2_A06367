@@ -42,6 +42,8 @@ CREATE TABLE films
     release date NOT NULL,
     duration integer NOT NULL,
     language text NOT NULL,
+    budget text NOT NULL,
+    age text NOT NULL,
     pic text[] NOT NULL,
     src text[] NOT NULL,
     PRIMARY KEY (id),
