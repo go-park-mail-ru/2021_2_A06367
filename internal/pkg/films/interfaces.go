@@ -22,6 +22,8 @@ type FilmsUsecase interface {
 	GetWatchlist(user models.User) ([]models.Film, models.StatusCode)
 	AddWatchlist(film models.Film, user models.User) models.StatusCode
 	RemoveWatchlist(film models.Film, user models.User) models.StatusCode
+
+	Randomize() (models.Film, models.StatusCode)
 }
 
 type FilmsRepository interface {
@@ -40,4 +42,6 @@ type FilmsRepository interface {
 	GetWatchlistFilms(user models.User) ([]models.Film, models.StatusCode)
 	InsertWatchlist(film models.Film, user models.User) models.StatusCode
 	DeleteWatchlist(film models.Film, user models.User) models.StatusCode
+
+	GetRandom() (models.Film, models.StatusCode)
 }

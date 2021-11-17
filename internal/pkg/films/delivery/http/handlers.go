@@ -291,3 +291,10 @@ func (h FilmsHandler) GetWatchlist(w http.ResponseWriter, r *http.Request) {
 	films, status := h.uc.GetWatchlist(user)
 	util.Response(w, status, films)
 }
+
+func (h FilmsHandler) RandomFilm(w http.ResponseWriter, r *http.Request) {
+
+	film, status := h.uc.Randomize()
+	util.Response(w, status, film)
+
+}
