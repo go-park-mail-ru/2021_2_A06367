@@ -114,19 +114,19 @@ func easyjson9e1087fdDecodeGithubComGoParkMailRu20212A06367InternalModels1(in *j
 			continue
 		}
 		switch key {
-		case "Id":
+		case "id":
 			if data := in.UnsafeBytes(); in.Ok() {
 				in.AddError((out.Id).UnmarshalText(data))
 			}
-		case "Login":
+		case "login":
 			out.Login = string(in.String())
-		case "About":
+		case "about":
 			out.About = string(in.String())
-		case "Avatar":
+		case "avatar":
 			out.Avatar = string(in.String())
-		case "Subscriptions":
+		case "subscriptions":
 			out.Subscriptions = uint(in.Uint())
-		case "Subscribers":
+		case "subscribers":
 			out.Subscribers = uint(in.Uint())
 		default:
 			in.SkipRecursive()
@@ -143,32 +143,32 @@ func easyjson9e1087fdEncodeGithubComGoParkMailRu20212A06367InternalModels1(out *
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"Id\":"
+		const prefix string = ",\"id\":"
 		out.RawString(prefix[1:])
 		out.RawText((in.Id).MarshalText())
 	}
 	{
-		const prefix string = ",\"Login\":"
+		const prefix string = ",\"login\":"
 		out.RawString(prefix)
 		out.String(string(in.Login))
 	}
 	{
-		const prefix string = ",\"About\":"
+		const prefix string = ",\"about\":"
 		out.RawString(prefix)
 		out.String(string(in.About))
 	}
 	{
-		const prefix string = ",\"Avatar\":"
+		const prefix string = ",\"avatar\":"
 		out.RawString(prefix)
 		out.String(string(in.Avatar))
 	}
 	{
-		const prefix string = ",\"Subscriptions\":"
+		const prefix string = ",\"subscriptions\":"
 		out.RawString(prefix)
 		out.Uint(uint(in.Subscriptions))
 	}
 	{
-		const prefix string = ",\"Subscribers\":"
+		const prefix string = ",\"subscribers\":"
 		out.RawString(prefix)
 		out.Uint(uint(in.Subscribers))
 	}

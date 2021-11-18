@@ -20,12 +20,12 @@ type LoginUser struct {
 }
 
 type Profile struct {
-	Id            uuid.UUID
-	Login         string
-	About         string
-	Avatar        string
-	Subscriptions uint
-	Subscribers   uint
+	Id            uuid.UUID `json:"id"`
+	Login         string    `json:"login"`
+	About         string    `json:"about"`
+	Avatar        string    `json:"avatar"`
+	Subscriptions uint      `json:"subscriptions"`
+	Subscribers   uint      `json:"subscribers"`
 }
 
 type PassUpdate struct {
