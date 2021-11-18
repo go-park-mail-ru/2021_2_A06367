@@ -99,15 +99,6 @@ $$ LANGUAGE 'plpgsql' IMMUTABLE;
 
 -- actors
 INSERT INTO public.actors (id, name, surname, avatar, height, date_of_birth, description, genres)
-VALUES ('3e06d4e4-3b47-11ec-8d3d-0242ac130003', 'James', 'Bond', '/ewf/xxx/xxx', 1.78,
-        '1985-11-01 22:10:57.000000', 'some text', '{Comedy,Thriller}');
-INSERT INTO public.actors (id, name, surname, avatar, height, date_of_birth, description, genres)
-VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 'Nick', 'Ivanov', '/ewf/xxx/xxx', 1.78,
-        '1985-11-01 22:10:57.000000', 'some text', '{Comedy,Thriller}');
-
--- films
--- actors
-INSERT INTO public.actors (id, name, surname, avatar, height, date_of_birth, description, genres)
 VALUES ('3e06d4e4-3b47-11ec-8d3d-0242ac130003', 'Джеймс', 'Бонд', 'jb.png', 1.78,
         '1985-11-01 22:10:57.000000', 'Красивый', '{Комедия ,Триллер}');
 INSERT INTO public.actors (id, name, surname, avatar, height, date_of_birth, description, genres)
@@ -118,58 +109,58 @@ VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 'Павел', 'Табаков', 
 INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('c7020e69-6a77-4153-97bc-54dc905321a4', '{Комедия}', '007', 2019, '{B. Спейрс,
         K. Нолан}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1970-01-01', 120, 'Русский', '120 млн.', 12, '{matrix.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1970-01-01', 120, 'Русский', '120 млн', 12, '{matrix.png}', '{video.mp4}');
 INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('f8405178-3b47-11ec-8d3d-0242ac130003', '{Триллер}', 'Пятница 13', 2015, '{Роберт Уэйд,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн.', 12, '{bird.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{bird.png}', '{video.mp4}');
 
 INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('649be5f4-46e6-11ec-81d3-0242ac130003', '{Триллер}', 'Лего', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн.', 12, '{blood.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{blood.png}', '{video.mp4}');
 
 INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('68896eac-46e6-11ec-81d3-0242ac130003', '{Боевик}', 'Миссия невыполнима', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн.', 12, '{father.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{father.png}', '{video.mp4}');
 
 INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('6d0191bc-46e6-11ec-81d3-0242ac130003', '{Фентези}', 'Ирландец', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн.', 12, '{irish.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{irish.png}', '{video.mp4}');
 
 INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('7f1ff974-46e6-11ec-81d3-0242ac130003', '{Фантастика}', 'Изгой', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн.', 12, '{izgoy.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{izgoy.png}', '{video.mp4}');
 
 INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('9dd8cef4-46e6-11ec-81d3-0242ac130003', '{Комедия}', 'Убийство', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн.', 12, '{kill.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{kill.png}', '{video.mp4}');
 
 INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('a8c67370-46e6-11ec-81d3-0242ac130003', '{Фентези}', 'Игра в кальмара', 2015, '{S. Borunov,
         K. Tарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн.', 12, '{img.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{img.png}', '{video.mp4}');
 
 INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('ac615b08-46e6-11ec-81d3-0242ac130003', '{Триллер}', 'Ред', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн.', 12, '{red.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{red.png}', '{video.mp4}');
 
 INSERT INTO public.films (id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
 VALUES ('b0840514-46e6-11ec-81d3-0242ac130003', '{Триллер}', 'Варкрафт', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн.', 12, '{warcraft.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{warcraft.png}', '{video.mp4}');
 
 -- rating
-INSERT INTO rating (film_id, rating) VALUES ('c7020e69-6a77-4153-97bc-54dc905321a4', 4.7);
-INSERT INTO rating (film_id, rating) VALUES ('f8405178-3b47-11ec-8d3d-0242ac130003', 4.3);
-INSERT INTO rating (film_id, rating) VALUES ('b0840514-46e6-11ec-81d3-0242ac130003', 4.7);
-INSERT INTO rating (film_id, rating) VALUES ('ac615b08-46e6-11ec-81d3-0242ac130003', 4.2);
-INSERT INTO rating (film_id, rating) VALUES ('9dd8cef4-46e6-11ec-81d3-0242ac130003', 4.1);
+INSERT INTO public.rating (film_id, rating) VALUES ('c7020e69-6a77-4153-97bc-54dc905321a4', 4.7);
+INSERT INTO public.rating (film_id, rating) VALUES ('f8405178-3b47-11ec-8d3d-0242ac130003', 4.3);
+INSERT INTO public.rating (film_id, rating) VALUES ('b0840514-46e6-11ec-81d3-0242ac130003', 4.7);
+INSERT INTO public.rating (film_id, rating) VALUES ('ac615b08-46e6-11ec-81d3-0242ac130003', 4.2);
+INSERT INTO public.rating (film_id, rating) VALUES ('9dd8cef4-46e6-11ec-81d3-0242ac130003', 4.1);
 
 INSERT INTO public.rating (film_id, rating) VALUES ('68896eac-46e6-11ec-81d3-0242ac130003', 3.3);
 INSERT INTO public.rating (film_id, rating) VALUES ('649be5f4-46e6-11ec-81d3-0242ac130003', 2.7);
