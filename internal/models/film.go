@@ -11,6 +11,8 @@ type Film struct {
 	Id          uuid.UUID   `json:"id"`
 	Title       string      `json:"title"`
 	Genres      []string    `json:"genres"`
+	Country     string      `json:"country"`
+	ReleaseRus  time.Time   `json:"release_rus"`
 	Year        int         `json:"year"`
 	Director    []string    `json:"director"`
 	Authors     []string    `json:"authors"`
