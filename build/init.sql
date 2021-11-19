@@ -14,7 +14,7 @@ CREATE TABLE users(
     login text UNIQUE NOT NULL,
     encrypted_password text NOT NULL,
     about text DEFAULT 'no data',
-    avatar text DEFAULT 'no data',
+    avatar text DEFAULT 'userpic.png',
     subscriptions int DEFAULT 0,
     subscribers int DEFAULT 0,
     created_at TIMESTAMP NOT NULL
@@ -46,10 +46,23 @@ CREATE TABLE films
     age integer NOT NULL,
     pic text[] NOT NULL,
     src text[] NOT NULL,
+    description text NOT NULL,
+    isSeries bool DEFAULT false,
     PRIMARY KEY (id),
     Check(year > 0),
 	Check(duration > 0)
 );
+
+CREATE TABLE series_seasons
+(
+    series_id UUID REFERENCES films(id) NOT NULL,
+    id integer,
+    pic text[] NOT NULL,
+    src text[] NOT NULL
+);
+
+ALTER TABLE series_seasons
+    ADD CONSTRAINT series_seasons_uniq UNIQUE(series_id, id);
 
 CREATE TABLE starred_films
 (
