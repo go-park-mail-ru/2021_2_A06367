@@ -78,3 +78,7 @@ func (u FilmsUsecase) GetStarred(user models.User) ([]models.Film, models.Status
 func (u FilmsUsecase) GetWatchlist(user models.User) ([]models.Film, models.StatusCode) {
 	return u.repo.GetWatchlistFilms(user)
 }
+
+func (u FilmsUsecase) Randomize() (models.Film, models.StatusCode) {
+	return u.repo.GetRandom()
+}

@@ -5,6 +5,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/jackc/pgtype/pgxtype"
 	"go.uber.org/zap"
+	"math/rand"
 )
 
 const (
@@ -13,7 +14,16 @@ const (
 		"FROM films " +
 		"WHERE $1 = ANY(genres)"
 
-	SELECT_FILM_BY_RATING = "SELECT id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
+
+
+	SElECT_RANDOM_COUNT = "SELECT COUNT(id) FROM films"
+
+	SElECT_RANDOM_FILM = "SELECT id, genres, title, year, director, " +
+		"authors, actors, release, duration, language, budget, age, pic, src " +
+		"FROM films " +
+		"LIMIT 1 OFFSET $1"
+
+	SELECT_FILM_BY_RATING = "SELECT id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src " +
 		" FROM films JOIN rating ON films.id = rating.film_id ORDER BY rating DESC LIMIT 10"
 
 	SELECT_FILM_BY_DATE = "SELECT id, genres, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
@@ -367,6 +377,7 @@ func (r FilmsRepo) GetWatchlistFilms(user models.User) ([]models.Film, models.St
 	return films, models.Okey
 }
 
+
 func (r FilmsRepo) ReadSeries(film models.Film) models.StatusCode {
 	rows, err := r.pool.Query(context.Background(), GET_SERIES,
 		film.Id)
@@ -389,4 +400,26 @@ func (r FilmsRepo) ReadSeries(film models.Film) models.StatusCode {
 
 	film.Seasons = &seasons
 	return models.Okey
+}
+
+func (r *FilmsRepo) GetRandom() (models.Film, models.StatusCode) {
+
+	var count int
+	row := r.pool.QueryRow(context.Background(), SElECT_RANDOM_COUNT)
+	if err := row.Scan(&count); err != nil {
+		return models.Film{}, models.InternalError
+	}
+
+	id := rand.Intn(count)
+
+	row = r.pool.QueryRow(context.Background(), SElECT_RANDOM_FILM, id)
+	var film models.Film
+	err := row.Scan(&film.Id, &film.Genres, &film.Title,
+		&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
+		&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src)
+	if err != nil {
+		return models.Film{}, models.InternalError
+	}
+
+	return film, models.Okey
 }
