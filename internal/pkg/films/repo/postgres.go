@@ -14,12 +14,10 @@ const (
 		"FROM films " +
 		"WHERE $1 = ANY(genres)"
 
-
-
 	SElECT_RANDOM_COUNT = "SELECT COUNT(id) FROM films"
 
 	SElECT_RANDOM_FILM = "SELECT id, genres, title, year, director, " +
-		"authors, actors, release, duration, language, budget, age, pic, src " +
+		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
 		"FROM films " +
 		"LIMIT 1 OFFSET $1"
 
@@ -377,7 +375,6 @@ func (r FilmsRepo) GetWatchlistFilms(user models.User) ([]models.Film, models.St
 	return films, models.Okey
 }
 
-
 func (r FilmsRepo) ReadSeries(film models.Film) models.StatusCode {
 	rows, err := r.pool.Query(context.Background(), GET_SERIES,
 		film.Id)
@@ -419,6 +416,12 @@ func (r *FilmsRepo) GetRandom() (models.Film, models.StatusCode) {
 		&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src)
 	if err != nil {
 		return models.Film{}, models.InternalError
+	}
+	if film.IsSeries {
+		code := r.ReadSeries(film)
+		if code != models.Okey {
+			return models.Film{}, models.InternalError
+		}
 	}
 
 	return film, models.Okey
