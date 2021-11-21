@@ -51,7 +51,7 @@ const (
 
 	DELETE_FILM_FROM_STARRED = "DELETE FROM starred_films WHERE film_id=$1 AND user_id=$2;"
 
-	GET_STARRED_FILMS = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, duration, language, pic, src, description, isSeries " +
+	GET_STARRED_FILMS = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
 		"FROM films f JOIN starred_films sf ON f.id  = sf.film_id " +
 		"WHERE sf.user_id=$1"
 
@@ -342,7 +342,7 @@ func (r FilmsRepo) GetStarredFilms(user models.User) ([]models.Film, models.Stat
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Pic, &film.Src)
+			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
 		if err != nil {
 			return nil, models.InternalError
 		}
