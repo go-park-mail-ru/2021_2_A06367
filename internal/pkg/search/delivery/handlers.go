@@ -6,6 +6,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films"
 	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -23,7 +24,12 @@ func (sh *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
 	// Агрегирующий поиск, собирает информацию в один запрос
 	// Использует неточный поиск по полям
 
-	keyword := r.URL.Query().Get("search")
+	vars := mux.Vars(r)
+	keyword, found := vars["keyword"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
 	result := models.SearchResult{}
 
 	actors, _ := sh.au.GetByKeyword(keyword)
