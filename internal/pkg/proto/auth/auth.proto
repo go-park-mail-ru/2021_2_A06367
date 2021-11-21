@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+option go_package = "internal/pkg/auth/delivery/grpc";
+
+
+message LoginUser {
+  string Login = 1;
+  string EncryptedPassword = 2;
+};
+
+message User {
+  string UUID = 1;
+  string Login = 2;
+  string EncryptedPassword = 3;
+};
+
+message Token {
+  string Cookie = 1;
+};
+
+message Nothing {};
+
+message UserUUID {
+  string ID = 1;
+}
+
+message UserUpdatePic {
+  string ID = 1;
+  string Login = 2;
+  string Avatar = 3;
+}
+
+message UserUpdateBio {
+  string ID = 1;
+  string Login = 2;
+  string About = 3;
+}
+
+message UserUpdatePass {
+  string ID = 1;
+  string Login = 2;
+  string Password = 3;
+}
+
+service AuthService {
+  rpc Login(LoginUser) returns (Token) {}
+  rpc SignUp(User) returns (Token) {}
+  rpc GetProfile(UserUUID) returns (User) {}
+  rpc UpdateProfilePic(UserUpdatePic) returns (Nothing) {}
+  rpc UpdateProfilePass(UserUpdatePass) returns (Nothing) {}
+  rpc UpdateProfileBio(UserUpdateBio) returns (Nothing) {}
+}

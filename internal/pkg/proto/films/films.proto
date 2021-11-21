@@ -1,0 +1,67 @@
+syntax = "proto3";
+option go_package = "internal/pkg/films/delivery/grpc";
+
+message Timestamp {
+  int64 seconds = 1;
+  int32 nanos = 2;
+}
+
+message Nothing {};
+
+message KeyWord {
+  string Word = 1;
+}
+
+message Season {
+
+}
+message Film {
+  string  Id = 1;
+  string Title =2;
+  repeated string Genres =3;
+  string Country =4;
+  int64  Year =5;
+  Timestamp ReleaseRus =6;
+  repeated string Director =7;
+  repeated string Authors =8;
+  repeated string Actors =9;
+  Timestamp Release =10;
+  int64 Duration =11;
+  string  ReleaseRusLanguage =12;
+  string  Budget =13;
+  int64 Age =14;
+  repeated string Pic =15;
+  repeated string Src =16;
+  string  Description =17;
+  bool IsSeries =18;
+  repeated Season Seasons = 19;
+}
+
+message Films {
+  repeated Film Data = 1;
+}
+
+message Pair {
+  string FilmUUID = 1;
+  string UserUUID = 2;
+}
+
+message UUID {
+  string id = 1;
+}
+
+service FilmsService {
+  rpc FilmByGenre(KeyWord) returns (Films) {}
+  rpc FilmBySelection(KeyWord) returns (Films) {}
+  rpc FilmsByActor(UUID) returns (Films) {}
+  rpc FilmById(UUID) returns (Film) {}
+  rpc FilmsByUser(UUID) returns (Films) {}
+  rpc FilmStartSelection(UUID) returns (Films) {}
+  rpc AddStarred(Pair) returns (Nothing) {}
+  rpc RemoveStarred(Pair) returns (Nothing) {}
+  rpc AddWatchList(Pair) returns (Nothing) {}
+  rpc RemoveWatchList(Pair) returns (Nothing) {}
+  rpc Starred(UUID) returns (Films) {}
+  rpc WatchList(UUID) returns (Films) {}
+  rpc Random(Nothing) returns (Film) {}
+}
