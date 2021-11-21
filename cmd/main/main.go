@@ -7,10 +7,12 @@ import (
 	actorsDelivery "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors/delivery/http"
 	actorsRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors/repo"
 	actorsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors/usecase"
+	grpc3 "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc"
 	authDelivery "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/http"
 	authRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/repo"
 	authUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/config"
+	grpc2 "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc"
 	filmsDelivery "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/http"
 	filmsRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/repo"
 	filmsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/usecase"
@@ -20,6 +22,7 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 	"log"
 	"net/http"
 	"os"
@@ -68,6 +71,32 @@ func run() error {
 		return err
 	}
 
+
+	filmsConn, err := grpc.Dial(
+		"localhost:8010",
+		grpc.WithInsecure(),
+	)
+
+	if err != nil {
+		log.Fatalf("cant connect to films grpc")
+	}
+
+	filmsClient := grpc2.NewFilmsServiceClient(filmsConn)
+
+	authConn, err := grpc.Dial(
+		"auth:8020",
+		grpc.WithInsecure(),
+	)
+
+	if err != nil {
+		log.Fatalf("cant connect to session grpc")
+	}
+
+	authClient := grpc3.NewAuthServiceClient(authConn)
+	log.Print(authClient)
+
+
+
 	encrypter := authUsecase.NewEncrypter()
 	tokenGenerator := authUsecase.NewTokenator()
 	authRepo := authRepository.NewAuthRepo(pool, zapSugar)
@@ -76,7 +105,7 @@ func run() error {
 
 	filmsRepo := filmsRepository.NewFilmsRepo(pool, zapSugar)
 	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo, zapSugar)
-	filmsHandler := filmsDelivery.NewFilmsHandler(filmsUse, zapSugar)
+	filmsHandler := filmsDelivery.NewFilmsHandler(zapSugar, filmsClient)
 
 	actorsRepo := actorsRepository.NewActorsRepo(pool, zapSugar)
 	actorsUse := actorsUsecase.NewActorsUsecase(actorsRepo, zapSugar)
@@ -138,5 +167,7 @@ func run() error {
 
 	http.Handle("/", r)
 	log.Print("main running on: ", srv.Addr)
+
+
 	return srv.ListenAndServe()
 }

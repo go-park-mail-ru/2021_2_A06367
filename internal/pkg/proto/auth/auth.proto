@@ -18,7 +18,7 @@ message Token {
   string Cookie = 1;
 };
 
-message Nothing {};
+message Empty {};
 
 message UserUUID {
   string ID = 1;
@@ -46,7 +46,7 @@ service AuthService {
   rpc Login(LoginUser) returns (Token) {}
   rpc SignUp(User) returns (Token) {}
   rpc GetProfile(UserUUID) returns (User) {}
-  rpc UpdateProfilePic(UserUpdatePic) returns (Nothing) {}
-  rpc UpdateProfilePass(UserUpdatePass) returns (Nothing) {}
-  rpc UpdateProfileBio(UserUpdateBio) returns (Nothing) {}
+  rpc UpdateProfilePic(UserUpdatePic) returns (Empty) {}
+  rpc UpdateProfilePass(UserUpdatePass) returns (Empty) {}
+  rpc UpdateProfileBio(UserUpdateBio) returns (Empty) {}
 }

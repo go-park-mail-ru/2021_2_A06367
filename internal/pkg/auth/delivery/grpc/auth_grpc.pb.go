@@ -21,9 +21,9 @@ type AuthServiceClient interface {
 	Login(ctx context.Context, in *LoginUser, opts ...grpc.CallOption) (*Token, error)
 	SignUp(ctx context.Context, in *User, opts ...grpc.CallOption) (*Token, error)
 	GetProfile(ctx context.Context, in *UserUUID, opts ...grpc.CallOption) (*User, error)
-	UpdateProfilePic(ctx context.Context, in *UserUpdatePic, opts ...grpc.CallOption) (*Nothing, error)
-	UpdateProfilePass(ctx context.Context, in *UserUpdatePass, opts ...grpc.CallOption) (*Nothing, error)
-	UpdateProfileBio(ctx context.Context, in *UserUpdateBio, opts ...grpc.CallOption) (*Nothing, error)
+	UpdateProfilePic(ctx context.Context, in *UserUpdatePic, opts ...grpc.CallOption) (*Empty, error)
+	UpdateProfilePass(ctx context.Context, in *UserUpdatePass, opts ...grpc.CallOption) (*Empty, error)
+	UpdateProfileBio(ctx context.Context, in *UserUpdateBio, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type authServiceClient struct {
@@ -61,8 +61,8 @@ func (c *authServiceClient) GetProfile(ctx context.Context, in *UserUUID, opts .
 	return out, nil
 }
 
-func (c *authServiceClient) UpdateProfilePic(ctx context.Context, in *UserUpdatePic, opts ...grpc.CallOption) (*Nothing, error) {
-	out := new(Nothing)
+func (c *authServiceClient) UpdateProfilePic(ctx context.Context, in *UserUpdatePic, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/AuthService/UpdateProfilePic", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -70,8 +70,8 @@ func (c *authServiceClient) UpdateProfilePic(ctx context.Context, in *UserUpdate
 	return out, nil
 }
 
-func (c *authServiceClient) UpdateProfilePass(ctx context.Context, in *UserUpdatePass, opts ...grpc.CallOption) (*Nothing, error) {
-	out := new(Nothing)
+func (c *authServiceClient) UpdateProfilePass(ctx context.Context, in *UserUpdatePass, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/AuthService/UpdateProfilePass", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -79,8 +79,8 @@ func (c *authServiceClient) UpdateProfilePass(ctx context.Context, in *UserUpdat
 	return out, nil
 }
 
-func (c *authServiceClient) UpdateProfileBio(ctx context.Context, in *UserUpdateBio, opts ...grpc.CallOption) (*Nothing, error) {
-	out := new(Nothing)
+func (c *authServiceClient) UpdateProfileBio(ctx context.Context, in *UserUpdateBio, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/AuthService/UpdateProfileBio", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -95,9 +95,9 @@ type AuthServiceServer interface {
 	Login(context.Context, *LoginUser) (*Token, error)
 	SignUp(context.Context, *User) (*Token, error)
 	GetProfile(context.Context, *UserUUID) (*User, error)
-	UpdateProfilePic(context.Context, *UserUpdatePic) (*Nothing, error)
-	UpdateProfilePass(context.Context, *UserUpdatePass) (*Nothing, error)
-	UpdateProfileBio(context.Context, *UserUpdateBio) (*Nothing, error)
+	UpdateProfilePic(context.Context, *UserUpdatePic) (*Empty, error)
+	UpdateProfilePass(context.Context, *UserUpdatePass) (*Empty, error)
+	UpdateProfileBio(context.Context, *UserUpdateBio) (*Empty, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -114,13 +114,13 @@ func (UnimplementedAuthServiceServer) SignUp(context.Context, *User) (*Token, er
 func (UnimplementedAuthServiceServer) GetProfile(context.Context, *UserUUID) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProfile not implemented")
 }
-func (UnimplementedAuthServiceServer) UpdateProfilePic(context.Context, *UserUpdatePic) (*Nothing, error) {
+func (UnimplementedAuthServiceServer) UpdateProfilePic(context.Context, *UserUpdatePic) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfilePic not implemented")
 }
-func (UnimplementedAuthServiceServer) UpdateProfilePass(context.Context, *UserUpdatePass) (*Nothing, error) {
+func (UnimplementedAuthServiceServer) UpdateProfilePass(context.Context, *UserUpdatePass) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfilePass not implemented")
 }
-func (UnimplementedAuthServiceServer) UpdateProfileBio(context.Context, *UserUpdateBio) (*Nothing, error) {
+func (UnimplementedAuthServiceServer) UpdateProfileBio(context.Context, *UserUpdateBio) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfileBio not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
