@@ -3,11 +3,13 @@ package http
 import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc"
 	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"net/http"
+	"time"
 )
 
 type FilmsHandler struct {
@@ -297,4 +299,46 @@ func (h FilmsHandler) RandomFilm(w http.ResponseWriter, r *http.Request) {
 	film, status := h.uc.Randomize()
 	util.Response(w, status, film)
 
+}
+
+func (h FilmsHandler) FilmToModel(film *grpc.Film) models.Film {
+	id, _ := uuid.Parse(film.Id)
+	releaseru, _ := time.Parse("", film.ReleaseRus)
+	release, _ := time.Parse("", film.Release)
+
+	var actors []uuid.UUID
+	for i := 0; i < len(film.Actors); i++ {
+		id, _ := uuid.Parse(film.Actors[i])
+		actors = append(actors, id)
+	}
+
+	return models.Film{
+		Id:          id,
+		Title:       film.Title,
+		Genres:      film.Genres,
+		Country:     film.Country,
+		ReleaseRus:  releaseru,
+		Year:        int(film.Year),
+		Director:    film.Director,
+		Authors:     film.Authors,
+		Actors:      actors,
+		Release:     release,
+		Duration:    int(film.Duration),
+		Budget:      film.Budget,
+		Age:         int(film.Age),
+		Pic:         film.Pic,
+		Src:         film.Src,
+		Description: film.Description,
+		IsSeries:    film.IsSeries,
+		Seasons:     nil,
+	}
+}
+
+func (h FilmsHandler) FilmsToModels(films grpc.Films) []models.Film {
+	var result []models.Film
+	for i := 0; i < len(films.Data); i++ {
+		film := h.FilmToModel(films.Data[i])
+		result = append(result, film)
+	}
+	return result
 }
