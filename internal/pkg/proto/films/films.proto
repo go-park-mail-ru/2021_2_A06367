@@ -1,11 +1,6 @@
 syntax = "proto3";
 option go_package = "internal/pkg/films/delivery/grpc";
 
-message Timestamp {
-  int64 seconds = 1;
-  int32 nanos = 2;
-}
-
 message Nothing {};
 
 message KeyWord {
@@ -21,11 +16,11 @@ message Film {
   repeated string Genres =3;
   string Country =4;
   int64  Year =5;
-  Timestamp ReleaseRus =6;
+  string ReleaseRus =6;
   repeated string Director =7;
   repeated string Authors =8;
   repeated string Actors =9;
-  Timestamp Release =10;
+  string Release =10;
   int64 Duration =11;
   string  ReleaseRusLanguage =12;
   string  Budget =13;
