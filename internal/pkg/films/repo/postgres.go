@@ -366,7 +366,7 @@ func (r FilmsRepo) GetWatchlistFilms(user models.User) ([]models.Film, models.St
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Pic, &film.Src)
+			&film.Language, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
 		if err != nil {
 			return nil, models.InternalError
 		}
