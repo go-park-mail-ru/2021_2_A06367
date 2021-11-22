@@ -11,7 +11,6 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // FilmsServiceClient is the client API for FilmsService service.
@@ -231,7 +230,7 @@ type UnsafeFilmsServiceServer interface {
 }
 
 func RegisterFilmsServiceServer(s grpc.ServiceRegistrar, srv FilmsServiceServer) {
-	s.RegisterService(&FilmsService_ServiceDesc, srv)
+	s.RegisterService(&_FilmsService_serviceDesc, srv)
 }
 
 func _FilmsService_FilmByGenre_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -468,10 +467,7 @@ func _FilmsService_Random_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-// FilmsService_ServiceDesc is the grpc.ServiceDesc for FilmsService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var FilmsService_ServiceDesc = grpc.ServiceDesc{
+var _FilmsService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "FilmsService",
 	HandlerType: (*FilmsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{

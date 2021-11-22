@@ -20,6 +20,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/search/delivery"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -71,7 +72,6 @@ func run() error {
 		return err
 	}
 
-
 	filmsConn, err := grpc.Dial(
 		"localhost:8010",
 		grpc.WithInsecure(),
@@ -84,7 +84,7 @@ func run() error {
 	filmsClient := grpc2.NewFilmsServiceClient(filmsConn)
 
 	authConn, err := grpc.Dial(
-		"auth:8020",
+		"localhost:8020",
 		grpc.WithInsecure(),
 	)
 
@@ -93,15 +93,12 @@ func run() error {
 	}
 
 	authClient := grpc3.NewAuthServiceClient(authConn)
-	log.Print(authClient)
-
-
 
 	encrypter := authUsecase.NewEncrypter()
 	tokenGenerator := authUsecase.NewTokenator()
 	authRepo := authRepository.NewAuthRepo(pool, zapSugar)
 	authUse := authUsecase.NewAuthUsecase(authRepo, tokenGenerator, encrypter, zapSugar)
-	authHandler := authDelivery.NewAuthHandler(authUse, zapSugar)
+	authHandler := authDelivery.NewAuthHandler(authClient, zapSugar)
 
 	filmsRepo := filmsRepository.NewFilmsRepo(pool, zapSugar)
 	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo, zapSugar)
@@ -114,6 +111,8 @@ func run() error {
 	search := delivery.NewSearchHandler(filmsUse, authUse, actorsUse)
 
 	m := middleware.NewMiddleware(zapSugar)
+	m2 := middleware.NewMetricsMiddleware()
+	m2.Register(middleware.ServiceMainLabel)
 
 	auth := r.PathPrefix("/users").Subrouter()
 	//auth.Use(protect)
@@ -160,14 +159,17 @@ func run() error {
 		seraching.HandleFunc("/{keyword}", search.Search).Methods(http.MethodGet)
 	}
 
+
 	// swag init -g ./cmd/main/main.go
 	r.PathPrefix("/api-docs").Handler(httpSwagger.WrapHandler)
-
+	r.PathPrefix("/metrics").Handler(promhttp.Handler())
 	r.Use(m.LogRequest)
+	r.Use(m2.LogMetrics)
+
+
 
 	http.Handle("/", r)
 	log.Print("main running on: ", srv.Addr)
-
 
 	return srv.ListenAndServe()
 }

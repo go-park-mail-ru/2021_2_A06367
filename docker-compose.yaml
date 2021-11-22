@@ -7,3 +7,15 @@ services:
       dockerfile: ./build/main.Dockerfile
     ports:
       - 8000:8000
+  films:
+    build:
+      context: .
+      dockerfile: ./build/films.Dockerfile
+    ports:
+      - 8010:8010
+  auth:
+    build:
+      context: .
+      dockerfile: ./build/auth.Dockerfile
+    ports:
+      - 8020:8020

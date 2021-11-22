@@ -1,15 +1,14 @@
 package http
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/hex"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
-	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
-	uuid "github.com/google/uuid"
 	"github.com/gorilla/csrf"
-	"github.com/gorilla/mux"
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"io/ioutil"
@@ -19,13 +18,13 @@ import (
 )
 
 type AuthHandler struct {
-	uc     auth.AuthUsecase
 	logger *zap.SugaredLogger
+	client grpc.AuthServiceClient
 }
 
-func NewAuthHandler(uc auth.AuthUsecase, logger *zap.SugaredLogger) *AuthHandler {
+func NewAuthHandler(cl grpc.AuthServiceClient, logger *zap.SugaredLogger) *AuthHandler {
 	return &AuthHandler{
-		uc:     uc,
+		client: cl,
 		logger: logger,
 	}
 }
@@ -48,14 +47,21 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		utils.Response(w, models.Forbidden, nil)
 		return
 	}
-	token, status := h.uc.SignIn(user)
-	if status != models.Okey {
+
+	login, err := h.client.Login(context.Background(), &grpc.LoginUser{
+		Login:             user.Login,
+		EncryptedPassword: user.EncryptedPassword,
+	})
+	if err != nil {
+		utils.Response(w, models.Unauthed, nil)
+	}
+	if models.StatusCode(login.Status) != models.Okey {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}
 	SSCookie := &http.Cookie{
 		Name:   "SSID",
-		Value:  token,
+		Value:  login.Cookie,
 		Path:   "/",
 		Domain: "3.67.182.34",
 		//SameSite: http.SameSiteNoneMode,
@@ -63,7 +69,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(time.Hour * 24),
 	}
 	http.SetCookie(w, SSCookie)
-	utils.Response(w, status, nil)
+	utils.Response(w, models.StatusCode(login.Status), nil)
 }
 
 func (h *AuthHandler) Token(w http.ResponseWriter, r *http.Request) {
@@ -126,15 +132,24 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		utils.Response(w, models.BadRequest, nil)
 		return
 	}
-	token, status := h.uc.SignUp(user)
-	if token == "" || token == "no secret key" || status != models.Okey { //TODO в константу
-		utils.Response(w, status, nil)
+
+	us, err := h.client.SignUp(context.Background(), &grpc.User{
+		Login:             user.Login,
+		EncryptedPassword: user.EncryptedPassword,
+	})
+	if err != nil {
+		utils.Response(w, models.Unauthed, nil)
+		return
+	}
+
+	if models.StatusCode(us.Status) != models.Okey || us.Cookie == "" || us.Cookie == "no secret key" { //TODO в константу
+		utils.Response(w, models.StatusCode(us.Status), nil)
 		return
 	}
 
 	SSCookie := &http.Cookie{
 		Name:   "SSID",
-		Value:  token,
+		Value:  us.Cookie,
 		Path:   "/",
 		Domain: "3.67.182.34",
 		//SameSite: http.SameSiteNoneMode,
@@ -204,8 +219,20 @@ func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	profile.Id = uid
 
-	user, status := h.uc.GetProfile(profile)
-	utils.Response(w, status, user)
+	us, err := h.client.GetProfile(context.Background(), &grpc.UserUUID{
+		ID: profile.Id.String(),
+	})
+	if err != nil {
+		utils.Response(w, models.InternalError, nil)
+	}
+	utils.Response(w, models.StatusCode(us.Status), models.Profile{
+		Id:            uid,
+		Login:         us.Login,
+		About:         us.About,
+		Avatar:        us.Avatar,
+		Subscriptions: uint(us.Subscriptions),
+		Subscribers:   uint(us.Subscribers),
+	})
 }
 
 // Follow godoc
@@ -219,21 +246,23 @@ func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 // @Failure 400,404 {string} 1
 // @Router /user/profile/{id}/follow [post]
 func (h *AuthHandler) Follow(w http.ResponseWriter, r *http.Request) {
+	/*
+		vars := mux.Vars(r)
+		id, found := vars["id"]
+		if !found {
+			utils.Response(w, models.BadRequest, nil)
+			return
+		}
+		uid, err := uuid.Parse(id)
+		if err != nil {
+			utils.Response(w, models.BadRequest, nil)
+			return
+		}
 
-	vars := mux.Vars(r)
-	id, found := vars["id"]
-	if !found {
-		utils.Response(w, models.BadRequest, nil)
-		return
-	}
-	uid, err := uuid.Parse(id)
-	if err != nil {
-		utils.Response(w, models.BadRequest, nil)
-		return
-	}
+		//status := h.uc.Follow(uid, uid)
+		utils.Response(w, status, nil)
 
-	status := h.uc.Follow(uid, uid)
-	utils.Response(w, status, nil)
+	*/
 }
 
 // Unfollow godoc
@@ -247,7 +276,7 @@ func (h *AuthHandler) Follow(w http.ResponseWriter, r *http.Request) {
 // @Failure 400,404 {string} 1
 // @Router /user/profile/{id}/unfollow [delete]
 func (h *AuthHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+	/*vars := mux.Vars(r)
 	id, found := vars["id"]
 	if !found {
 		utils.Response(w, models.BadRequest, nil)
@@ -261,6 +290,8 @@ func (h *AuthHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
 
 	status := h.uc.Follow(uid, uid)
 	utils.Response(w, status, nil)
+
+	*/
 }
 
 func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
@@ -303,8 +334,15 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 		Avatar: hex.EncodeToString(name[:]) + ".png",
 	}
 
-	status := h.uc.SetAvatar(user)
-	utils.Response(w, status, nil)
+	us, err := h.client.UpdateProfilePic(context.Background(), &grpc.UserUpdatePic{
+		Login:  user.Login,
+		Avatar: user.Avatar,
+		ID:     user.Id.String(),
+	})
+	if err != nil {
+		utils.Response(w, models.Unauthed, nil)
+	}
+	utils.Response(w, models.StatusCode(us.Status), nil)
 }
 
 func (h *AuthHandler) UpdateProfilePass(w http.ResponseWriter, r *http.Request) {
@@ -324,8 +362,15 @@ func (h *AuthHandler) UpdateProfilePass(w http.ResponseWriter, r *http.Request) 
 		Login:             jwtData.Login,
 	}
 
-	status := h.uc.SetPass(user)
-	utils.Response(w, status, nil)
+	us, err := h.client.UpdateProfilePass(context.Background(), &grpc.UserUpdatePass{
+		Login:    user.Login,
+		Password: user.EncryptedPassword,
+		ID:       user.Id.String(),
+	})
+	if err != nil {
+		utils.Response(w, models.Unauthed, nil)
+	}
+	utils.Response(w, models.StatusCode(us.Status), nil)
 }
 
 func (h *AuthHandler) UpdateProfileBio(w http.ResponseWriter, r *http.Request) {
@@ -345,6 +390,13 @@ func (h *AuthHandler) UpdateProfileBio(w http.ResponseWriter, r *http.Request) {
 		Login: jwtData.Login,
 	}
 
-	status := h.uc.SetBio(user)
-	utils.Response(w, status, nil)
+	us, err := h.client.UpdateProfileBio(context.Background(), &grpc.UserUpdateBio{
+		Login: user.Login,
+		About: user.About,
+		ID:    user.Id.String(),
+	})
+	if err != nil {
+		utils.Response(w, models.Unauthed, nil)
+	}
+	utils.Response(w, models.StatusCode(us.Status), nil)
 }

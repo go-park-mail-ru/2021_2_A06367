@@ -32,7 +32,6 @@ func run() error {
 		return err
 	}
 
-
 	logger, err := zap.NewProduction()
 	defer logger.Sync()
 	if err != nil {
@@ -40,7 +39,6 @@ func run() error {
 	}
 	defer logger.Sync()
 	zapSugar := logger.Sugar()
-
 
 	filmsRepo := filmsRepository.NewFilmsRepo(pool, zapSugar)
 	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo, zapSugar)
@@ -55,6 +53,6 @@ func run() error {
 
 	grpc2.RegisterFilmsServiceServer(server, service)
 
-	log.Print("main running on: ", srv.Addr())
-	return  server.Serve(srv)
+	log.Print("films running on: ", srv.Addr())
+	return server.Serve(srv)
 }

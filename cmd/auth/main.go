@@ -55,6 +55,6 @@ func run() error {
 
 	grpc3.RegisterAuthServiceServer(server, service)
 
-	log.Print("main running on: ", srv.Addr())
+	log.Print("auth running on: ", srv.Addr())
 	return server.Serve(srv)
 }

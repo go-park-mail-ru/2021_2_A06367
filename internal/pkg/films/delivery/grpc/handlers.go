@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/models/grpc"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films"
 	"github.com/google/uuid"
 	"log"
@@ -21,66 +22,70 @@ func NewGrpcFilmsHandler(uc films.FilmsUsecase) *GrpcFilmsHandler {
 
 func (g *GrpcFilmsHandler) FilmByGenre(ctx context.Context, in *KeyWord) (*Films, error) {
 	filmSet, status := g.uc.GetCompilation(in.Word)
-	if status == models.Okey {
-		return g.FilmsAdaptor(filmSet), nil
-	}
-	return &Films{}, nil
+	data := g.FilmsAdaptor(filmSet)
+
+	data.Status = grpc.StatusCode(status)
+
+	return data, nil
 }
 func (g *GrpcFilmsHandler) FilmBySelection(ctx context.Context, in *KeyWord) (*Films, error) {
 	filmSet, status := g.uc.GetSelection(in.Word)
-	if status == models.Okey {
-		return g.FilmsAdaptor(filmSet), nil
-	}
-	return &Films{}, nil
+	data := g.FilmsAdaptor(filmSet)
+
+	data.Status = grpc.StatusCode(status)
+
+	return data, nil
 }
 func (g *GrpcFilmsHandler) FilmsByActor(ctx context.Context, in *UUID) (*Films, error) {
 	id, _ := uuid.Parse(in.Id)
 
 	actor := models.Actors{Id: id}
 	filmSet, status := g.uc.GetFilmsOfActor(actor)
-	if status == models.Okey {
-		return g.FilmsAdaptor(filmSet), nil
-	}
-	return &Films{}, nil
+	data := g.FilmsAdaptor(filmSet)
+
+	data.Status = grpc.StatusCode(status)
+
+	return data, nil
 }
 func (g *GrpcFilmsHandler) FilmById(ctx context.Context, in *UUID) (*Film, error) {
 	id, _ := uuid.Parse(in.Id)
 
 	filmReq := models.Film{Id: id}
 	film, status := g.uc.GetFilm(filmReq)
-	if status == models.Okey {
-		return g.FilmAdaptor(film), nil
-	}
-	return &Film{}, nil
+	data := g.FilmAdaptor(film)
+
+	data.Status = grpc.StatusCode(status)
+
+	return data, nil
 }
 func (g *GrpcFilmsHandler) FilmsByUser(ctx context.Context, in *UUID) (*Films, error) {
 	id, _ := uuid.Parse(in.Id)
 	user := models.User{Id: id}
 	filmSet, status := g.uc.GetCompilationForUser(user)
-	if status == models.Okey {
-		return g.FilmsAdaptor(filmSet), nil
-	}
+	data := g.FilmsAdaptor(filmSet)
 
-	return &Films{}, nil
+	data.Status = grpc.StatusCode(status)
+
+	return data, nil
 }
 func (g *GrpcFilmsHandler) FilmStartSelection(ctx context.Context, in *UUID) (*Films, error) {
+	var (
+		films  []models.Film
+		status models.StatusCode
+	)
+
 	id, err := uuid.Parse(in.Id)
 	if err != nil {
 		user := models.User{}
-		filmSet, status := g.uc.GetStartSelections(false, user)
-		if status == models.Okey {
-			return g.FilmsAdaptor(filmSet), nil
-		}
-
-		return &Films{}, nil
+		films, status = g.uc.GetStartSelections(false, user)
+	} else {
+		user := models.User{Id: id}
+		films, status = g.uc.GetStartSelections(true, user)
 	}
-	user := models.User{Id: id}
-	filmSet, status := g.uc.GetStartSelections(true, user)
-	if status == models.Okey {
-		return g.FilmsAdaptor(filmSet), nil
-	}
+	data := g.FilmsAdaptor(films)
+	data.Status = grpc.StatusCode(status)
 
-	return &Films{}, nil
+	return data, nil
 }
 func (g *GrpcFilmsHandler) AddStarred(ctx context.Context, in *Pair) (*Nothing, error) {
 	filmId, _ := uuid.Parse(in.FilmUUID)
@@ -88,8 +93,9 @@ func (g *GrpcFilmsHandler) AddStarred(ctx context.Context, in *Pair) (*Nothing, 
 	userId, _ := uuid.Parse(in.UserUUID)
 	user := models.User{Id: userId}
 	status := g.uc.AddStarred(film, user)
-	log.Print(status)
-	return &Nothing{}, nil
+	return &Nothing{
+		Status: grpc.StatusCode(status),
+	}, nil
 }
 func (g *GrpcFilmsHandler) RemoveStarred(ctx context.Context, in *Pair) (*Nothing, error) {
 	filmId, _ := uuid.Parse(in.FilmUUID)
@@ -106,8 +112,9 @@ func (g *GrpcFilmsHandler) AddWatchList(ctx context.Context, in *Pair) (*Nothing
 	userId, _ := uuid.Parse(in.UserUUID)
 	user := models.User{Id: userId}
 	status := g.uc.AddWatchlist(film, user)
-	log.Print(status)
-	return &Nothing{}, nil
+	return &Nothing{
+		Status: grpc.StatusCode(status),
+	}, nil
 }
 func (g *GrpcFilmsHandler) RemoveWatchList(ctx context.Context, in *Pair) (*Nothing, error) {
 	filmId, _ := uuid.Parse(in.FilmUUID)
@@ -115,8 +122,9 @@ func (g *GrpcFilmsHandler) RemoveWatchList(ctx context.Context, in *Pair) (*Noth
 	userId, _ := uuid.Parse(in.UserUUID)
 	user := models.User{Id: userId}
 	status := g.uc.RemoveWatchlist(film, user)
-	log.Print(status)
-	return &Nothing{}, nil
+	return &Nothing{
+		Status: grpc.StatusCode(status),
+	}, nil
 }
 func (g *GrpcFilmsHandler) Starred(ctx context.Context, in *UUID) (*Films, error) {
 
@@ -139,10 +147,9 @@ func (g *GrpcFilmsHandler) WatchList(ctx context.Context, in *UUID) (*Films, err
 }
 func (g *GrpcFilmsHandler) Random(ctx context.Context, in *Nothing) (*Film, error) {
 	film, status := g.uc.Randomize()
-	if status == models.Okey {
-		return g.FilmAdaptor(film), nil
-	}
-	return &Film{}, nil
+	data := g.FilmAdaptor(film)
+	data.Status = grpc.StatusCode(status)
+	return data, nil
 }
 
 func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *Film {
@@ -151,7 +158,8 @@ func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *Film {
 	for i := 0; i < len(film.Actors); i++ {
 		actors = append(actors, film.Actors[i].String())
 	}
-	return &Film{
+	var gfilm *Film
+	gfilm = &Film{
 		Id:                 film.Id.String(),
 		Title:              film.Title,
 		Genres:             film.Genres,
@@ -172,6 +180,19 @@ func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *Film {
 		IsSeries:           film.IsSeries,
 		Seasons:            nil,
 	}
+
+	if film.Seasons != nil {
+		var gs []*Season
+		for i := 0; i < len(*film.Seasons); i++ {
+			gs = append(gs, &Season{
+				Num:  int64((*film.Seasons)[i].Num),
+				Src:  (*film.Seasons)[i].Src,
+				Pics: (*film.Seasons)[i].Pics,
+			})
+		}
+		gfilm.Seasons = gs
+	}
+	return gfilm
 }
 
 func (g *GrpcFilmsHandler) FilmsAdaptor(films []models.Film) *Films {

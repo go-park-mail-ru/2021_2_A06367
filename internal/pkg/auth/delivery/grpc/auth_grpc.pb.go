@@ -11,7 +11,6 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // AuthServiceClient is the client API for AuthService service.
@@ -20,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 type AuthServiceClient interface {
 	Login(ctx context.Context, in *LoginUser, opts ...grpc.CallOption) (*Token, error)
 	SignUp(ctx context.Context, in *User, opts ...grpc.CallOption) (*Token, error)
-	GetProfile(ctx context.Context, in *UserUUID, opts ...grpc.CallOption) (*User, error)
+	GetProfile(ctx context.Context, in *UserUUID, opts ...grpc.CallOption) (*Profile, error)
 	UpdateProfilePic(ctx context.Context, in *UserUpdatePic, opts ...grpc.CallOption) (*Empty, error)
 	UpdateProfilePass(ctx context.Context, in *UserUpdatePass, opts ...grpc.CallOption) (*Empty, error)
 	UpdateProfileBio(ctx context.Context, in *UserUpdateBio, opts ...grpc.CallOption) (*Empty, error)
@@ -52,8 +51,8 @@ func (c *authServiceClient) SignUp(ctx context.Context, in *User, opts ...grpc.C
 	return out, nil
 }
 
-func (c *authServiceClient) GetProfile(ctx context.Context, in *UserUUID, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
+func (c *authServiceClient) GetProfile(ctx context.Context, in *UserUUID, opts ...grpc.CallOption) (*Profile, error) {
+	out := new(Profile)
 	err := c.cc.Invoke(ctx, "/AuthService/GetProfile", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -94,7 +93,7 @@ func (c *authServiceClient) UpdateProfileBio(ctx context.Context, in *UserUpdate
 type AuthServiceServer interface {
 	Login(context.Context, *LoginUser) (*Token, error)
 	SignUp(context.Context, *User) (*Token, error)
-	GetProfile(context.Context, *UserUUID) (*User, error)
+	GetProfile(context.Context, *UserUUID) (*Profile, error)
 	UpdateProfilePic(context.Context, *UserUpdatePic) (*Empty, error)
 	UpdateProfilePass(context.Context, *UserUpdatePass) (*Empty, error)
 	UpdateProfileBio(context.Context, *UserUpdateBio) (*Empty, error)
@@ -111,7 +110,7 @@ func (UnimplementedAuthServiceServer) Login(context.Context, *LoginUser) (*Token
 func (UnimplementedAuthServiceServer) SignUp(context.Context, *User) (*Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
 }
-func (UnimplementedAuthServiceServer) GetProfile(context.Context, *UserUUID) (*User, error) {
+func (UnimplementedAuthServiceServer) GetProfile(context.Context, *UserUUID) (*Profile, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProfile not implemented")
 }
 func (UnimplementedAuthServiceServer) UpdateProfilePic(context.Context, *UserUpdatePic) (*Empty, error) {
@@ -133,7 +132,7 @@ type UnsafeAuthServiceServer interface {
 }
 
 func RegisterAuthServiceServer(s grpc.ServiceRegistrar, srv AuthServiceServer) {
-	s.RegisterService(&AuthService_ServiceDesc, srv)
+	s.RegisterService(&_AuthService_serviceDesc, srv)
 }
 
 func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -244,10 +243,7 @@ func _AuthService_UpdateProfileBio_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-// AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var AuthService_ServiceDesc = grpc.ServiceDesc{
+var _AuthService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{

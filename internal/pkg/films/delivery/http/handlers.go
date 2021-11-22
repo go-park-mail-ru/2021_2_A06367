@@ -49,7 +49,7 @@ func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filmSet := h.FilmsToModels(*films)
-	util.Response(w, models.Okey, filmSet)
+	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
 // FilmBySelection godoc
@@ -78,7 +78,7 @@ func (h FilmsHandler) FilmBySelection(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filmSet := h.FilmsToModels(*films)
-	util.Response(w, models.Okey, filmSet)
+	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
 // FilmByActor godoc
@@ -112,7 +112,7 @@ func (h FilmsHandler) FilmByActor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filmSet := h.FilmsToModels(*films)
-	util.Response(w, models.Okey, filmSet)
+	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
 // FilmById godoc
@@ -146,7 +146,7 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filmSet := h.FilmToModel(film)
-	util.Response(w, models.Okey, filmSet)
+	util.Response(w, models.StatusCode(film.Status), filmSet)
 
 }
 
@@ -173,7 +173,7 @@ func (h FilmsHandler) FilmsByUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filmSet := h.FilmsToModels(*films)
-	util.Response(w, models.Okey, filmSet)
+	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
 func (h FilmsHandler) FilmStartSelection(w http.ResponseWriter, r *http.Request) {
@@ -187,7 +187,7 @@ func (h FilmsHandler) FilmStartSelection(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	film := h.FilmsToModels(*selection)
-	util.Response(w, models.Okey, film)
+	util.Response(w, models.StatusCode(selection.Status), film)
 }
 
 func (h FilmsHandler) AddStarred(w http.ResponseWriter, r *http.Request) {
@@ -214,7 +214,7 @@ func (h FilmsHandler) AddStarred(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 
-	_, err = h.client.AddStarred(context.Background(), &grpc.Pair{
+	none, err := h.client.AddStarred(context.Background(), &grpc.Pair{
 		FilmUUID: film.Id.String(),
 		UserUUID: user.Id.String(),
 	})
@@ -223,7 +223,7 @@ func (h FilmsHandler) AddStarred(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	util.Response(w, models.Okey, nil)
+	util.Response(w, models.StatusCode(none.Status), nil)
 }
 
 func (h FilmsHandler) RemoveStarred(w http.ResponseWriter, r *http.Request) {
@@ -250,7 +250,7 @@ func (h FilmsHandler) RemoveStarred(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 
-	_, err = h.client.RemoveStarred(context.Background(), &grpc.Pair{
+	none, err := h.client.RemoveStarred(context.Background(), &grpc.Pair{
 		FilmUUID: film.Id.String(),
 		UserUUID: user.Id.String(),
 	})
@@ -259,7 +259,7 @@ func (h FilmsHandler) RemoveStarred(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	util.Response(w, models.Okey, nil)
+	util.Response(w, models.StatusCode(none.Status), nil)
 }
 
 func (h FilmsHandler) AddWatchlist(w http.ResponseWriter, r *http.Request) {
@@ -286,7 +286,7 @@ func (h FilmsHandler) AddWatchlist(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 
-	_, err = h.client.AddWatchList(context.Background(), &grpc.Pair{
+	none, err := h.client.AddWatchList(context.Background(), &grpc.Pair{
 		FilmUUID: film.Id.String(),
 		UserUUID: user.Id.String(),
 	})
@@ -295,7 +295,7 @@ func (h FilmsHandler) AddWatchlist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	util.Response(w, models.Okey, nil)
+	util.Response(w, models.StatusCode(none.Status), nil)
 }
 
 func (h FilmsHandler) RemoveWatchlist(w http.ResponseWriter, r *http.Request) {
@@ -322,7 +322,7 @@ func (h FilmsHandler) RemoveWatchlist(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 
-	_, err = h.client.RemoveWatchList(context.Background(), &grpc.Pair{
+	none, err := h.client.RemoveWatchList(context.Background(), &grpc.Pair{
 		FilmUUID: film.Id.String(),
 		UserUUID: user.Id.String(),
 	})
@@ -331,7 +331,7 @@ func (h FilmsHandler) RemoveWatchlist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	util.Response(w, models.Okey, nil)
+	util.Response(w, models.StatusCode(none.Status), nil)
 }
 
 func (h FilmsHandler) GetStarred(w http.ResponseWriter, r *http.Request) {
@@ -351,7 +351,7 @@ func (h FilmsHandler) GetStarred(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	filmSet := h.FilmsToModels(*films)
-	util.Response(w, models.Okey, filmSet)
+	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 func (h FilmsHandler) GetWatchlist(w http.ResponseWriter, r *http.Request) {
 
@@ -369,13 +369,17 @@ func (h FilmsHandler) GetWatchlist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	filmSet := h.FilmsToModels(*films)
-	util.Response(w, models.Okey, filmSet)
+	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
 func (h FilmsHandler) RandomFilm(w http.ResponseWriter, r *http.Request) {
 
-	film, _ := h.client.Random(context.Background(), &grpc.Nothing{})
-	util.Response(w, models.Okey, film)
+	film, err := h.client.Random(context.Background(), &grpc.Nothing{})
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	util.Response(w, models.StatusCode(film.Status), film)
 
 }
 

@@ -17,6 +17,7 @@ require (
 	github.com/jackc/puddle v1.1.4 // indirect
 	github.com/joho/godotenv v1.4.0
 	github.com/mailru/easyjson v0.7.7
+	github.com/prometheus/client_golang v1.3.0
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/http-swagger v1.1.2
 	github.com/swaggo/swag v1.7.3
@@ -27,6 +28,6 @@ require (
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.7 // indirect
-	google.golang.org/grpc v1.32.0
+	google.golang.org/grpc v1.42.0
 	google.golang.org/protobuf v1.27.1
 )

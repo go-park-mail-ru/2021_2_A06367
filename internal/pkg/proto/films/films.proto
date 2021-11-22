@@ -1,13 +1,20 @@
 syntax = "proto3";
 option go_package = "internal/pkg/films/delivery/grpc";
 
-message Nothing {};
+import "codes.proto";
+
+message Nothing {
+ codes.StatusCode Status= 1;
+};
 
 message KeyWord {
   string Word = 1;
 }
 
 message Season {
+  int64 Num = 1;
+  repeated string Src = 2;
+  repeated string Pics = 3;
 
 }
 message Film {
@@ -30,10 +37,12 @@ message Film {
   string  Description =17;
   bool IsSeries =18;
   repeated Season Seasons = 19;
+  codes.StatusCode Status= 20;
 }
 
 message Films {
   repeated Film Data = 1;
+  codes.StatusCode Status= 2;
 }
 
 message Pair {

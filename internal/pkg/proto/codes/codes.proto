@@ -1,0 +1,14 @@
+syntax = "proto3";
+option go_package = "github.com/go-park-mail-ru/2021_2_A06367/internal/models/grpc";
+package codes;
+
+enum StatusCode {
+    Okey = 0;
+    NotFound = 1;
+    InternalError = 2;
+    Unauthed = 3;
+    Conflict = 4;
+    InvalidBody = 5;
+    BadRequest = 6;
+    Forbidden = 7;
+}
