@@ -303,10 +303,11 @@ func (r *FilmsRepo) DeleteStarred(film models.Film, user models.User) models.Sta
 
 func (r *FilmsRepo) InsertWatchlist(film models.Film, user models.User) models.StatusCode {
 
-	exec, err := r.pool.Exec(context.Background(), INSERT_FILM_TO_WATCHLIST, film.Id, user.Id)
+	exec, err := r.pool.Exec(context.Background(), INSERT_FILM_TO_WATCHLIST, user.Id, film.Id)
 	if err != nil {
 		return models.InternalError
 	}
+	//log.Println(err.Error())
 
 	if exec.RowsAffected() != 1 {
 		return models.Conflict
