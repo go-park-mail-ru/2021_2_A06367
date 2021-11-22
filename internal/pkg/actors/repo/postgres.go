@@ -92,7 +92,7 @@ func (r *ActorsRepo) GetActorsByKeyword(keyword string) ([]models.Actors, models
 
 	for rows.Next() {
 		var actor models.Actors
-		err = rows.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar, &actor.Height, &actor.DateOfBirth, &actor.Genres)
+		err = rows.Scan(&actor.Id, &actor.Name, &actor.Surname, &actor.Avatar, &actor.Height, &actor.DateOfBirth, &actor.Description, &actor.Genres)
 		if err != nil {
 			return nil, models.InternalError
 		}
