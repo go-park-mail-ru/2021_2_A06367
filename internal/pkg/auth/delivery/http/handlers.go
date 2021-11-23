@@ -323,11 +323,13 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 	hash.Write(all)
 	name := hash.Sum(nil)
 
-	err = os.WriteFile("../image/"+hex.EncodeToString(name[:])+".png", all, 0644)
+	fl, err := os.Create("../image/"+hex.EncodeToString(name[:])+".png")
 	if err != nil {
 		utils.Response(w, models.InternalError, nil)
 		return
 	}
+	fl.Write(all)
+	fl.Close()
 	user := models.Profile{
 		Id:     jwtData.Id,
 		Login:  jwtData.Login,
