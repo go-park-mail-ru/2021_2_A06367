@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
-	"fmt"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
@@ -317,24 +316,22 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 
 	all, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Fatal(err)
 		utils.Response(w, models.InternalError, nil)
+		log.Fatal("readall", err)
 		return
 	}
 	hash := md5.New()
 	hash.Write(all)
 	name := hash.Sum(nil)
 
-	_, err = os.Create("../image/"+hex.EncodeToString(name[:])+".png")
+	err =  os.WriteFile("../image/"+hex.EncodeToString(name[:])+".png", all, 0644)
 	if err != nil {
-		log.Fatal(err)
 		utils.Response(w, models.InternalError, nil)
+
+		log.Fatal("write", err)
 		return
 	}
 
-	fl, err := os.Open("../image/"+hex.EncodeToString(name[:])+".png")
-	fmt.Print(fl.Write(all))
-	fmt.Print(fl.Close())
 	user := models.Profile{
 		Id:     jwtData.Id,
 		Login:  jwtData.Login,
