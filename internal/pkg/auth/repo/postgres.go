@@ -157,7 +157,7 @@ func (r *AuthRepo) UpdateBio(profile models.Profile) models.StatusCode {
 
 func (r *AuthRepo) UpdateAvatar(profile models.Profile) models.StatusCode {
 
-	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_BIO, profile.Avatar, profile.Id)
+	tag, err := r.pool.Exec(context.Background(), UPDATE_USER_PIC, profile.Avatar, profile.Id)
 
 	if err != nil {
 		return models.InternalError

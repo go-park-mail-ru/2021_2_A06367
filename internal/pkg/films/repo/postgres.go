@@ -303,10 +303,11 @@ func (r *FilmsRepo) DeleteStarred(film models.Film, user models.User) models.Sta
 
 func (r *FilmsRepo) InsertWatchlist(film models.Film, user models.User) models.StatusCode {
 
-	exec, err := r.pool.Exec(context.Background(), INSERT_FILM_TO_WATCHLIST, film.Id, user.Id)
+	exec, err := r.pool.Exec(context.Background(), INSERT_FILM_TO_WATCHLIST, user.Id, film.Id)
 	if err != nil {
 		return models.InternalError
 	}
+	//log.Println(err.Error())
 
 	if exec.RowsAffected() != 1 {
 		return models.Conflict
@@ -365,7 +366,7 @@ func (r FilmsRepo) GetWatchlistFilms(user models.User) ([]models.Film, models.St
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Pic, &film.Src)
+			&film.Language, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
 		if err != nil {
 			return nil, models.InternalError
 		}
