@@ -19,3 +19,8 @@ services:
       dockerfile: ./build/auth.Dockerfile
     ports:
       - 8020:8020
+    volumes:
+      - type: bind
+        source: $HOST/images
+        target: /container/images
+

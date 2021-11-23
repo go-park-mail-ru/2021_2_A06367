@@ -323,7 +323,7 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 	hash.Write(all)
 	name := hash.Sum(nil)
 
-	err = os.WriteFile("/image/" + hex.EncodeToString(name[:])+".png", all, 0644)
+	err = os.WriteFile("/images/"+hex.EncodeToString(name[:])+".png", all, 0644)
 	if err != nil {
 		utils.Response(w, models.InternalError, nil)
 		return
