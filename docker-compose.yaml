@@ -21,6 +21,6 @@ services:
       - 8020:8020
     volumes:
       - type: bind
-        source: $HOST/images
-        target: /container/images
+        source: ../image
+        target: /image
 
