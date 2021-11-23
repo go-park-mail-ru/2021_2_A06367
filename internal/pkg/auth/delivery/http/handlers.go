@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
@@ -12,7 +13,6 @@ import (
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -316,7 +316,7 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 
 	all, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Print(err)
+		fmt.Print(err)
 		utils.Response(w, models.InternalError, nil)
 		return
 	}
@@ -326,12 +326,12 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 
 	fl, err := os.Create("../image/"+hex.EncodeToString(name[:])+".png")
 	if err != nil {
-		log.Print(err)
+		fmt.Print(err)
 		utils.Response(w, models.InternalError, nil)
 		return
 	}
-	log.Print(fl.Write(all))
-	log.Print(fl.Close())
+	fmt.Print(fl.Write(all))
+	fmt.Print(fl.Close())
 	user := models.Profile{
 		Id:     jwtData.Id,
 		Login:  jwtData.Login,
