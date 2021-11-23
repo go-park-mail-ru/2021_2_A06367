@@ -325,12 +325,14 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 	hash.Write(all)
 	name := hash.Sum(nil)
 
-	fl, err := os.Create("../image/"+hex.EncodeToString(name[:])+".png")
+	_, err = os.Create("../image/"+hex.EncodeToString(name[:])+".png")
 	if err != nil {
 		log.Fatal(err)
 		utils.Response(w, models.InternalError, nil)
 		return
 	}
+
+	fl, err := os.Open("../image/"+hex.EncodeToString(name[:])+".png")
 	fmt.Print(fl.Write(all))
 	fmt.Print(fl.Close())
 	user := models.Profile{
