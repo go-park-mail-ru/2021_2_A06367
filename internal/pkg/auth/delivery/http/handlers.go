@@ -12,6 +12,7 @@ import (
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -309,13 +310,13 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 
 	file, _, err := r.FormFile("pic")
 	if err != nil {
-
 		utils.Response(w, models.BadRequest, nil)
 		return
 	}
 
 	all, err := ioutil.ReadAll(file)
 	if err != nil {
+		log.Print(err)
 		utils.Response(w, models.InternalError, nil)
 		return
 	}
@@ -325,11 +326,12 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 
 	fl, err := os.Create("../image/"+hex.EncodeToString(name[:])+".png")
 	if err != nil {
+		log.Print(err)
 		utils.Response(w, models.InternalError, nil)
 		return
 	}
-	fl.Write(all)
-	fl.Close()
+	log.Print(fl.Write(all))
+	log.Print(fl.Close())
 	user := models.Profile{
 		Id:     jwtData.Id,
 		Login:  jwtData.Login,
