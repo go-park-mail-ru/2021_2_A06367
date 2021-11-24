@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
+	"log"
 	"net/http"
 	"time"
 )
@@ -144,7 +145,7 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.NotFound, nil)
 		return
 	}
-
+	log.Println(film.Seasons)
 	filmSet := h.FilmToModel(film)
 	util.Response(w, models.StatusCode(film.Status), filmSet)
 
@@ -394,6 +395,37 @@ func (h FilmsHandler) FilmToModel(film *grpc.Film) models.Film {
 		actors = append(actors, id)
 	}
 
+	//out := &[]models.Season{}
+	//if film.Seasons != nil {
+	//
+	//	SeasonsOut := []models.Season{}
+	//	for _, season := range film.Seasons {
+	//		temp := models.Season{
+	//			Num:  int(season.Num),
+	//			Src:  season.Src,
+	//			Pics: season.Pics,
+	//		}
+	//		SeasonsOut = append(SeasonsOut, temp)
+	//	}
+	//	log.Println(SeasonsOut)
+	//	out = &SeasonsOut
+	//} else {
+	//	out = nil
+	//}
+	SeasonsOut := []models.Season{}
+	for _, season := range film.Seasons {
+		temp := models.Season{
+			Num:  int(season.Num),
+			Src:  season.Src,
+			Pics: season.Pics,
+		}
+		SeasonsOut = append(SeasonsOut, temp)
+	}
+	if len(SeasonsOut) == 0 {
+		temp := models.Season{}
+		SeasonsOut = append(SeasonsOut, temp)
+	}
+
 	return models.Film{
 		Id:          id,
 		Title:       film.Title,
@@ -412,7 +444,7 @@ func (h FilmsHandler) FilmToModel(film *grpc.Film) models.Film {
 		Src:         film.Src,
 		Description: film.Description,
 		IsSeries:    film.IsSeries,
-		Seasons:     nil,
+		Seasons:     &SeasonsOut,
 	}
 }
 

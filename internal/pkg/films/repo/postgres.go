@@ -98,7 +98,7 @@ func (r *FilmsRepo) GetFilmsByTopic(topic string) ([]models.Film, models.StatusC
 		}
 
 		if film.IsSeries {
-			code := r.ReadSeries(film)
+			code := r.ReadSeries(&film)
 			if code != models.Okey {
 				return nil, models.InternalError
 			}
@@ -128,7 +128,7 @@ func (r *FilmsRepo) GetHottestFilms() ([]models.Film, models.StatusCode) {
 			return nil, models.InternalError
 		}
 		if film.IsSeries {
-			code := r.ReadSeries(film)
+			code := r.ReadSeries(&film)
 			if code != models.Okey {
 				return nil, models.InternalError
 			}
@@ -158,7 +158,7 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 			return nil, models.InternalError
 		}
 		if film.IsSeries {
-			code := r.ReadSeries(film)
+			code := r.ReadSeries(&film)
 			if code != models.Okey {
 				return nil, models.InternalError
 			}
@@ -187,7 +187,7 @@ func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.Sta
 			return nil, models.InternalError
 		}
 		if film.IsSeries {
-			code := r.ReadSeries(film)
+			code := r.ReadSeries(&film)
 			if code != models.Okey {
 				return nil, models.InternalError
 			}
@@ -216,7 +216,7 @@ func (r *FilmsRepo) GetFilmsByActor(actor models.Actors) ([]models.Film, models.
 			return nil, models.InternalError
 		}
 		if film.IsSeries {
-			code := r.ReadSeries(film)
+			code := r.ReadSeries(&film)
 			if code != models.Okey {
 				return nil, models.InternalError
 			}
@@ -234,7 +234,7 @@ func (r *FilmsRepo) GetFilmById(film models.Film) (models.Film, models.StatusCod
 		&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
 
 	if film.IsSeries {
-		code := r.ReadSeries(film)
+		code := r.ReadSeries(&film)
 		if code != models.Okey {
 			return models.Film{}, models.InternalError
 		}
@@ -263,7 +263,7 @@ func (r *FilmsRepo) GetFilmsByUser(user models.User) ([]models.Film, models.Stat
 			return nil, models.InternalError
 		}
 		if film.IsSeries {
-			code := r.ReadSeries(film)
+			code := r.ReadSeries(&film)
 			if code != models.Okey {
 				return nil, models.InternalError
 			}
@@ -376,7 +376,7 @@ func (r FilmsRepo) GetWatchlistFilms(user models.User) ([]models.Film, models.St
 	return films, models.Okey
 }
 
-func (r FilmsRepo) ReadSeries(film models.Film) models.StatusCode {
+func (r FilmsRepo) ReadSeries(film *models.Film) models.StatusCode {
 	rows, err := r.pool.Query(context.Background(), GET_SERIES,
 		film.Id)
 
@@ -394,6 +394,7 @@ func (r FilmsRepo) ReadSeries(film models.Film) models.StatusCode {
 			return models.InternalError
 		}
 		seasons = append(seasons, season)
+
 	}
 
 	film.Seasons = &seasons
@@ -419,7 +420,7 @@ func (r *FilmsRepo) GetRandom() (models.Film, models.StatusCode) {
 		return models.Film{}, models.InternalError
 	}
 	if film.IsSeries {
-		code := r.ReadSeries(film)
+		code := r.ReadSeries(&film)
 		if code != models.Okey {
 			return models.Film{}, models.InternalError
 		}

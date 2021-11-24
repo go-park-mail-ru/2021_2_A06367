@@ -154,6 +154,9 @@ func (g *GrpcFilmsHandler) Random(ctx context.Context, in *Nothing) (*Film, erro
 
 func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *Film {
 
+	if film.Seasons != nil {
+		log.Println(*film.Seasons)
+	}
 	var actors []string
 	for i := 0; i < len(film.Actors); i++ {
 		actors = append(actors, film.Actors[i].String())
@@ -191,7 +194,10 @@ func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *Film {
 			})
 		}
 		gfilm.Seasons = gs
+		log.Println()
+		log.Println("HERE NOW =============")
 	}
+
 	return gfilm
 }
 
