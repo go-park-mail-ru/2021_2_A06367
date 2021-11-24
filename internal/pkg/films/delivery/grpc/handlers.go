@@ -9,6 +9,8 @@ import (
 	"log"
 )
 
+//go:generate mockgen -source=films_grpc.pb.go -destination=films_grpc.go -package=grpc
+
 type GrpcFilmsHandler struct {
 	uc films.FilmsUsecase
 	FilmsServiceServer
