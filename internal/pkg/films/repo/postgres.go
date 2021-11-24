@@ -55,6 +55,10 @@ const (
 		"FROM films f JOIN starred_films sf ON f.id  = sf.film_id " +
 		"WHERE sf.user_id=$1"
 
+	GET_IF_STARRED_FILMS = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
+		"FROM films f JOIN starred_films sf ON f.id  = sf.film_id " +
+		"WHERE sf.user_id=$1 AND id=$2"
+
 	INSERT_FILM_TO_WATCHLIST = "INSERT INTO watchlist (id, film_id) VALUES($1, $2);"
 
 	DELETE_FILM_FROM_WATCHLIST = "DELETE FROM watchlist WHERE film_id=$1 AND id=$2;"
@@ -351,6 +355,19 @@ func (r FilmsRepo) GetStarredFilms(user models.User) ([]models.Film, models.Stat
 	}
 
 	return films, models.Okey
+}
+
+func (r FilmsRepo) IfStarred(film models.Film, user models.User) models.StatusCode {
+	rows := r.pool.QueryRow(context.Background(), GET_IF_STARRED_FILMS, user.Id, film.Id)
+
+	err := rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
+		&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
+		&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
+	if err != nil {
+		return models.NotFound
+	}
+
+	return models.Okey
 }
 
 func (r FilmsRepo) GetWatchlistFilms(user models.User) ([]models.Film, models.StatusCode) {

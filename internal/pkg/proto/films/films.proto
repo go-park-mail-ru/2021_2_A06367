@@ -66,6 +66,8 @@ service FilmsService {
   rpc AddWatchList(Pair) returns (Nothing) {}
   rpc RemoveWatchList(Pair) returns (Nothing) {}
   rpc Starred(UUID) returns (Films) {}
+
+  rpc IfStarred(Pair) returns (Nothing) {}
   rpc WatchList(UUID) returns (Films) {}
   rpc Random(Nothing) returns (Film) {}
 }

@@ -227,6 +227,42 @@ func (h FilmsHandler) AddStarred(w http.ResponseWriter, r *http.Request) {
 	util.Response(w, models.StatusCode(none.Status), nil)
 }
 
+func (h FilmsHandler) IfStarred(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	none, err := h.client.IfStarred(context.Background(), &grpc.Pair{
+		FilmUUID: film.Id.String(),
+		UserUUID: user.Id.String(),
+	})
+	if err != nil {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	util.Response(w, models.StatusCode(none.Status), nil)
+}
+
 func (h FilmsHandler) RemoveStarred(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

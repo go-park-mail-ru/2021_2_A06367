@@ -16,6 +16,7 @@ type FilmsUsecase interface {
 	GetStartSelections(authorized bool, user models.User) ([]models.Film, models.StatusCode)
 
 	GetStarred(user models.User) ([]models.Film, models.StatusCode)
+	GetIfStarred(film models.Film, user models.User)  models.StatusCode
 	AddStarred(film models.Film, user models.User) models.StatusCode
 	RemoveStarred(film models.Film, user models.User) models.StatusCode
 
@@ -38,6 +39,7 @@ type FilmsRepository interface {
 	GetStarredFilms(user models.User) ([]models.Film, models.StatusCode)
 	InsertStarred(film models.Film, user models.User) models.StatusCode
 	DeleteStarred(film models.Film, user models.User) models.StatusCode
+	IfStarred(film models.Film, user models.User) models.StatusCode
 
 	GetWatchlistFilms(user models.User) ([]models.Film, models.StatusCode)
 	InsertWatchlist(film models.Film, user models.User) models.StatusCode

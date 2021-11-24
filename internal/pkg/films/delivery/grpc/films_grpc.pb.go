@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // FilmsServiceClient is the client API for FilmsService service.
@@ -28,6 +29,7 @@ type FilmsServiceClient interface {
 	AddWatchList(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error)
 	RemoveWatchList(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error)
 	Starred(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Films, error)
+	IfStarred(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error)
 	WatchList(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Films, error)
 	Random(ctx context.Context, in *Nothing, opts ...grpc.CallOption) (*Film, error)
 }
@@ -139,6 +141,15 @@ func (c *filmsServiceClient) Starred(ctx context.Context, in *UUID, opts ...grpc
 	return out, nil
 }
 
+func (c *filmsServiceClient) IfStarred(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error) {
+	out := new(Nothing)
+	err := c.cc.Invoke(ctx, "/FilmsService/IfStarred", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *filmsServiceClient) WatchList(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Films, error) {
 	out := new(Films)
 	err := c.cc.Invoke(ctx, "/FilmsService/WatchList", in, out, opts...)
@@ -172,6 +183,7 @@ type FilmsServiceServer interface {
 	AddWatchList(context.Context, *Pair) (*Nothing, error)
 	RemoveWatchList(context.Context, *Pair) (*Nothing, error)
 	Starred(context.Context, *UUID) (*Films, error)
+	IfStarred(context.Context, *Pair) (*Nothing, error)
 	WatchList(context.Context, *UUID) (*Films, error)
 	Random(context.Context, *Nothing) (*Film, error)
 	mustEmbedUnimplementedFilmsServiceServer()
@@ -214,6 +226,9 @@ func (UnimplementedFilmsServiceServer) RemoveWatchList(context.Context, *Pair) (
 func (UnimplementedFilmsServiceServer) Starred(context.Context, *UUID) (*Films, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Starred not implemented")
 }
+func (UnimplementedFilmsServiceServer) IfStarred(context.Context, *Pair) (*Nothing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IfStarred not implemented")
+}
 func (UnimplementedFilmsServiceServer) WatchList(context.Context, *UUID) (*Films, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WatchList not implemented")
 }
@@ -230,7 +245,7 @@ type UnsafeFilmsServiceServer interface {
 }
 
 func RegisterFilmsServiceServer(s grpc.ServiceRegistrar, srv FilmsServiceServer) {
-	s.RegisterService(&_FilmsService_serviceDesc, srv)
+	s.RegisterService(&FilmsService_ServiceDesc, srv)
 }
 
 func _FilmsService_FilmByGenre_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -431,6 +446,24 @@ func _FilmsService_Starred_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FilmsService_IfStarred_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Pair)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FilmsServiceServer).IfStarred(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/FilmsService/IfStarred",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FilmsServiceServer).IfStarred(ctx, req.(*Pair))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _FilmsService_WatchList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UUID)
 	if err := dec(in); err != nil {
@@ -467,7 +500,10 @@ func _FilmsService_Random_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-var _FilmsService_serviceDesc = grpc.ServiceDesc{
+// FilmsService_ServiceDesc is the grpc.ServiceDesc for FilmsService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var FilmsService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "FilmsService",
 	HandlerType: (*FilmsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -514,6 +550,10 @@ var _FilmsService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Starred",
 			Handler:    _FilmsService_Starred_Handler,
+		},
+		{
+			MethodName: "IfStarred",
+			Handler:    _FilmsService_IfStarred_Handler,
 		},
 		{
 			MethodName: "WatchList",

@@ -59,6 +59,11 @@ func (u *FilmsUsecase) AddStarred(film models.Film, user models.User) models.Sta
 	return u.repo.InsertStarred(film, user)
 }
 
+
+func (u *FilmsUsecase) GetIfStarred(film models.Film, user models.User) models.StatusCode {
+	return u.repo.InsertStarred(film, user)
+}
+
 func (u *FilmsUsecase) RemoveStarred(film models.Film, user models.User) models.StatusCode {
 	return u.repo.DeleteStarred(film, user)
 }

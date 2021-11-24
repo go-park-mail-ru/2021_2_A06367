@@ -116,6 +116,17 @@ func (g *GrpcFilmsHandler) AddWatchList(ctx context.Context, in *Pair) (*Nothing
 		Status: grpc.StatusCode(status),
 	}, nil
 }
+
+func (g *GrpcFilmsHandler) IfStarred(ctx context.Context, in *Pair) (*Nothing, error) {
+	filmId, _ := uuid.Parse(in.FilmUUID)
+	film := models.Film{Id: filmId}
+	userId, _ := uuid.Parse(in.UserUUID)
+	user := models.User{Id: userId}
+	status := g.uc.GetIfStarred(film, user)
+	return &Nothing{
+		Status: grpc.StatusCode(status),
+	}, nil
+}
 func (g *GrpcFilmsHandler) RemoveWatchList(ctx context.Context, in *Pair) (*Nothing, error) {
 	filmId, _ := uuid.Parse(in.FilmUUID)
 	film := models.Film{Id: filmId}
