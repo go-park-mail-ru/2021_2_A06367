@@ -140,6 +140,7 @@ func run() error {
 		film.HandleFunc("/selection", filmsHandler.FilmStartSelection).Methods(http.MethodGet)
 
 		film.HandleFunc("/starred", filmsHandler.GetStarred).Methods(http.MethodGet)
+		film.HandleFunc("/starred/check/{id}", filmsHandler.IfStarred).Methods(http.MethodGet)
 		film.HandleFunc("/starred/{id}", filmsHandler.AddStarred).Methods(http.MethodPost)
 		film.HandleFunc("/starred/{id}", filmsHandler.RemoveStarred).Methods(http.MethodDelete)
 
