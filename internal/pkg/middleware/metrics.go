@@ -17,7 +17,6 @@ const (
 
 const (
 	ServiceName = "service"
-	StartTime   = "start"
 	FullTime    = "duration"
 	URL         = "url"
 	Method      = "method"
@@ -41,8 +40,11 @@ func (w *writer) WriteHeader(code int) {
 }
 
 type MetricsMiddleware struct {
-	metric *prometheus.GaugeVec
-	name   string
+	metric    *prometheus.GaugeVec
+	counter   *prometheus.CounterVec       //количество ошибок
+	durations *prometheus.HistogramVec //сколько выполняются различные запросы
+	errors    *prometheus.CounterVec
+	name      string
 }
 
 func NewMetricsMiddleware() *MetricsMiddleware {
@@ -58,13 +60,36 @@ func (m *MetricsMiddleware) Register(name string) {
 			Help: fmt.Sprintf("SLO for service %s", name),
 		},
 		[]string{
-			ServiceName, StartTime, FullTime, URL, Method, StatusCode,
+			ServiceName, URL, Method, StatusCode,
 		})
 
 	m.metric = gauge
 
+	counter := prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "hits",
+			Help: "Number of all errors.",
+		},  []string{URL})
+	m.counter = counter
+
+	hist := prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Name:    "durations_stats",
+		Help:    "durations_stats",
+		Buckets: prometheus.LinearBuckets(0, 1, 10),
+	}, []string{URL})
+	m.durations = hist
+
+	errs := prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "errors_hits",
+		Help: "Number of all errors.",
+	}, []string{URL})
+
+	m.errors = errs
 	rand.Seed(time.Now().Unix())
-	prometheus.MustRegister(gauge)
+	prometheus.MustRegister(m.metric)
+	prometheus.MustRegister(m.counter)
+	prometheus.MustRegister(m.durations)
+	prometheus.MustRegister(m.errors)
 }
 
 func (m *MetricsMiddleware) LogMetrics(next http.Handler) http.Handler {
@@ -79,14 +104,19 @@ func (m *MetricsMiddleware) LogMetrics(next http.Handler) http.Handler {
 
 		next.ServeHTTP(wrapper, r.WithContext(ctx))
 
+		tm := time.Since(start)
 		m.metric.With(prometheus.Labels{
 			ServiceName: m.name,
-			StartTime:   start.String(),
-			FullTime:    time.Since(start).String(),
 			URL:         r.URL.Path,
 			Method:      r.Method,
 			StatusCode:  fmt.Sprintf("%d", wrapper.statusCode),
 		}).Inc()
 
+		m.durations.With(prometheus.Labels{URL: r.URL.Path}).Observe(tm.Seconds())
+
+		if wrapper.statusCode != http.StatusOK {
+			m.errors.With(prometheus.Labels{URL: r.URL.Path}).Inc()
+		}
+		m.counter.With(prometheus.Labels{URL: r.URL.Path}).Inc()
 	})
 }
