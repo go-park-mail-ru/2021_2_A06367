@@ -1,4 +1,4 @@
-package middleware
+package utils
 
 import (
 	"encoding/json"
@@ -6,15 +6,12 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
+	"github.com/google/uuid"
 	"net/http"
 	"os"
 	"strings"
 	"time"
 )
-
-type AccessDetails struct {
-	Login string
-}
 
 type Extracter func(r *http.Request) string
 
@@ -32,8 +29,12 @@ func ExtractToken(r *http.Request) string {
 	return strArr[0]
 }
 
-func ExtractTokenFromHeader(r *http.Request) string {
-	token := r.Header.Get("Authorization")
+func ExtractTokenFromCookie(r *http.Request) string {
+	tokenCookie, err := r.Cookie("SSID")
+	if err != nil {
+		return ""
+	}
+	token := tokenCookie.Value
 	strArr := strings.Split(token, " ")
 	if len(strArr) == 2 {
 		return strArr[1]
@@ -44,7 +45,7 @@ func ExtractTokenFromHeader(r *http.Request) string {
 func VerifyToken(r *http.Request, extracter Extracter) (*models.Token, error) {
 	tokenStr := extracter(r)
 	if tokenStr == "" {
-		return nil, errors.New("no token")
+		return nil, errors.New(models.ErrNoToken)
 	}
 
 	token, err := jwt.ParseWithClaims(tokenStr, &models.Token{}, func(token *jwt.Token) (interface{}, error) {
@@ -61,10 +62,10 @@ func VerifyToken(r *http.Request, extracter Extracter) (*models.Token, error) {
 	if ok && token.Valid {
 		return claims, nil
 	}
-	return nil, errors.New("no auth data")
+	return nil, errors.New(models.ErrNoAuthData)
 }
 
-func ExtractTokenMetadata(r *http.Request, extracter Extracter) (*AccessDetails, error) {
+func ExtractTokenMetadata(r *http.Request, extracter Extracter) (*models.AccessDetails, error) {
 	token, err := VerifyToken(r, extracter)
 	if err != nil {
 		return nil, err
@@ -72,11 +73,15 @@ func ExtractTokenMetadata(r *http.Request, extracter Extracter) (*AccessDetails,
 	exp := token.ExpiresAt
 	now := time.Now().Unix()
 	if exp < now {
-		return nil, errors.New("token expired")
+		return nil, errors.New(models.ErrExpiredToken)
 	}
-	data := &AccessDetails{Login: token.Login}
-	if data.Login == "" {
-		return nil, errors.New("invalid token")
+	uid, err := uuid.Parse(token.Id)
+	if err != nil {
+		return nil, err
+	}
+	data := &models.AccessDetails{Login: token.Login, Id: uid}
+	if data.Login == "" || data.Id.String() == "" {
+		return nil, errors.New(models.ErrInvalidToken)
 	}
 
 	return data, err

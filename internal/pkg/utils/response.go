@@ -1,4 +1,4 @@
-package middleware
+package utils
 
 import (
 	"encoding/json"
@@ -7,6 +7,9 @@ import (
 )
 
 func Response(w http.ResponseWriter, status models.StatusCode, body interface{}) {
+	if body != nil {
+		w.Header().Set("Content-Type", "application/json")
+	}
 
 	switch status {
 	case models.Okey:
@@ -27,8 +30,8 @@ func Response(w http.ResponseWriter, status models.StatusCode, body interface{})
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	if body != nil {
-		w.Header().Set("Content-Type", "application/json")
 		jsn, _ := json.Marshal(body)
 		_, _ = w.Write(jsn)
 	}
+
 }

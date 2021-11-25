@@ -1,0 +1,69 @@
+run:
+  concurency: 4
+  tests: true
+  skip-dirs-use-default: true # пропустить вендор
+
+output:
+  format: github-actions
+  print-issued-lines: true
+  print-linter-name: true
+
+linters-settings:
+
+  dogsled:
+    max-blank-identifiers: 2
+
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+
+  govet:
+    check-shadowing: true
+    check-structtags: false
+
+  golint:
+    min-confidence: 0.7
+  gofmt:
+    simplify: true
+  goimports:
+    local-prefixes: 2021_2_A06367
+  gocyclo:
+    min-complexity: 10
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 50
+  goconst:
+    min-len: 3
+    min-occurrences: 2
+  lll:
+    line-length: 80
+    tab-width: 4
+
+  linters:
+    enable:
+      - megacheck
+      - govet
+    enable-all: false
+    disable:
+      - maligned
+      - prealloc
+    disable-all: false
+    presets:
+      - bugs
+      - unused
+    fast: false
+
+  godox:
+    keywords:
+      - TODO
+      - FIXME
+      - OPTIMIZE
+  gosimple:
+    go: "1.16"
+    checks: [ "all" ]
+  misspell:
+    locale: US # называем переменные красиво
+issues:
+  exclude:
+    - w.Write

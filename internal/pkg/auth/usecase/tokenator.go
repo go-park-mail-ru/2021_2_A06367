@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
+	"github.com/golang-jwt/jwt"
 	"os"
 	"time"
 )
@@ -17,6 +17,7 @@ func NewTokenator() *Tokenator {
 func (t *Tokenator) GetToken(user models.User) string {
 	tokenModel := models.Token{
 		Login: user.Login,
+		Id:    user.Id.String(),
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 5).Unix(),
 		},
@@ -24,7 +25,7 @@ func (t *Tokenator) GetToken(user models.User) string {
 
 	SecretKey, err := os.LookupEnv("SECRET")
 	if !err {
-		panic("where is a secret key!")
+		return "no secret key"
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenModel)
 

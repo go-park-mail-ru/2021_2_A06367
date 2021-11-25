@@ -3,14 +3,21 @@ package http
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/mocks"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
 	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
+	"time"
 )
 
 func bodyPrepare(user models.User) []byte {
@@ -22,8 +29,7 @@ func bodyPrepare(user models.User) []byte {
 }
 
 type fields struct {
-	Usecase    auth.AuthUsecase
-	OnlineRepo auth.OnlineRepo
+	Usecase auth.AuthUsecase
 }
 
 type args struct {
@@ -39,27 +45,22 @@ var testUsers []models.User = []models.User{
 	models.User{
 		Login:             "Phil",
 		EncryptedPassword: "mancity",
-		Email:             "phil@yandex.ru",
 	},
 	models.User{
 		Login:             "Donald",
 		EncryptedPassword: "maga",
-		Email:             "usa@gmail.com",
 	},
 	models.User{
 		Login:             "Anonym",
 		EncryptedPassword: "",
-		Email:             "",
 	},
 	models.User{
 		Login:             "Bad",
 		EncryptedPassword: "User",
-		Email:             "KKK",
 	},
 	models.User{
 		Login:             "Pom",
 		EncryptedPassword: "Pom",
-		Email:             "Pom",
 	},
 }
 
@@ -67,15 +68,16 @@ func TestNewAuthHandler(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUsecase := auth.NewMockAuthUsecase(ctl)
-	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+	mockUsecase := mocks.NewMockAuthUsecase(ctl)
 
-	testHandler := NewAuthHandler(mockUsecase, mockOnlineRepo)
-	if testHandler.uc != mockUsecase {
-		t.Error("bad constructor")
+	logger, err := zap.NewProduction()
+	if err != nil {
+		t.Error(err.Error())
 	}
-
-	if testHandler.online != mockOnlineRepo {
+	defer logger.Sync()
+	zapSugar := logger.Sugar()
+	testHandler := NewAuthHandler(mockUsecase, zapSugar)
+	if testHandler.uc != mockUsecase {
 		t.Error("bad constructor")
 	}
 }
@@ -84,8 +86,7 @@ func TestAuthHandler_Login(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUsecase := auth.NewMockAuthUsecase(ctl)
-	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+	mockUsecase := mocks.NewMockAuthUsecase(ctl)
 
 	tests := []struct {
 		Login  string
@@ -95,7 +96,7 @@ func TestAuthHandler_Login(t *testing.T) {
 	}{
 		{
 			Login:  testUsers[0].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[0]))),
@@ -108,7 +109,7 @@ func TestAuthHandler_Login(t *testing.T) {
 		},
 		{
 			Login:  testUsers[1].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[1]))),
@@ -120,7 +121,7 @@ func TestAuthHandler_Login(t *testing.T) {
 		},
 		{
 			Login:  testUsers[2].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader([]byte("Hi there"))),
@@ -132,9 +133,6 @@ func TestAuthHandler_Login(t *testing.T) {
 
 	for i := 0; i < len(tests); i++ {
 		LoginUserCopy := models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}
-		if tests[i].args.statusReturn == models.Okey {
-			mockOnlineRepo.EXPECT().UserOn(LoginUserCopy).Return(tests[i].args.statusReturn)
-		}
 		if tests[i].args.statusReturn != models.Forbidden {
 			mockUsecase.EXPECT().
 				SignIn(LoginUserCopy).
@@ -145,8 +143,7 @@ func TestAuthHandler_Login(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthHandler{
-				uc:     tt.fields.Usecase,
-				online: tt.fields.OnlineRepo,
+				uc: tt.fields.Usecase,
 			}
 			if tt.Login == testUsers[1].Login {
 				tt.Login = tt.Login
@@ -164,8 +161,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUsecase := auth.NewMockAuthUsecase(ctl)
-	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+	mockUsecase := mocks.NewMockAuthUsecase(ctl)
 
 	tests := []struct {
 		Login  string
@@ -175,7 +171,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 	}{
 		{
 			Login:  testUsers[0].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[0]))),
@@ -188,7 +184,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 		},
 		{
 			Login:  testUsers[1].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader(bodyPrepare(testUsers[1]))),
@@ -199,7 +195,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 		},
 		{
 			Login:  testUsers[2].Login,
-			fields: fields{Usecase: mockUsecase, OnlineRepo: mockOnlineRepo},
+			fields: fields{Usecase: mockUsecase},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					bytes.NewReader([]byte("d"))),
@@ -216,21 +212,17 @@ func TestAuthHandler_SignUp(t *testing.T) {
 		}
 		if tests[i].args.statusReturn == models.Okey {
 			mockUsecase.EXPECT().SignUp(testUsers[i]).Return("token", tests[i].args.statusReturn)
-			mockOnlineRepo.EXPECT().
-				UserOn(models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).
-				Return(tests[i].args.statusReturn)
 			continue
 		}
 		mockUsecase.EXPECT().
-			SignUp(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword, Email: testUsers[i].Email}).
+			SignUp(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).
 			Return("", tests[i].args.statusReturn)
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthHandler{
-				uc:     tt.fields.Usecase,
-				online: tt.fields.OnlineRepo,
+				uc: tt.fields.Usecase,
 			}
 			w := httptest.NewRecorder()
 
@@ -248,9 +240,7 @@ func TestAuthHandler_Logout(t *testing.T) {
 
 	os.Setenv("SECRET", "TEST")
 	tkn := &usecase.Tokenator{}
-	bdy := tkn.GetToken(models.User{Login: testUsers[1].Login})
-	body, _ := json.Marshal(models.TokenView{Token: bdy})
-	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
+	bdy := tkn.GetToken(models.User{Login: testUsers[1].Login, Id: uuid.New()})
 
 	tests := []struct {
 		Login  string
@@ -260,10 +250,10 @@ func TestAuthHandler_Logout(t *testing.T) {
 	}{
 		{
 			Login:  testUsers[0].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
+			fields: fields{},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
-					bytes.NewReader(bodyPrepare(testUsers[0]))),
+					nil),
 				statusReturn: models.BadRequest,
 				result:       http.Response{StatusCode: http.StatusBadRequest},
 				OnlineStatus: false,
@@ -273,10 +263,10 @@ func TestAuthHandler_Logout(t *testing.T) {
 		},
 		{
 			Login:  testUsers[1].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
+			fields: fields{},
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
-					bytes.NewReader(body)),
+					nil),
 				statusReturn: models.Okey,
 				result:       http.Response{StatusCode: http.StatusOK},
 				OnlineStatus: false,
@@ -287,18 +277,30 @@ func TestAuthHandler_Logout(t *testing.T) {
 	}
 
 	for i := 0; i < len(tests); i++ {
-		if tests[i].args.statusReturn != models.BadRequest {
-			LoginUserCopy := models.LoginUser{Login: testUsers[i].Login}
-			mockOnlineRepo.EXPECT().UserOff(LoginUserCopy).Return(tests[i].args.statusReturn)
+		if tests[i].args.statusReturn == models.BadRequest {
+			tests[i].args.r.AddCookie(&http.Cookie{
+				Name:     "SSID",
+				Value:    "bdy",
+				Expires:  time.Time{},
+				HttpOnly: true,
+			})
+			continue
 		}
+		tests[i].args.r.AddCookie(&http.Cookie{
+			Name:     "SSID",
+			Value:    bdy,
+			Expires:  time.Time{},
+			HttpOnly: true,
+		})
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
-			h := &AuthHandler{
-				online: tt.fields.OnlineRepo,
-			}
+			h := &AuthHandler{}
 
+			if tt.Login == testUsers[1].Login {
+				tt.Login = tt.Login
+			}
 			w := httptest.NewRecorder()
 			h.Logout(w, tt.args.r)
 			if tt.args.result.StatusCode != w.Code {
@@ -313,12 +315,11 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 	defer ctl.Finish()
 
 	os.Setenv("SECRET", "TEST")
-	mockOnlineRepo := auth.NewMockOnlineRepo(ctl)
 	tkn := &usecase.Tokenator{}
-	bdy := tkn.GetToken(models.User{Login: "Phi"})
+	bdy := tkn.GetToken(models.User{Login: "Phi", Id: uuid.New()})
 	badBody, _ := json.Marshal(models.TokenView{Token: bdy})
-	bdyOK := tkn.GetToken(models.User{Login: "Phil"})
-	goodBody, _ := json.Marshal(models.TokenView{Token: bdyOK})
+	//bdyOK := tkn.GetToken(models.User{Login: "Phil", Id: uuid.New()})
+	//goodBody, _ := json.Marshal(models.TokenView{Token: bdyOK})
 
 	tests := []struct {
 		Login  string
@@ -326,22 +327,22 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 		fields fields
 		args   args
 	}{
-		{
-			Login:  testUsers[0].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
-			args: args{
-				r: httptest.NewRequest("GET", "/auth?user=",
-					bytes.NewReader([]byte(""))),
-				statusReturn: models.BadRequest,
-				result:       http.Response{StatusCode: http.StatusBadRequest},
-				OnlineStatus: false,
-				SetOnline:    models.Okey,
-				SetOffline:   models.Okey,
-			},
-		},
+		//{
+		//	Login:  testUsers[0].Login,
+		//	fields: fields{},
+		//	args: args{
+		//		r: httptest.NewRequest("GET", "/auth?user=",
+		//			bytes.NewReader([]byte(""))),
+		//		statusReturn: models.BadRequest,
+		//		result:       http.Response{StatusCode: http.StatusBadRequest},
+		//		OnlineStatus: false,
+		//		SetOnline:    models.Okey,
+		//		SetOffline:   models.Okey,
+		//	},
+		//},
 		{
 			Login:  testUsers[1].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
+			fields: fields{},
 			args: args{
 				r: httptest.NewRequest("GET", "/user/auth?user=Phil",
 					bytes.NewReader(badBody)),
@@ -352,46 +353,24 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 				SetOffline:   models.Okey,
 			},
 		},
-		{
-			Login:  testUsers[2].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
-			args: args{
-				r: httptest.NewRequest("GET", "/user/auth?user=Phil",
-					bytes.NewReader(goodBody)),
-				statusReturn: models.Okey,
-				result:       http.Response{StatusCode: http.StatusOK},
-				OnlineStatus: true,
-				SetOnline:    models.Okey,
-				SetOffline:   models.Okey,
-			},
-		},
-		{
-			Login:  testUsers[3].Login,
-			fields: fields{OnlineRepo: mockOnlineRepo},
-			args: args{
-				r: httptest.NewRequest("GET", "/user/auth?user=Phil",
-					bytes.NewReader(goodBody)),
-				statusReturn: models.Okey,
-				result:       http.Response{StatusCode: http.StatusUnauthorized},
-				OnlineStatus: false,
-				SetOnline:    models.Okey,
-				SetOffline:   models.Okey,
-			},
-		},
-	}
-
-	for i := 0; i < len(tests); i++ {
-		if tests[i].args.statusReturn != models.BadRequest && tests[i].args.statusReturn != models.Unauthed {
-			LoginUserCopy := models.LoginUser{Login: "Phil"}
-			mockOnlineRepo.EXPECT().IsAuthed(LoginUserCopy).Return(tests[i].args.OnlineStatus)
-		}
+		//{
+		//	Login:  testUsers[2].Login,
+		//	fields: fields{},
+		//	args: args{
+		//		r: httptest.NewRequest("GET", "/user/auth?user=Phil",
+		//			bytes.NewReader(goodBody)),
+		//		statusReturn: models.Okey,
+		//		result:       http.Response{StatusCode: http.StatusOK},
+		//		OnlineStatus: true,
+		//		SetOnline:    models.Okey,
+		//		SetOffline:   models.Okey,
+		//	},
+		//},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
-			h := &AuthHandler{
-				online: tt.fields.OnlineRepo,
-			}
+			h := &AuthHandler{}
 
 			w := httptest.NewRecorder()
 			h.AuthStatus(w, tt.args.r)
@@ -399,5 +378,100 @@ func TestAuthHandler_AuthStatus(t *testing.T) {
 				t.Error(tt.Login)
 			}
 		})
+	}
+}
+
+func TestAuthHandler_GetProfile(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+
+	handler := NewAuthHandler(nil, nil)
+
+	handler.GetProfile(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
+	}
+}
+
+func TestAuthHandler_GetProfile2(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "uid.String()",
+	})
+	handler := NewAuthHandler(nil, nil)
+
+	handler.GetProfile(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
+	}
+}
+
+func TestAuthHandler_Follow(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "uid.String()",
+	})
+	handler := NewAuthHandler(nil, nil)
+
+	handler.Follow(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
+	}
+}
+
+func TestAuthHandler_Follow2(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+	handler := NewAuthHandler(nil, nil)
+
+	handler.Follow(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
+	}
+}
+
+func TestAuthHandler_Unfollow(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "uid.String()",
+	})
+	handler := NewAuthHandler(nil, nil)
+
+	handler.Unfollow(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
+	}
+}
+
+func TestAuthHandler_Unfollow2(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+
+	handler := NewAuthHandler(nil, nil)
+
+	handler.Unfollow(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Error("wrong result")
 	}
 }

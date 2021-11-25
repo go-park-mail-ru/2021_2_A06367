@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+option go_package = "internal/pkg/auth/delivery/grpc";
+import "codes.proto";
+
+message LoginUser {
+  string Login = 1;
+  string EncryptedPassword = 2;
+};
+
+message Profile {
+  string UUID = 1;
+  string Login = 2;
+  string About  =3;
+  string Avatar = 4;
+  int64 Subscriptions =5;
+  int64 Subscribers=6;
+  codes.StatusCode Status = 7;
+};
+message User {
+  string UUID = 1;
+  string Login = 2;
+  string EncryptedPassword = 3;
+  codes.StatusCode Status = 4;
+};
+
+message Token {
+  string Cookie = 1;
+  codes.StatusCode Status = 2;
+};
+
+message Empty {
+  codes.StatusCode Status = 1;
+};
+
+message UserUUID {
+  string ID = 1;
+}
+
+message UserUpdatePic {
+  string ID = 1;
+  string Login = 2;
+  string Avatar = 3;
+}
+
+message UserUpdateBio {
+  string ID = 1;
+  string Login = 2;
+  string About = 3;
+}
+
+message UserUpdatePass {
+  string ID = 1;
+  string Login = 2;
+  string Password = 3;
+}
+
+service AuthService {
+  rpc Login(LoginUser) returns (Token) {}
+  rpc SignUp(User) returns (Token) {}
+  rpc GetProfile(UserUUID) returns (Profile) {}
+  rpc UpdateProfilePic(UserUpdatePic) returns (Empty) {}
+  rpc UpdateProfilePass(UserUpdatePass) returns (Empty) {}
+  rpc UpdateProfileBio(UserUpdateBio) returns (Empty) {}
+}

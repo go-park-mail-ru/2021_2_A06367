@@ -13,6 +13,12 @@ type LoggerMiddleware struct {
 	logger *zap.SugaredLogger
 }
 
+func NewMiddleware(logger *zap.SugaredLogger) LoggerMiddleware {
+	return LoggerMiddleware{
+		logger: logger,
+	}
+}
+
 func (m *LoggerMiddleware) LogRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
