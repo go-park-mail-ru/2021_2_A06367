@@ -30,7 +30,7 @@ const (
 	SELECT_FILM_BY_KEYWORD = "SELECT id, genres, country, releaseRus, title, year, director, " +
 		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
 		"FROM films " +
-		"WHERE make_tsvector(title) @@ to_tsquery($1) LIMIT 10"
+		"WHERE make_tsvector(title) @@ to_tsquery($1) or LOWER(title) like LOWER('%$1%')  LIMIT 10"
 
 	SELECT_FILM_BY_ID = "SELECT id, genres, country, releaseRus, title, year, director, " +
 		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
