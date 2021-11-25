@@ -5,7 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
-	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc/generated"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
 	"github.com/gorilla/csrf"
@@ -20,10 +20,10 @@ import (
 
 type AuthHandler struct {
 	logger *zap.SugaredLogger
-	client grpc.AuthServiceClient
+	client generated.AuthServiceClient
 }
 
-func NewAuthHandler(cl grpc.AuthServiceClient, logger *zap.SugaredLogger) *AuthHandler {
+func NewAuthHandler(cl generated.AuthServiceClient, logger *zap.SugaredLogger) *AuthHandler {
 	return &AuthHandler{
 		client: cl,
 		logger: logger,
@@ -49,7 +49,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	login, err := h.client.Login(context.Background(), &grpc.LoginUser{
+	login, err := h.client.Login(context.Background(), &generated.LoginUser{
 		Login:             user.Login,
 		EncryptedPassword: user.EncryptedPassword,
 	})
@@ -134,7 +134,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	us, err := h.client.SignUp(context.Background(), &grpc.User{
+	us, err := h.client.SignUp(context.Background(), &generated.User{
 		Login:             user.Login,
 		EncryptedPassword: user.EncryptedPassword,
 	})
@@ -220,7 +220,7 @@ func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	profile.Id = uid
 
-	us, err := h.client.GetProfile(context.Background(), &grpc.UserUUID{
+	us, err := h.client.GetProfile(context.Background(), &generated.UserUUID{
 		ID: profile.Id.String(),
 	})
 	if err != nil {
@@ -324,7 +324,7 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 	hash.Write(all)
 	name := hash.Sum(nil)
 
-	err =  os.WriteFile("/image/"+hex.EncodeToString(name[:])+".png", all, 0644)
+	err = os.WriteFile("/image/"+hex.EncodeToString(name[:])+".png", all, 0644)
 	if err != nil {
 		utils.Response(w, models.InternalError, nil)
 
@@ -338,7 +338,7 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 		Avatar: hex.EncodeToString(name[:]) + ".png",
 	}
 
-	us, err := h.client.UpdateProfilePic(context.Background(), &grpc.UserUpdatePic{
+	us, err := h.client.UpdateProfilePic(context.Background(), &generated.UserUpdatePic{
 		Login:  user.Login,
 		Avatar: user.Avatar,
 		ID:     user.Id.String(),
@@ -366,7 +366,7 @@ func (h *AuthHandler) UpdateProfilePass(w http.ResponseWriter, r *http.Request) 
 		Login:             jwtData.Login,
 	}
 
-	us, err := h.client.UpdateProfilePass(context.Background(), &grpc.UserUpdatePass{
+	us, err := h.client.UpdateProfilePass(context.Background(), &generated.UserUpdatePass{
 		Login:    user.Login,
 		Password: user.EncryptedPassword,
 		ID:       user.Id.String(),
@@ -394,7 +394,7 @@ func (h *AuthHandler) UpdateProfileBio(w http.ResponseWriter, r *http.Request) {
 		Login: jwtData.Login,
 	}
 
-	us, err := h.client.UpdateProfileBio(context.Background(), &grpc.UserUpdateBio{
+	us, err := h.client.UpdateProfileBio(context.Background(), &generated.UserUpdateBio{
 		Login: user.Login,
 		About: user.About,
 		ID:    user.Id.String(),

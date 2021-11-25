@@ -3,7 +3,7 @@ package http
 import (
 	"fmt"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
-	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -22,7 +22,7 @@ func TestActorById(t *testing.T) {
 
 	uid := uuid.New()
 
-	usecase := actors.NewMockActorsUsecase(ctl)
+	usecase := mocks.NewMockActorsUsecase(ctl)
 	usecase.EXPECT().GetById(models.Actors{Id: uid}).Times(1).Return(models.Actors{}, models.Okey)
 
 	logger, err := zap.NewProduction()
@@ -50,7 +50,7 @@ func TestActorByIdNotFound(t *testing.T) {
 
 	uid := uuid.New()
 
-	usecase := actors.NewMockActorsUsecase(ctl)
+	usecase := mocks.NewMockActorsUsecase(ctl)
 	usecase.EXPECT().GetById(models.Actors{Id: uid}).Times(1).Return(models.Actors{}, models.NotFound)
 
 	logger, err := zap.NewProduction()

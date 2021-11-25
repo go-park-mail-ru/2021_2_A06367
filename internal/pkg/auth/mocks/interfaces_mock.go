@@ -2,7 +2,7 @@
 // Source: interfaces.go
 
 // Package auth is a generated GoMock package.
-package auth
+package mocks
 
 import (
 	reflect "reflect"

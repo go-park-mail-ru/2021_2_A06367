@@ -41,7 +41,7 @@ func (w *writer) WriteHeader(code int) {
 
 type MetricsMiddleware struct {
 	metric    *prometheus.GaugeVec
-	counter   *prometheus.CounterVec       //количество ошибок
+	counter   *prometheus.CounterVec   //количество ошибок
 	durations *prometheus.HistogramVec //сколько выполняются различные запросы
 	errors    *prometheus.CounterVec
 	name      string
@@ -69,7 +69,7 @@ func (m *MetricsMiddleware) Register(name string) {
 		prometheus.CounterOpts{
 			Name: "hits",
 			Help: "Number of all errors.",
-		},  []string{URL})
+		}, []string{URL})
 	m.counter = counter
 
 	hist := prometheus.NewHistogramVec(prometheus.HistogramOpts{

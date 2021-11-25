@@ -5,6 +5,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	grpc "github.com/go-park-mail-ru/2021_2_A06367/internal/models/grpc"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc/generated"
 	"github.com/google/uuid"
 	"time"
 )
@@ -13,7 +14,7 @@ import (
 
 type GrpcAuthHandler struct {
 	uc auth.AuthUsecase
-	AuthServiceServer
+	generated.AuthServiceServer
 }
 
 func NewGrpcAuthHandler(uc auth.AuthUsecase) *GrpcAuthHandler {
@@ -22,32 +23,32 @@ func NewGrpcAuthHandler(uc auth.AuthUsecase) *GrpcAuthHandler {
 	}
 }
 
-func (h GrpcAuthHandler) Login(ctx context.Context, in *LoginUser) (*Token, error) {
+func (h GrpcAuthHandler) Login(ctx context.Context, in *generated.LoginUser) (*generated.Token, error) {
 
 	user := models.LoginUser{Login: in.Login, EncryptedPassword: in.EncryptedPassword}
 
 	token, status := h.uc.SignIn(user)
 
-	return &Token{Cookie: token, Status: grpc.StatusCode(status)}, nil
+	return &generated.Token{Cookie: token, Status: grpc.StatusCode(status)}, nil
 }
 
-func (h GrpcAuthHandler) SignUp(ctx context.Context, in *User) (*Token, error) {
+func (h GrpcAuthHandler) SignUp(ctx context.Context, in *generated.User) (*generated.Token, error) {
 	user := models.User{
 		Login:             in.Login,
 		EncryptedPassword: in.EncryptedPassword,
 		CreatedAt:         time.Now(),
 	}
 	token, status := h.uc.SignUp(user)
-	return &Token{Cookie: token, Status: grpc.StatusCode(status)}, nil
+	return &generated.Token{Cookie: token, Status: grpc.StatusCode(status)}, nil
 }
 
-func (h GrpcAuthHandler) GetProfile(ctx context.Context, in *UserUUID) (*Profile, error) {
+func (h GrpcAuthHandler) GetProfile(ctx context.Context, in *generated.UserUUID) (*generated.Profile, error) {
 	id, _ := uuid.Parse(in.ID)
 	profile := models.Profile{
 		Id: id,
 	}
 	user, status := h.uc.GetProfile(profile)
-	return &Profile{
+	return &generated.Profile{
 		UUID:          user.Id.String(),
 		Login:         user.Login,
 		Subscribers:   int64(user.Subscribers),
@@ -58,7 +59,7 @@ func (h GrpcAuthHandler) GetProfile(ctx context.Context, in *UserUUID) (*Profile
 	}, nil
 }
 
-func (h GrpcAuthHandler) UpdateProfilePic(ctx context.Context, in *UserUpdatePic) (*Empty, error) {
+func (h GrpcAuthHandler) UpdateProfilePic(ctx context.Context, in *generated.UserUpdatePic) (*generated.Empty, error) {
 	id, _ := uuid.Parse(in.ID)
 	user := models.Profile{
 		Id:     id,
@@ -67,12 +68,12 @@ func (h GrpcAuthHandler) UpdateProfilePic(ctx context.Context, in *UserUpdatePic
 	}
 
 	status := h.uc.SetAvatar(user)
-	return &Empty{
+	return &generated.Empty{
 		Status: grpc.StatusCode(status),
 	}, nil
 }
 
-func (h GrpcAuthHandler) UpdateProfilePass(ctx context.Context, in *UserUpdatePass) (*Empty, error) {
+func (h GrpcAuthHandler) UpdateProfilePass(ctx context.Context, in *generated.UserUpdatePass) (*generated.Empty, error) {
 	id, _ := uuid.Parse(in.ID)
 	user := models.User{
 		Id:                id,
@@ -81,12 +82,12 @@ func (h GrpcAuthHandler) UpdateProfilePass(ctx context.Context, in *UserUpdatePa
 	}
 
 	status := h.uc.SetPass(user)
-	return &Empty{
+	return &generated.Empty{
 		Status: grpc.StatusCode(status),
 	}, nil
 }
 
-func (h GrpcAuthHandler) UpdateProfileBio(ctx context.Context, in *UserUpdateBio) (*Empty, error) {
+func (h GrpcAuthHandler) UpdateProfileBio(ctx context.Context, in *generated.UserUpdateBio) (*generated.Empty, error) {
 	id, _ := uuid.Parse(in.ID)
 	user := models.Profile{
 		Id:    id,
@@ -95,7 +96,7 @@ func (h GrpcAuthHandler) UpdateProfileBio(ctx context.Context, in *UserUpdateBio
 	}
 
 	status := h.uc.SetBio(user)
-	return &Empty{
+	return &generated.Empty{
 		Status: grpc.StatusCode(status),
 	}, nil
 }

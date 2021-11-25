@@ -2,10 +2,11 @@
 // Source: films_grpc.pb.go
 
 // Package grpc is a generated GoMock package.
-package grpc
+package mocks
 
 import (
 	context "context"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc/generated"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -36,14 +37,14 @@ func (m *MockFilmsServiceClient) EXPECT() *MockFilmsServiceClientMockRecorder {
 }
 
 // FilmByGenre mocks base method.
-func (m *MockFilmsServiceClient) FilmByGenre(ctx context.Context, in *KeyWord, opts ...grpc.CallOption) (*Films, error) {
+func (m *MockFilmsServiceClient) FilmByGenre(ctx context.Context, in *generated.KeyWord, opts ...grpc.CallOption) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "FilmByGenre", varargs...)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -56,14 +57,14 @@ func (mr *MockFilmsServiceClientMockRecorder) FilmByGenre(ctx, in interface{}, o
 }
 
 // FilmBySelection mocks base method.
-func (m *MockFilmsServiceClient) FilmBySelection(ctx context.Context, in *KeyWord, opts ...grpc.CallOption) (*Films, error) {
+func (m *MockFilmsServiceClient) FilmBySelection(ctx context.Context, in *generated.KeyWord, opts ...grpc.CallOption) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "FilmBySelection", varargs...)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -76,14 +77,14 @@ func (mr *MockFilmsServiceClientMockRecorder) FilmBySelection(ctx, in interface{
 }
 
 // FilmsByActor mocks base method.
-func (m *MockFilmsServiceClient) FilmsByActor(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Films, error) {
+func (m *MockFilmsServiceClient) FilmsByActor(ctx context.Context, in *generated.UUID, opts ...grpc.CallOption) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "FilmsByActor", varargs...)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -96,14 +97,14 @@ func (mr *MockFilmsServiceClientMockRecorder) FilmsByActor(ctx, in interface{}, 
 }
 
 // FilmById mocks base method.
-func (m *MockFilmsServiceClient) FilmById(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Film, error) {
+func (m *MockFilmsServiceClient) FilmById(ctx context.Context, in *generated.UUID, opts ...grpc.CallOption) (*generated.Film, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "FilmById", varargs...)
-	ret0, _ := ret[0].(*Film)
+	ret0, _ := ret[0].(*generated.Film)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -116,14 +117,14 @@ func (mr *MockFilmsServiceClientMockRecorder) FilmById(ctx, in interface{}, opts
 }
 
 // FilmsByUser mocks base method.
-func (m *MockFilmsServiceClient) FilmsByUser(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Films, error) {
+func (m *MockFilmsServiceClient) FilmsByUser(ctx context.Context, in *generated.UUID, opts ...grpc.CallOption) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "FilmsByUser", varargs...)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -136,14 +137,14 @@ func (mr *MockFilmsServiceClientMockRecorder) FilmsByUser(ctx, in interface{}, o
 }
 
 // FilmStartSelection mocks base method.
-func (m *MockFilmsServiceClient) FilmStartSelection(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Films, error) {
+func (m *MockFilmsServiceClient) FilmStartSelection(ctx context.Context, in *generated.UUID, opts ...grpc.CallOption) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "FilmStartSelection", varargs...)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -156,14 +157,14 @@ func (mr *MockFilmsServiceClientMockRecorder) FilmStartSelection(ctx, in interfa
 }
 
 // AddStarred mocks base method.
-func (m *MockFilmsServiceClient) AddStarred(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error) {
+func (m *MockFilmsServiceClient) AddStarred(ctx context.Context, in *generated.Pair, opts ...grpc.CallOption) (*generated.Nothing, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "AddStarred", varargs...)
-	ret0, _ := ret[0].(*Nothing)
+	ret0, _ := ret[0].(*generated.Nothing)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -176,14 +177,14 @@ func (mr *MockFilmsServiceClientMockRecorder) AddStarred(ctx, in interface{}, op
 }
 
 // RemoveStarred mocks base method.
-func (m *MockFilmsServiceClient) RemoveStarred(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error) {
+func (m *MockFilmsServiceClient) RemoveStarred(ctx context.Context, in *generated.Pair, opts ...grpc.CallOption) (*generated.Nothing, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "RemoveStarred", varargs...)
-	ret0, _ := ret[0].(*Nothing)
+	ret0, _ := ret[0].(*generated.Nothing)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -196,14 +197,14 @@ func (mr *MockFilmsServiceClientMockRecorder) RemoveStarred(ctx, in interface{},
 }
 
 // AddWatchList mocks base method.
-func (m *MockFilmsServiceClient) AddWatchList(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error) {
+func (m *MockFilmsServiceClient) AddWatchList(ctx context.Context, in *generated.Pair, opts ...grpc.CallOption) (*generated.Nothing, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "AddWatchList", varargs...)
-	ret0, _ := ret[0].(*Nothing)
+	ret0, _ := ret[0].(*generated.Nothing)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -216,14 +217,14 @@ func (mr *MockFilmsServiceClientMockRecorder) AddWatchList(ctx, in interface{}, 
 }
 
 // RemoveWatchList mocks base method.
-func (m *MockFilmsServiceClient) RemoveWatchList(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error) {
+func (m *MockFilmsServiceClient) RemoveWatchList(ctx context.Context, in *generated.Pair, opts ...grpc.CallOption) (*generated.Nothing, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "RemoveWatchList", varargs...)
-	ret0, _ := ret[0].(*Nothing)
+	ret0, _ := ret[0].(*generated.Nothing)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -236,14 +237,14 @@ func (mr *MockFilmsServiceClientMockRecorder) RemoveWatchList(ctx, in interface{
 }
 
 // Starred mocks base method.
-func (m *MockFilmsServiceClient) Starred(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Films, error) {
+func (m *MockFilmsServiceClient) Starred(ctx context.Context, in *generated.UUID, opts ...grpc.CallOption) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Starred", varargs...)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -256,14 +257,14 @@ func (mr *MockFilmsServiceClientMockRecorder) Starred(ctx, in interface{}, opts 
 }
 
 // IfStarred mocks base method.
-func (m *MockFilmsServiceClient) IfStarred(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error) {
+func (m *MockFilmsServiceClient) IfStarred(ctx context.Context, in *generated.Pair, opts ...grpc.CallOption) (*generated.Nothing, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "IfStarred", varargs...)
-	ret0, _ := ret[0].(*Nothing)
+	ret0, _ := ret[0].(*generated.Nothing)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -276,14 +277,14 @@ func (mr *MockFilmsServiceClientMockRecorder) IfStarred(ctx, in interface{}, opt
 }
 
 // WatchList mocks base method.
-func (m *MockFilmsServiceClient) WatchList(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Films, error) {
+func (m *MockFilmsServiceClient) WatchList(ctx context.Context, in *generated.UUID, opts ...grpc.CallOption) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WatchList", varargs...)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -296,14 +297,14 @@ func (mr *MockFilmsServiceClientMockRecorder) WatchList(ctx, in interface{}, opt
 }
 
 // Random mocks base method.
-func (m *MockFilmsServiceClient) Random(ctx context.Context, in *Nothing, opts ...grpc.CallOption) (*Film, error) {
+func (m *MockFilmsServiceClient) Random(ctx context.Context, in *generated.Nothing, opts ...grpc.CallOption) (*generated.Film, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Random", varargs...)
-	ret0, _ := ret[0].(*Film)
+	ret0, _ := ret[0].(*generated.Film)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -339,10 +340,10 @@ func (m *MockFilmsServiceServer) EXPECT() *MockFilmsServiceServerMockRecorder {
 }
 
 // FilmByGenre mocks base method.
-func (m *MockFilmsServiceServer) FilmByGenre(arg0 context.Context, arg1 *KeyWord) (*Films, error) {
+func (m *MockFilmsServiceServer) FilmByGenre(arg0 context.Context, arg1 *generated.KeyWord) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilmByGenre", arg0, arg1)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -354,10 +355,10 @@ func (mr *MockFilmsServiceServerMockRecorder) FilmByGenre(arg0, arg1 interface{}
 }
 
 // FilmBySelection mocks base method.
-func (m *MockFilmsServiceServer) FilmBySelection(arg0 context.Context, arg1 *KeyWord) (*Films, error) {
+func (m *MockFilmsServiceServer) FilmBySelection(arg0 context.Context, arg1 *generated.KeyWord) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilmBySelection", arg0, arg1)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -369,10 +370,10 @@ func (mr *MockFilmsServiceServerMockRecorder) FilmBySelection(arg0, arg1 interfa
 }
 
 // FilmsByActor mocks base method.
-func (m *MockFilmsServiceServer) FilmsByActor(arg0 context.Context, arg1 *UUID) (*Films, error) {
+func (m *MockFilmsServiceServer) FilmsByActor(arg0 context.Context, arg1 *generated.UUID) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilmsByActor", arg0, arg1)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -384,10 +385,10 @@ func (mr *MockFilmsServiceServerMockRecorder) FilmsByActor(arg0, arg1 interface{
 }
 
 // FilmById mocks base method.
-func (m *MockFilmsServiceServer) FilmById(arg0 context.Context, arg1 *UUID) (*Film, error) {
+func (m *MockFilmsServiceServer) FilmById(arg0 context.Context, arg1 *generated.UUID) (*generated.Film, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilmById", arg0, arg1)
-	ret0, _ := ret[0].(*Film)
+	ret0, _ := ret[0].(*generated.Film)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -399,10 +400,10 @@ func (mr *MockFilmsServiceServerMockRecorder) FilmById(arg0, arg1 interface{}) *
 }
 
 // FilmsByUser mocks base method.
-func (m *MockFilmsServiceServer) FilmsByUser(arg0 context.Context, arg1 *UUID) (*Films, error) {
+func (m *MockFilmsServiceServer) FilmsByUser(arg0 context.Context, arg1 *generated.UUID) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilmsByUser", arg0, arg1)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -414,10 +415,10 @@ func (mr *MockFilmsServiceServerMockRecorder) FilmsByUser(arg0, arg1 interface{}
 }
 
 // FilmStartSelection mocks base method.
-func (m *MockFilmsServiceServer) FilmStartSelection(arg0 context.Context, arg1 *UUID) (*Films, error) {
+func (m *MockFilmsServiceServer) FilmStartSelection(arg0 context.Context, arg1 *generated.UUID) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilmStartSelection", arg0, arg1)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -429,10 +430,10 @@ func (mr *MockFilmsServiceServerMockRecorder) FilmStartSelection(arg0, arg1 inte
 }
 
 // AddStarred mocks base method.
-func (m *MockFilmsServiceServer) AddStarred(arg0 context.Context, arg1 *Pair) (*Nothing, error) {
+func (m *MockFilmsServiceServer) AddStarred(arg0 context.Context, arg1 *generated.Pair) (*generated.Nothing, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddStarred", arg0, arg1)
-	ret0, _ := ret[0].(*Nothing)
+	ret0, _ := ret[0].(*generated.Nothing)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -444,10 +445,10 @@ func (mr *MockFilmsServiceServerMockRecorder) AddStarred(arg0, arg1 interface{})
 }
 
 // RemoveStarred mocks base method.
-func (m *MockFilmsServiceServer) RemoveStarred(arg0 context.Context, arg1 *Pair) (*Nothing, error) {
+func (m *MockFilmsServiceServer) RemoveStarred(arg0 context.Context, arg1 *generated.Pair) (*generated.Nothing, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RemoveStarred", arg0, arg1)
-	ret0, _ := ret[0].(*Nothing)
+	ret0, _ := ret[0].(*generated.Nothing)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -459,10 +460,10 @@ func (mr *MockFilmsServiceServerMockRecorder) RemoveStarred(arg0, arg1 interface
 }
 
 // AddWatchList mocks base method.
-func (m *MockFilmsServiceServer) AddWatchList(arg0 context.Context, arg1 *Pair) (*Nothing, error) {
+func (m *MockFilmsServiceServer) AddWatchList(arg0 context.Context, arg1 *generated.Pair) (*generated.Nothing, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddWatchList", arg0, arg1)
-	ret0, _ := ret[0].(*Nothing)
+	ret0, _ := ret[0].(*generated.Nothing)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -474,10 +475,10 @@ func (mr *MockFilmsServiceServerMockRecorder) AddWatchList(arg0, arg1 interface{
 }
 
 // RemoveWatchList mocks base method.
-func (m *MockFilmsServiceServer) RemoveWatchList(arg0 context.Context, arg1 *Pair) (*Nothing, error) {
+func (m *MockFilmsServiceServer) RemoveWatchList(arg0 context.Context, arg1 *generated.Pair) (*generated.Nothing, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RemoveWatchList", arg0, arg1)
-	ret0, _ := ret[0].(*Nothing)
+	ret0, _ := ret[0].(*generated.Nothing)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -489,10 +490,10 @@ func (mr *MockFilmsServiceServerMockRecorder) RemoveWatchList(arg0, arg1 interfa
 }
 
 // Starred mocks base method.
-func (m *MockFilmsServiceServer) Starred(arg0 context.Context, arg1 *UUID) (*Films, error) {
+func (m *MockFilmsServiceServer) Starred(arg0 context.Context, arg1 *generated.UUID) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Starred", arg0, arg1)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -504,10 +505,10 @@ func (mr *MockFilmsServiceServerMockRecorder) Starred(arg0, arg1 interface{}) *g
 }
 
 // IfStarred mocks base method.
-func (m *MockFilmsServiceServer) IfStarred(arg0 context.Context, arg1 *Pair) (*Nothing, error) {
+func (m *MockFilmsServiceServer) IfStarred(arg0 context.Context, arg1 *generated.Pair) (*generated.Nothing, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IfStarred", arg0, arg1)
-	ret0, _ := ret[0].(*Nothing)
+	ret0, _ := ret[0].(*generated.Nothing)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -519,10 +520,10 @@ func (mr *MockFilmsServiceServerMockRecorder) IfStarred(arg0, arg1 interface{}) 
 }
 
 // WatchList mocks base method.
-func (m *MockFilmsServiceServer) WatchList(arg0 context.Context, arg1 *UUID) (*Films, error) {
+func (m *MockFilmsServiceServer) WatchList(arg0 context.Context, arg1 *generated.UUID) (*generated.Films, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchList", arg0, arg1)
-	ret0, _ := ret[0].(*Films)
+	ret0, _ := ret[0].(*generated.Films)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -534,10 +535,10 @@ func (mr *MockFilmsServiceServerMockRecorder) WatchList(arg0, arg1 interface{}) 
 }
 
 // Random mocks base method.
-func (m *MockFilmsServiceServer) Random(arg0 context.Context, arg1 *Nothing) (*Film, error) {
+func (m *MockFilmsServiceServer) Random(arg0 context.Context, arg1 *generated.Nothing) (*generated.Film, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Random", arg0, arg1)
-	ret0, _ := ret[0].(*Film)
+	ret0, _ := ret[0].(*generated.Film)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

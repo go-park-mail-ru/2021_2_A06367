@@ -7,12 +7,12 @@ import (
 	actorsDelivery "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors/delivery/http"
 	actorsRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors/repo"
 	actorsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/actors/usecase"
-	grpc3 "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc"
+	generated2 "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc/generated"
 	authDelivery "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/http"
 	authRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/repo"
 	authUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/config"
-	grpc2 "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc/generated"
 	filmsDelivery "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/http"
 	filmsRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/repo"
 	filmsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/usecase"
@@ -81,7 +81,7 @@ func run() error {
 		log.Fatalf("cant connect to films grpc")
 	}
 
-	filmsClient := grpc2.NewFilmsServiceClient(filmsConn)
+	filmsClient := generated.NewFilmsServiceClient(filmsConn)
 
 	authConn, err := grpc.Dial(
 		"auth:8020",
@@ -92,7 +92,7 @@ func run() error {
 		log.Fatalf("cant connect to session grpc")
 	}
 
-	authClient := grpc3.NewAuthServiceClient(authConn)
+	authClient := generated2.NewAuthServiceClient(authConn)
 
 	encrypter := authUsecase.NewEncrypter()
 	tokenGenerator := authUsecase.NewTokenator()
@@ -160,14 +160,11 @@ func run() error {
 		seraching.HandleFunc("/{keyword}", search.Search).Methods(http.MethodGet)
 	}
 
-
 	// swag init -g ./cmd/main/main.go
 	r.PathPrefix("/api-docs").Handler(httpSwagger.WrapHandler)
 	r.PathPrefix("/metrics").Handler(promhttp.Handler())
 	r.Use(m.LogRequest)
 	r.Use(m2.LogMetrics)
-
-
 
 	http.Handle("/", r)
 	log.Print("main running on: ", srv.Addr)
