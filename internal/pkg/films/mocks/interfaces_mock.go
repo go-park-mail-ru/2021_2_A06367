@@ -2,7 +2,7 @@
 // Source: interfaces.go
 
 // Package films is a generated GoMock package.
-package films
+package mocks
 
 import (
 	reflect "reflect"

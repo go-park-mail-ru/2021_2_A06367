@@ -2,7 +2,7 @@
 // Source: interfaces.go
 
 // Package actors is a generated GoMock package.
-package actors
+package mocks
 
 import (
 	reflect "reflect"

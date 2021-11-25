@@ -3,7 +3,7 @@ package http
 import (
 	"context"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
-	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc/generated"
 	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -15,10 +15,10 @@ import (
 
 type FilmsHandler struct {
 	logger *zap.SugaredLogger
-	client grpc.FilmsServiceClient
+	client generated.FilmsServiceClient
 }
 
-func NewFilmsHandler(logger *zap.SugaredLogger, cl grpc.FilmsServiceClient) *FilmsHandler {
+func NewFilmsHandler(logger *zap.SugaredLogger, cl generated.FilmsServiceClient) *FilmsHandler {
 	return &FilmsHandler{
 		logger: logger,
 		client: cl,
@@ -43,7 +43,7 @@ func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	films, err := h.client.FilmByGenre(context.Background(), &grpc.KeyWord{Word: genres})
+	films, err := h.client.FilmByGenre(context.Background(), &generated.KeyWord{Word: genres})
 	if err != nil {
 		util.Response(w, models.NotFound, nil)
 		return
@@ -72,7 +72,7 @@ func (h FilmsHandler) FilmBySelection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	films, err := h.client.FilmBySelection(context.Background(), &grpc.KeyWord{Word: selection})
+	films, err := h.client.FilmBySelection(context.Background(), &generated.KeyWord{Word: selection})
 	if err != nil {
 		util.Response(w, models.NotFound, nil)
 		return
@@ -106,7 +106,7 @@ func (h FilmsHandler) FilmByActor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	films, err := h.client.FilmsByActor(context.Background(), &grpc.UUID{Id: idActor.String()})
+	films, err := h.client.FilmsByActor(context.Background(), &generated.UUID{Id: idActor.String()})
 	if err != nil {
 		util.Response(w, models.NotFound, nil)
 		return
@@ -140,7 +140,7 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	film, err := h.client.FilmById(context.Background(), &grpc.UUID{Id: id.String()})
+	film, err := h.client.FilmById(context.Background(), &generated.UUID{Id: id.String()})
 	if err != nil {
 		util.Response(w, models.NotFound, nil)
 		return
@@ -167,7 +167,7 @@ func (h FilmsHandler) FilmsByUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	films, err := h.client.FilmsByUser(context.Background(), &grpc.UUID{Id: access.Id.String()})
+	films, err := h.client.FilmsByUser(context.Background(), &generated.UUID{Id: access.Id.String()})
 	if err != nil {
 		util.Response(w, models.NotFound, nil)
 		return
@@ -183,7 +183,7 @@ func (h FilmsHandler) FilmStartSelection(w http.ResponseWriter, r *http.Request)
 	if access == nil {
 		access = &models.AccessDetails{}
 	}
-	selection, err := h.client.FilmStartSelection(context.Background(), &grpc.UUID{Id: access.Id.String()})
+	selection, err := h.client.FilmStartSelection(context.Background(), &generated.UUID{Id: access.Id.String()})
 	if err != nil {
 		return
 	}
@@ -215,7 +215,7 @@ func (h FilmsHandler) AddStarred(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 
-	none, err := h.client.AddStarred(context.Background(), &grpc.Pair{
+	none, err := h.client.AddStarred(context.Background(), &generated.Pair{
 		FilmUUID: film.Id.String(),
 		UserUUID: user.Id.String(),
 	})
@@ -251,7 +251,7 @@ func (h FilmsHandler) IfStarred(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 
-	none, err := h.client.IfStarred(context.Background(), &grpc.Pair{
+	none, err := h.client.IfStarred(context.Background(), &generated.Pair{
 		FilmUUID: film.Id.String(),
 		UserUUID: user.Id.String(),
 	})
@@ -287,7 +287,7 @@ func (h FilmsHandler) RemoveStarred(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 
-	none, err := h.client.RemoveStarred(context.Background(), &grpc.Pair{
+	none, err := h.client.RemoveStarred(context.Background(), &generated.Pair{
 		FilmUUID: film.Id.String(),
 		UserUUID: user.Id.String(),
 	})
@@ -323,7 +323,7 @@ func (h FilmsHandler) AddWatchlist(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 
-	none, err := h.client.AddWatchList(context.Background(), &grpc.Pair{
+	none, err := h.client.AddWatchList(context.Background(), &generated.Pair{
 		FilmUUID: film.Id.String(),
 		UserUUID: user.Id.String(),
 	})
@@ -359,7 +359,7 @@ func (h FilmsHandler) RemoveWatchlist(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 
-	none, err := h.client.RemoveWatchList(context.Background(), &grpc.Pair{
+	none, err := h.client.RemoveWatchList(context.Background(), &generated.Pair{
 		FilmUUID: film.Id.String(),
 		UserUUID: user.Id.String(),
 	})
@@ -380,7 +380,7 @@ func (h FilmsHandler) GetStarred(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{Id: access.Id}
 
-	films, err := h.client.Starred(context.Background(), &grpc.UUID{
+	films, err := h.client.Starred(context.Background(), &generated.UUID{
 		Id: user.Id.String(),
 	})
 	if err != nil {
@@ -398,7 +398,7 @@ func (h FilmsHandler) GetWatchlist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user := models.User{Id: access.Id}
-	films, err := h.client.WatchList(context.Background(), &grpc.UUID{
+	films, err := h.client.WatchList(context.Background(), &generated.UUID{
 		Id: user.Id.String(),
 	})
 	if err != nil {
@@ -411,7 +411,7 @@ func (h FilmsHandler) GetWatchlist(w http.ResponseWriter, r *http.Request) {
 
 func (h FilmsHandler) RandomFilm(w http.ResponseWriter, r *http.Request) {
 
-	film, err := h.client.Random(context.Background(), &grpc.Nothing{})
+	film, err := h.client.Random(context.Background(), &generated.Nothing{})
 	if err != nil {
 		util.Response(w, models.BadRequest, nil)
 		return
@@ -420,7 +420,7 @@ func (h FilmsHandler) RandomFilm(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (h FilmsHandler) FilmToModel(film *grpc.Film) models.Film {
+func (h FilmsHandler) FilmToModel(film *generated.Film) models.Film {
 	id, _ := uuid.Parse(film.Id)
 	releaseru, _ := time.Parse("", film.ReleaseRus)
 	release, _ := time.Parse("", film.Release)
@@ -484,7 +484,7 @@ func (h FilmsHandler) FilmToModel(film *grpc.Film) models.Film {
 	}
 }
 
-func (h FilmsHandler) FilmsToModels(films grpc.Films) []models.Film {
+func (h FilmsHandler) FilmsToModels(films generated.Films) []models.Film {
 	var result []models.Film
 	for i := 0; i < len(films.Data); i++ {
 		film := h.FilmToModel(films.Data[i])

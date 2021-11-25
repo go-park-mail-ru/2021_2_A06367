@@ -2,7 +2,7 @@
 // Source: auth_grpc.pb.go
 
 // Package grpc is a generated GoMock package.
-package grpc
+package generated
 
 import (
 	context "context"

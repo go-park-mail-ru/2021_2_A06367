@@ -4,7 +4,7 @@
 // 	protoc        v3.13.0
 // source: films.proto
 
-package grpc
+package generated
 
 import (
 	grpc "github.com/go-park-mail-ru/2021_2_A06367/internal/models/grpc"

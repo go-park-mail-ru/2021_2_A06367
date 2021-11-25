@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/mocks"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
@@ -67,7 +68,7 @@ func TestNewAuthHandler(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUsecase := auth.NewMockAuthUsecase(ctl)
+	mockUsecase := mocks.NewMockAuthUsecase(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -85,7 +86,7 @@ func TestAuthHandler_Login(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUsecase := auth.NewMockAuthUsecase(ctl)
+	mockUsecase := mocks.NewMockAuthUsecase(ctl)
 
 	tests := []struct {
 		Login  string
@@ -160,7 +161,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUsecase := auth.NewMockAuthUsecase(ctl)
+	mockUsecase := mocks.NewMockAuthUsecase(ctl)
 
 	tests := []struct {
 		Login  string
