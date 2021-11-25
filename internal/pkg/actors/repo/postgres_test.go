@@ -11,11 +11,11 @@ import (
 
 func TestActorsRepo_GetActorById(t *testing.T) {
 	uid := uuid.New()
-	columns := []string{"id", "name", "surname", "avatar", "height", "date_of_birth", "genres"}
+	columns := []string{"id", "name", "surname", "avatar", "height", "date_of_birth", "description", "genres"}
 	pgxRows := pgxpoolmock.NewRows(columns).
-		AddRow(uid, "tester2",
-			"tester2", "img.png", float32(178),
-			time.Now(), []string{"Comedy"}).ToPgxRows()
+		AddRow(uid, "tester3",
+			"tester3", "img.png", float32(178),
+			time.Now(), "test test", []string{"Comedy"}).ToPgxRows()
 	pgxRows.Next()
 	ctl := gomock.NewController(t)
 	mockPool := pgxpoolmock.NewMockPgxPool(ctl)
@@ -37,11 +37,11 @@ func TestActorsRepo_GetActorById(t *testing.T) {
 func TestActorsRepo_GetActors(t *testing.T) {
 	uid := uuid.New()
 
-	columns := []string{"id", "name", "surname", "avatar", "height", "date_of_birth", "genres"}
+	columns := []string{"id", "name", "surname", "avatar", "height", "date_of_birth", "description", "genres"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, "tester2",
 			"tester2", "img.png", float32(178),
-			time.Now(), []string{"Comedy"}).ToPgxRows()
+			time.Now(), "test test", []string{"Comedy"}).ToPgxRows()
 
 	ctl := gomock.NewController(t)
 	mockPool := pgxpoolmock.NewMockPgxPool(ctl)

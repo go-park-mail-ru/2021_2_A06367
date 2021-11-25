@@ -45,7 +45,7 @@ func TestFilmByGenre(t *testing.T) {
 	}
 	defer logger.Sync()
 	zapSugar := logger.Sugar()
-	handler := NewFilmsHandler(usecase, zapSugar)
+	handler := NewFilmsHandler(zapSugar, usecase)
 
 	r := httptest.NewRequest("GET", "/films/genres", strings.NewReader(fmt.Sprint()))
 	r = mux.SetURLVars(r, map[string]string{
