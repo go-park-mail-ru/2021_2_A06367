@@ -114,7 +114,7 @@ func run() error {
 	m2 := middleware.NewMetricsMiddleware()
 	m2.Register(middleware.ServiceMainLabel)
 
-	auth := r.PathPrefix("/users").Subrouter()
+	auth := r.PathPrefix("/api/users").Subrouter()
 	//auth.Use(protect)
 	{
 		auth.HandleFunc("/secure", authHandler.Token).Methods(http.MethodGet, http.MethodOptions)
@@ -130,7 +130,7 @@ func run() error {
 		auth.HandleFunc("/profile/settings/bio", authHandler.UpdateProfileBio).Methods(http.MethodPost)
 	}
 
-	film := r.PathPrefix("/films").Subrouter()
+	film := r.PathPrefix("/api/films").Subrouter()
 	{
 		film.HandleFunc("/genre/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
 		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet)
@@ -149,20 +149,20 @@ func run() error {
 		film.HandleFunc("/wl/{id}", filmsHandler.RemoveWatchlist).Methods(http.MethodDelete)
 	}
 
-	actors := r.PathPrefix("/actors").Subrouter()
+	actors := r.PathPrefix("/api/actors").Subrouter()
 	{
 		actors.HandleFunc("/actor/{id}", actorsHandler.ActorsById).Methods(http.MethodGet)
 		actors.HandleFunc("/film", actorsHandler.FetchActors).Methods(http.MethodPost, http.MethodGet)
 	}
 
-	seraching := r.PathPrefix("/search").Subrouter()
+	seraching := r.PathPrefix("/api/search").Subrouter()
 	{
 		seraching.HandleFunc("/{keyword}", search.Search).Methods(http.MethodGet)
 	}
 
 	// swag init -g ./cmd/main/main.go
 	r.PathPrefix("/api-docs").Handler(httpSwagger.WrapHandler)
-	r.PathPrefix("/metrics").Handler(promhttp.Handler())
+	r.PathPrefix("/api/metrics").Handler(promhttp.Handler())
 	r.Use(m.LogRequest)
 	r.Use(m2.LogMetrics)
 
