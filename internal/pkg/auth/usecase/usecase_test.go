@@ -3,6 +3,7 @@ package usecase
 import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"os"
@@ -43,9 +44,9 @@ var testUsers []models.User = []models.User{
 func TestNewAuthUsecase(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
-	mockAuthRepo := auth.NewMockAuthRepo(ctl)
-	mockTokenGen := auth.NewMockTokenGenerator(ctl)
-	mockEncrypter := auth.NewMockEncrypter(ctl)
+	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
+	mockTokenGen := mocks.NewMockTokenGenerator(ctl)
+	mockEncrypter := mocks.NewMockEncrypter(ctl)
 	testUC := NewAuthUsecase(mockAuthRepo, mockTokenGen, mockEncrypter, nil)
 	if testUC.repo != mockAuthRepo {
 		t.Error("bad constructor")
@@ -60,9 +61,9 @@ func TestAuthUsecase_SignIn(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 	os.Setenv("SECRET", "TESTS")
-	mockAuthRepo := auth.NewMockAuthRepo(ctl)
-	mockTokenGen := auth.NewMockTokenGenerator(ctl)
-	mockEncrypter := auth.NewMockEncrypter(ctl)
+	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
+	mockTokenGen := mocks.NewMockTokenGenerator(ctl)
+	mockEncrypter := mocks.NewMockEncrypter(ctl)
 
 	tests := []struct {
 		Login  string
@@ -117,9 +118,9 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 	os.Setenv("SECRET", "TESTS")
-	mockAuthRepo := auth.NewMockAuthRepo(ctl)
-	mockTokenGenereator := auth.NewMockTokenGenerator(ctl)
-	mockEncrypter := auth.NewMockEncrypter(ctl)
+	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
+	mockTokenGenereator := mocks.NewMockTokenGenerator(ctl)
+	mockEncrypter := mocks.NewMockEncrypter(ctl)
 
 	tests := []struct {
 		Login       string
@@ -190,7 +191,7 @@ func TestAuthUsecase_Follow(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 	os.Setenv("SECRET", "TESTS")
-	mockAuthRepo := auth.NewMockAuthRepo(ctl)
+	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
 	mockAuthRepo.EXPECT().AddFollowing(who, whom).Return(models.Okey)
 	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
 	st := usecase.Follow(who, whom)
@@ -205,7 +206,7 @@ func TestAuthUsecase_GetProfile(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 	os.Setenv("SECRET", "TESTS")
-	mockAuthRepo := auth.NewMockAuthRepo(ctl)
+	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
 	mockAuthRepo.EXPECT().RemoveFollowing(who, whom).Return(models.Okey)
 	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
 	st := usecase.Unfollow(who, whom)
@@ -234,7 +235,7 @@ func TestAuthUsecase_GetByKeyword(t *testing.T) {
 	keyword := "test"
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
-	mockAuthRepo := auth.NewMockAuthRepo(ctl)
+	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
 	mockAuthRepo.EXPECT().GetProfileByKeyword(keyword).Return(nil, models.Okey)
 	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
 	_, st := usecase.repo.GetProfileByKeyword(keyword)

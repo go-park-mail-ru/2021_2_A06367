@@ -16,7 +16,7 @@ type FilmsUsecase interface {
 	GetStartSelections(authorized bool, user models.User) ([]models.Film, models.StatusCode)
 
 	GetStarred(user models.User) ([]models.Film, models.StatusCode)
-	GetIfStarred(film models.Film, user models.User)  models.StatusCode
+	GetIfStarred(film models.Film, user models.User) models.StatusCode
 	AddStarred(film models.Film, user models.User) models.StatusCode
 	RemoveStarred(film models.Film, user models.User) models.StatusCode
 

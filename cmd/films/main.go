@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/config"
 	grpc2 "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc/generated"
 	filmsRepository "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/repo"
 	filmsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/usecase"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -51,7 +52,7 @@ func run() error {
 
 	server := grpc.NewServer()
 
-	grpc2.RegisterFilmsServiceServer(server, service)
+	generated.RegisterFilmsServiceServer(server, service)
 
 	log.Print("films running on: ", srv.Addr())
 	return server.Serve(srv)

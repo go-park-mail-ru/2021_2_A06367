@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
-	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"testing"
@@ -16,7 +16,7 @@ func TestFilmsUsecase_GetFilm(t *testing.T) {
 
 	testFilm := models.Film{Id: uid}
 
-	repo := films.NewMockFilmsRepository(ctl)
+	repo := mocks.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetFilmById(testFilm).Times(1).Return(models.Film{}, models.Okey)
 
 	usecase := NewFilmsUsecase(repo, nil)
@@ -35,7 +35,7 @@ func TestFilmsUsecase_GetFilmsOfActor(t *testing.T) {
 
 	testActor := models.Actors{Id: uid}
 
-	repo := films.NewMockFilmsRepository(ctl)
+	repo := mocks.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetFilmsByActor(testActor).Times(1).Return([]models.Film{}, models.Okey)
 
 	usecase := NewFilmsUsecase(repo, nil)
@@ -54,7 +54,7 @@ func TestFilmsUsecase_GetCompilationForUser(t *testing.T) {
 
 	testUser := models.User{Id: uid}
 
-	repo := films.NewMockFilmsRepository(ctl)
+	repo := mocks.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetFilmsByUser(testUser).Times(1).Return([]models.Film{}, models.Okey)
 
 	usecase := NewFilmsUsecase(repo, nil)
@@ -70,7 +70,7 @@ func TestFilmsUsecase_GetCompilation(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	repo := films.NewMockFilmsRepository(ctl)
+	repo := mocks.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetFilmsByTopic(topic).Times(1).Return([]models.Film{}, models.Okey)
 
 	usecase := NewFilmsUsecase(repo, nil)
@@ -86,7 +86,7 @@ func TestFilmsUsecase_GetByKeyword(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	repo := films.NewMockFilmsRepository(ctl)
+	repo := mocks.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetFilmsByKeyword(keyword).Times(1).Return([]models.Film{}, models.Okey)
 
 	usecase := NewFilmsUsecase(repo, nil)
@@ -103,7 +103,7 @@ func TestFilmsUsecase_GetSelection(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	repo := films.NewMockFilmsRepository(ctl)
+	repo := mocks.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetHottestFilms().Times(1).Return([]models.Film{}, models.Okey)
 	repo.EXPECT().GetNewestFilms().Times(1).Return([]models.Film{}, models.Okey)
 
@@ -124,7 +124,7 @@ func TestFilmsUsecase_GetStartSelections(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	repo := films.NewMockFilmsRepository(ctl)
+	repo := mocks.NewMockFilmsRepository(ctl)
 	repo.EXPECT().GetHottestFilms().Times(1).Return([]models.Film{}, models.Okey)
 
 	usecase := NewFilmsUsecase(repo, nil)

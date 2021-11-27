@@ -18,15 +18,15 @@ func GetConnectionString() (string, error) {
 	return key, nil
 }
 
-func GetCsrfToken() ([]byte, error) {
-	key, flag := os.LookupEnv("CSRF")
-	if !flag {
-		return nil, errors.New("CSRF string not found")
-	}
-
-	check := []byte(key)
-	if len(check) != 32 {
-		return nil, errors.New("invalid CSRF length")
-	}
-	return check, nil
-}
+//func GetCsrfToken() ([]byte, error) {
+//	key, flag := os.LookupEnv("CSRF")
+//	if !flag {
+//		return nil, errors.New("CSRF string not found")
+//	}
+//
+//	check := []byte(key)
+//	if len(check) != 32 {
+//		return nil, errors.New("invalid CSRF length")
+//	}
+//	return check, nil
+//}

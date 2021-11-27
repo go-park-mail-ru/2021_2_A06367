@@ -182,10 +182,10 @@ VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', '{Фентези}', 'США', '2
         9743f488-3b47-11ec-8d3d-0242ac130003}', '2001-01-02', 120, 'Русский', '120 млн', 12, '{irish.png}', '{video.mp4}', true);
 
 INSERT INTO public.series_seasons (series_id, id, pic, src)
-VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 1, '{warcraft.png, warcraft.png, warcraft.png, warcraft.png, warcraft.png}',
+VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 1, '{warcraft_s1_ser1.png, warcraft_s1_ser2.png, warcraft_s1_ser3.png, warcraft_s1_ser4.png, warcraft_s1_ser5.png}',
         '{video.mp4, video.mp4, video.mp4, video.mp4, video.mp4}');
 INSERT INTO public.series_seasons (series_id, id, pic, src)
-VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 2, '{warcraft.png, warcraft.png, warcraft.png, warcraft.png, warcraft.png}',
+VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 2, '{warcraft_s2_ser1.png, warcraft_s2_ser2.png, warcraft_s2_ser3.png, warcraft_s2_ser4.png, warcraft_s2_ser5.png}',
     '{video.mp4, video.mp4, video.mp4, video.mp4, video.mp4}');
 
 -- rating
