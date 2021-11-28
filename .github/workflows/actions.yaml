@@ -2,8 +2,9 @@ name: Netflix v2 build
 
 on:
   push:
-    branches: [ dev ] # Пока собираем только дев-ветку
-
+    branches:
+      - main
+      - grpc-magic
 jobs:
   prebuild:
     name: prebuild
@@ -17,7 +18,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v1
+      #- name: golangci-lint
+      #  uses: golangci/golangci-lint-action@v1
+      #  with:
+      #    version: v1.42
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        run: echo 0
+    # TODO: добавить шаг с тестами
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull code
+        uses: appleboy/ssh-action@master
         with:
-          version: v1.42
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: cd /backend/2021_2_A06367 && git pull
+      - name: Build containers
+        uses: appleboy/ssh-action@master
+        with:
+          timeout: 30m
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: cd /backend/2021_2_A06367 && docker-compose build
+      - name: Restart service
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: cd /backend/2021_2_A06367 && docker-compose down && docker rm $(docker ps -aq) && docker-compose up -d
+
