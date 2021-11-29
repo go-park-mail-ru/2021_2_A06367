@@ -34,11 +34,12 @@ func run() error {
 	}
 
 	logger, err := zap.NewProduction()
-	defer logger.Sync()
-	if err != nil {
-		return err
-	}
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err = logger.Sync()
+		if err != nil {
+			log.Print(err)
+		}
+	}(logger)
 	zapSugar := logger.Sugar()
 
 	encrypter := authUsecase.NewEncrypter()

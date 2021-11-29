@@ -31,6 +31,9 @@ func TestLogin(t *testing.T) {
 	usecase.EXPECT().SignIn(gomock.Any()).Return(models.Okey)
 
 	_, err = cl.Login(context.Background(), &generated.LoginUser{})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -52,6 +55,9 @@ func TestSignUp(t *testing.T) {
 	usecase.EXPECT().SignUp(gomock.Any()).Return("", models.Okey)
 
 	_, err = cl.SignUp(context.Background(), &generated.User{})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -73,6 +79,9 @@ func TestGetProfile(t *testing.T) {
 	usecase.EXPECT().GetProfile(gomock.Any()).Return(models.Profile{}, models.Okey)
 
 	_, err = cl.GetProfile(context.Background(), &generated.UserUUID{})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -94,6 +103,9 @@ func TestUpdateProfilePic(t *testing.T) {
 	usecase.EXPECT().SetAvatar(gomock.Any()).Return(models.Okey)
 
 	_, err = cl.UpdateProfilePic(context.Background(), &generated.UserUpdatePic{})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -115,6 +127,9 @@ func TestUpdateProfileBio(t *testing.T) {
 	usecase.EXPECT().SetBio(gomock.Any()).Return(models.Okey)
 
 	_, err = cl.UpdateProfileBio(context.Background(), &generated.UserUpdateBio{})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -136,6 +151,9 @@ func TestUpdateProfilePass(t *testing.T) {
 	usecase.EXPECT().SetPass(gomock.Any()).Return(models.Okey)
 
 	_, err = cl.UpdateProfilePass(context.Background(), &generated.UserUpdatePass{})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 

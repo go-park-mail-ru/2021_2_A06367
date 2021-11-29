@@ -3,6 +3,7 @@ package http
 import (
 	"fmt"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc/generated"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
@@ -36,14 +37,19 @@ func TestFilmByGenre(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	usecase := mocks.NewMockFilmsUsecase(ctl)
-	usecase.EXPECT().GetCompilation("topic").Times(1).Return([]models.Film{}, models.Okey)
+	usecase := mocks.NewMockFilmsServiceClient(ctl)
+	usecase.EXPECT().FilmByGenre(gomock.Any(), gomock.Any()).Times(1).Return(generated.Film{}, models.Okey)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
 		t.Error("wrong")
 	}
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err = logger.Sync()
+		if err != nil {
+			t.Error(err)
+		}
+	}(logger)
 	zapSugar := logger.Sugar()
 	handler := NewFilmsHandler(zapSugar, usecase)
 
@@ -63,16 +69,21 @@ func TestFilmBySelection(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	usecase := mocks.NewMockFilmsUsecase(ctl)
-	usecase.EXPECT().GetSelection("hottest").Times(1).Return([]models.Film{}, models.Okey)
+	usecase := mocks.NewMockFilmsServiceClient(ctl)
+	usecase.EXPECT().FilmByGenre(gomock.Any(), gomock.Any()).Times(1).Return(generated.Film{}, models.Okey)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
 		panic(err)
 	}
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err = logger.Sync()
+		if err != nil {
+			t.Error(err)
+		}
+	}(logger)
 	zapSugar := logger.Sugar()
-	handler := NewFilmsHandler(usecase, zapSugar)
+	handler := NewFilmsHandler(zapSugar, usecase)
 
 	r := httptest.NewRequest("GET", "/films/hottest", strings.NewReader(fmt.Sprint()))
 	r = mux.SetURLVars(r, map[string]string{
@@ -91,16 +102,21 @@ func TestFilmsHandler_FilmByActor(t *testing.T) {
 
 	uid := uuid.New()
 
-	usecase := mocks.NewMockFilmsUsecase(ctl)
-	usecase.EXPECT().GetFilmsOfActor(models.Actors{Id: uid}).Times(1).Return([]models.Film{}, models.Okey)
+	usecase := mocks.NewMockFilmsServiceClient(ctl)
+	//usecase.EXPECT().GetFilmsOfActor(models.Actors{Id: uid}).Times(1).Return([]models.Film{}, models.Okey)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
 		t.Error(err.Error())
 	}
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err = logger.Sync()
+		if err != nil {
+			t.Error(err)
+		}
+	}(logger)
 	zapSugar := logger.Sugar()
-	handler := NewFilmsHandler(usecase, zapSugar)
+	handler := NewFilmsHandler(zapSugar, usecase)
 
 	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
 	r = mux.SetURLVars(r, map[string]string{
@@ -117,15 +133,20 @@ func TestFilmsHandler_FilmByActor2(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	usecase := mocks.NewMockFilmsUsecase(ctl)
+	usecase := mocks.NewMockFilmsServiceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
 		t.Error(err.Error())
 	}
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err = logger.Sync()
+		if err != nil {
+			t.Error(err)
+		}
+	}(logger)
 	zapSugar := logger.Sugar()
-	handler := NewFilmsHandler(usecase, zapSugar)
+	handler := NewFilmsHandler(zapSugar, usecase)
 
 	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
 	r = mux.SetURLVars(r, map[string]string{
@@ -142,15 +163,20 @@ func TestFilmsHandler_FilmByActor3(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	usecase := mocks.NewMockFilmsUsecase(ctl)
+	usecase := mocks.NewMockFilmsServiceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
 		t.Error(err.Error())
 	}
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err = logger.Sync()
+		if err != nil {
+			t.Error(err)
+		}
+	}(logger)
 	zapSugar := logger.Sugar()
-	handler := NewFilmsHandler(usecase, zapSugar)
+	handler := NewFilmsHandler(zapSugar, usecase)
 
 	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
 	w := httptest.NewRecorder()
@@ -161,46 +187,56 @@ func TestFilmsHandler_FilmByActor3(t *testing.T) {
 }
 
 func TestFilmsHandler_FilmById(t *testing.T) {
-	//ctl := gomock.NewController(t)
-	//defer ctl.Finish()
-	//
-	//uid := uuid.New()
-	//
-	//usecase := mocks.NewMockFilmsUsecase(ctl)
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	uid := uuid.New()
+
+	usecase := mocks.NewMockFilmsServiceClient(ctl)
 	//usecase.EXPECT().GetFilm(models.Film{Id: uid}).Times(1).Return(models.Film{}, models.Okey)
-	//
-	//logger, err := zap.NewProduction()
-	//if err != nil {
-	//	t.Error("wrong")
-	//}
-	//defer logger.Sync()
-	//zapSugar := logger.Sugar()
-	//handler := NewFilmsHandler(usecase, zapSugar)
-	//
-	//r := httptest.NewRequest("GET", "/film/"+uid.String(), strings.NewReader(fmt.Sprint()))
-	//r = mux.SetURLVars(r, map[string]string{
-	//	"film_id": uid.String(),
-	//})
-	//w := httptest.NewRecorder()
-	//
-	//handler.FilmById(w, r)
-	//require.Equal(t, w.Code, http.StatusOK)
-	//log.Print(w.Body.String())
+
+	logger, err := zap.NewProduction()
+	if err != nil {
+		t.Error("wrong")
+	}
+	defer func(logger *zap.Logger) {
+		err = logger.Sync()
+		if err != nil {
+			t.Error(err)
+		}
+	}(logger)
+	zapSugar := logger.Sugar()
+	handler := NewFilmsHandler(zapSugar, usecase)
+
+	r := httptest.NewRequest("GET", "/film/"+uid.String(), strings.NewReader(fmt.Sprint()))
+	r = mux.SetURLVars(r, map[string]string{
+		"film_id": uid.String(),
+	})
+	w := httptest.NewRecorder()
+
+	handler.FilmById(w, r)
+	require.Equal(t, w.Code, http.StatusOK)
+	log.Print(w.Body.String())
 }
 
 func TestFilmsHandler_FilmById2(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 	uid := uuid.New()
-	usecase := mocks.NewMockFilmsUsecase(ctl)
+	usecase := mocks.NewMockFilmsServiceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
 		t.Error("wrong")
 	}
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err = logger.Sync()
+		if err != nil {
+			t.Error(err)
+		}
+	}(logger)
 	zapSugar := logger.Sugar()
-	handler := NewFilmsHandler(usecase, zapSugar)
+	handler := NewFilmsHandler(zapSugar, usecase)
 
 	r := httptest.NewRequest("GET", "/film/"+uid.String(), strings.NewReader(fmt.Sprint()))
 	w := httptest.NewRecorder()
@@ -214,15 +250,20 @@ func TestFilmsHandler_FilmById3(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 	uid := uuid.New()
-	usecase := mocks.NewMockFilmsUsecase(ctl)
+	usecase := mocks.NewMockFilmsServiceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
 		t.Error("wrong")
 	}
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err = logger.Sync()
+		if err != nil {
+			t.Error(err)
+		}
+	}(logger)
 	zapSugar := logger.Sugar()
-	handler := NewFilmsHandler(usecase, zapSugar)
+	handler := NewFilmsHandler(zapSugar, usecase)
 
 	r := httptest.NewRequest("GET", "/film/"+uid.String(), strings.NewReader(fmt.Sprint()))
 	r = mux.SetURLVars(r, map[string]string{
@@ -238,15 +279,20 @@ func TestFilmsHandler_FilmById3(t *testing.T) {
 func TestFilmsHandler_FilmsByUser(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
-	usecase := mocks.NewMockFilmsUsecase(ctl)
+	usecase := mocks.NewMockFilmsServiceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
 		t.Error("wrong")
 	}
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err = logger.Sync()
+		if err != nil {
+			t.Error(err)
+		}
+	}(logger)
 	zapSugar := logger.Sugar()
-	handler := NewFilmsHandler(usecase, zapSugar)
+	handler := NewFilmsHandler(zapSugar, usecase)
 
 	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
 
@@ -258,22 +304,27 @@ func TestFilmsHandler_FilmsByUser(t *testing.T) {
 }
 
 func TestFilmsHandler_FilmStartSelection(t *testing.T) {
-	//ctl := gomock.NewController(t)
-	//defer ctl.Finish()
-	//usecase := mocks.NewMockFilmsUsecase(ctl)
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	usecase := mocks.NewMockFilmsServiceClient(ctl)
 	//usecase.EXPECT().GetStartSelections(false, models.User{}).Return([]models.Film{}, models.Okey)
-	//logger, err := zap.NewProduction()
-	//if err != nil {
-	//	t.Error("wrong")
-	//}
-	//defer logger.Sync()
-	//zapSugar := logger.Sugar()
-	//handler := NewFilmsHandler(usecase, zapSugar)
-	//
-	//r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
-	//w := httptest.NewRecorder()
-	//
-	//handler.FilmStartSelection(w, r)
-	//require.Equal(t, w.Code, http.StatusOK)
-	//log.Print(w.Body.String())
+	logger, err := zap.NewProduction()
+	if err != nil {
+		t.Error("wrong")
+	}
+	defer func(logger *zap.Logger) {
+		err = logger.Sync()
+		if err != nil {
+			t.Error(err)
+		}
+	}(logger)
+	zapSugar := logger.Sugar()
+	handler := NewFilmsHandler(zapSugar, usecase)
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+
+	handler.FilmStartSelection(w, r)
+	require.Equal(t, w.Code, http.StatusOK)
+	log.Print(w.Body.String())
 }

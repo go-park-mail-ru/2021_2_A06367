@@ -34,6 +34,9 @@ func TestFilmByGenre(t *testing.T) {
 
 	genre, err := cl.FilmByGenre(context.Background(), &generated.KeyWord{})
 	log.Println(genre)
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -56,6 +59,9 @@ func TestFilmBySelection(t *testing.T) {
 
 	genre, err := cl.FilmBySelection(context.Background(), &generated.KeyWord{})
 	log.Println(genre)
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -78,6 +84,9 @@ func TestFilmsByActor(t *testing.T) {
 
 	genre, err := cl.FilmsByActor(context.Background(), &generated.UUID{})
 	log.Println(genre)
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -100,6 +109,9 @@ func TestFilmById(t *testing.T) {
 
 	genre, err := cl.FilmById(context.Background(), &generated.UUID{})
 	log.Println(genre)
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -122,6 +134,9 @@ func TestFilmsByUser(t *testing.T) {
 
 	genre, err := cl.FilmsByUser(context.Background(), &generated.UUID{})
 	log.Println(genre)
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -143,10 +158,18 @@ func TestFilmStartSelection(t *testing.T) {
 	usecase.EXPECT().GetStartSelections(true, gomock.Any()).Times(1).Return([]models.Film{}, models.Okey)
 	usecase.EXPECT().GetStartSelections(false, gomock.Any()).Times(1).Return([]models.Film{}, models.Okey)
 
-	genre, err := cl.FilmStartSelection(context.Background(), &generated.UUID{})
-	id, _ := uuid.NewUUID()
-	genre, err = cl.FilmStartSelection(context.Background(), &generated.UUID{Id: id.String()})
-	log.Println(genre)
+	_, err = cl.FilmStartSelection(context.Background(), &generated.UUID{})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
+	id, err := uuid.NewUUID()
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
+	_, err = cl.FilmStartSelection(context.Background(), &generated.UUID{Id: id.String()})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -171,6 +194,9 @@ func TestFilmStarred(t *testing.T) {
 		FilmUUID: uuid.UUID{}.String(),
 		UserUUID: uuid.UUID{}.String(),
 	})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -195,6 +221,9 @@ func TestFilmRemoveStarred(t *testing.T) {
 		FilmUUID: uuid.UUID{}.String(),
 		UserUUID: uuid.UUID{}.String(),
 	})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -219,6 +248,9 @@ func TestFilmWl(t *testing.T) {
 		FilmUUID: uuid.UUID{}.String(),
 		UserUUID: uuid.UUID{}.String(),
 	})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 
@@ -243,6 +275,9 @@ func TestFilmRemoveWl(t *testing.T) {
 		FilmUUID: uuid.UUID{}.String(),
 		UserUUID: uuid.UUID{}.String(),
 	})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
 
 }
 

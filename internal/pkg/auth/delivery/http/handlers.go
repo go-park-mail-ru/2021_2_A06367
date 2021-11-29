@@ -353,6 +353,10 @@ func (h *AuthHandler) UpdateProfilePass(w http.ResponseWriter, r *http.Request) 
 
 	var pass models.PassUpdate
 	err := easyjson.UnmarshalFromReader(r.Body, &pass)
+	if err != nil {
+		utils.Response(w, models.BadRequest, nil)
+		return
+	}
 
 	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
 	if err != nil && err.Error() != "no token" {
@@ -381,6 +385,10 @@ func (h *AuthHandler) UpdateProfileBio(w http.ResponseWriter, r *http.Request) {
 
 	var bio models.BioUpdate
 	err := easyjson.UnmarshalFromReader(r.Body, &bio)
+	if err != nil {
+		utils.Response(w, models.BadRequest, nil)
+		return
+	}
 
 	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
 	if err != nil && err.Error() != "no token" {

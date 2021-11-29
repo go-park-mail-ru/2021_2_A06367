@@ -169,9 +169,6 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 				tokenator: mockTokenGenereator,
 				encrypter: mockEncrypter,
 			}
-			if tt.Login == "Anonym" {
-				tt.Login = tt.Login
-			}
 			CreateUser := models.User{
 				Login:             testUsers[i].Login,
 				EncryptedPassword: testUsers[i].EncryptedPassword,

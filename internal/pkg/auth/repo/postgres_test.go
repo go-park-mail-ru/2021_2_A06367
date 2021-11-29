@@ -27,7 +27,10 @@ func prepare(t *testing.T, pgxRows pgx.Rows) *AuthRepo { // mock on repo and uid
 
 func TestAuthRepo_CheckUser(t *testing.T) {
 	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
-	uid, _ := uuid.Parse(uidStr)
+	uid, err := uuid.Parse(uidStr)
+	if err != nil {
+		t.Error(err)
+	}
 	ecnryptedPswd := usecase.NewEncrypter().EncryptPswd(pswd)
 	columns := []string{"encrypted_password"}
 	pgxRows := pgxpoolmock.NewRows(columns).
@@ -45,7 +48,10 @@ func TestAuthRepo_CheckUser(t *testing.T) {
 
 func TestAuthRepo_CreateUser(t *testing.T) {
 	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
-	uid, _ := uuid.Parse(uidStr)
+	uid, err := uuid.Parse(uidStr)
+	if err != nil {
+		t.Error(err)
+	}
 	ecnryptedPswd := usecase.NewEncrypter().EncryptPswd(pswd)
 	columns := []string{"id"}
 	pgxRows := pgxpoolmock.NewRows(columns).
@@ -63,7 +69,10 @@ func TestAuthRepo_CreateUser(t *testing.T) {
 
 func TestAuthRepo_AddFollowing(t *testing.T) {
 	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
-	uid, _ := uuid.Parse(uidStr)
+	uid, err := uuid.Parse(uidStr)
+	if err != nil {
+		t.Error(err)
+	}
 	columns := []string{"id"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(1).ToPgxRows()
@@ -78,7 +87,10 @@ func TestAuthRepo_AddFollowing(t *testing.T) {
 
 func TestAuthRepo_GetProfile(t *testing.T) {
 	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
-	uid, _ := uuid.Parse(uidStr)
+	uid, err := uuid.Parse(uidStr)
+	if err != nil {
+		t.Error(err)
+	}
 	columns := []string{"login", "about", "avatar", "subscriptions", "subscribers"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow("tester2",
@@ -119,7 +131,10 @@ func TestAuthRepo_GetProfileByKeyword(t *testing.T) {
 
 func TestAuthRepo_RemoveFollowing(t *testing.T) {
 	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
-	uid, _ := uuid.Parse(uidStr)
+	uid, err := uuid.Parse(uidStr)
+	if err != nil {
+		t.Error(err)
+	}
 	columns := []string{"id"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(1).ToPgxRows()

@@ -14,7 +14,10 @@ func prepare(t *testing.T) (*FilmsRepo, uuid.UUID) { // mock on repo and uid use
 	ctl := gomock.NewController(t)
 	mockPool := pgxpoolmock.NewMockPgxPool(ctl)
 	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
-	uid, _ := uuid.Parse(uidStr)
+	uid, err := uuid.Parse(uidStr)
+	if err != nil {
+		t.Error(err)
+	}
 	filmRepo := NewFilmsRepo(mockPool, nil)
 	columns := []string{"id", "genres", "title", "year", "director", "authors", "actors", "release", "duration", "language", "pic", "src"}
 	pgxRows := pgxpoolmock.NewRows(columns).
@@ -30,7 +33,10 @@ func TestFilmsRepo_GetFilmById(t *testing.T) {
 
 	mockPool := pgxpoolmock.NewMockPgxPool(ctl)
 	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
-	uid, _ := uuid.Parse(uidStr)
+	uid, err := uuid.Parse(uidStr)
+	if err != nil {
+		t.Error(err)
+	}
 	filmRepo := NewFilmsRepo(mockPool, nil)
 	columns := []string{"id", "genres", "title", "year", "director", "authors", "actors", "release", "duration", "language", "pic", "src"}
 	pgxRows := pgxpoolmock.NewRows(columns).

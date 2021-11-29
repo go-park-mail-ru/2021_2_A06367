@@ -3,11 +3,15 @@ package config
 import (
 	"errors"
 	"github.com/joho/godotenv"
+	"log"
 	"os"
 )
 
 func init() {
-	godotenv.Load(".env")
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("config not loaded")
+	}
 }
 
 func GetConnectionString() (string, error) {

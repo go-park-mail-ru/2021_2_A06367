@@ -88,6 +88,9 @@ func (r *ActorsRepo) GetActors(actors []models.Actors) ([]models.Actors, models.
 
 func (r *ActorsRepo) GetActorsByKeyword(keyword string) ([]models.Actors, models.StatusCode) {
 	rows, err := r.pool.Query(context.Background(), SELECT_ACTORS_BY_KEYWORD, strings.Replace(keyword, " ", "&", -1), keyword)
+	if err != nil {
+		return []models.Actors{}, models.InternalError
+	}
 	actors := make([]models.Actors, 0, 10)
 
 	for rows.Next() {

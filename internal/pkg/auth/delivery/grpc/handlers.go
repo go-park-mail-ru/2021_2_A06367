@@ -43,7 +43,12 @@ func (h GrpcAuthHandler) SignUp(ctx context.Context, in *generated.User) (*gener
 }
 
 func (h GrpcAuthHandler) GetProfile(ctx context.Context, in *generated.UserUUID) (*generated.Profile, error) {
-	id, _ := uuid.Parse(in.ID)
+	id, err := uuid.Parse(in.ID)
+	if err != nil {
+		return &generated.Profile{
+			Status: grpc.StatusCode(models.InternalError),
+		}, nil
+	}
 	profile := models.Profile{
 		Id: id,
 	}
@@ -60,7 +65,12 @@ func (h GrpcAuthHandler) GetProfile(ctx context.Context, in *generated.UserUUID)
 }
 
 func (h GrpcAuthHandler) UpdateProfilePic(ctx context.Context, in *generated.UserUpdatePic) (*generated.Empty, error) {
-	id, _ := uuid.Parse(in.ID)
+	id, err := uuid.Parse(in.ID)
+	if err != nil {
+		return &generated.Empty{
+			Status: grpc.StatusCode(models.InternalError),
+		}, nil
+	}
 	user := models.Profile{
 		Id:     id,
 		Login:  in.Login,
@@ -74,7 +84,12 @@ func (h GrpcAuthHandler) UpdateProfilePic(ctx context.Context, in *generated.Use
 }
 
 func (h GrpcAuthHandler) UpdateProfilePass(ctx context.Context, in *generated.UserUpdatePass) (*generated.Empty, error) {
-	id, _ := uuid.Parse(in.ID)
+	id, err := uuid.Parse(in.ID)
+	if err != nil {
+		return &generated.Empty{
+			Status: grpc.StatusCode(models.InternalError),
+		}, nil
+	}
 	user := models.User{
 		Id:                id,
 		Login:             in.Login,
@@ -88,7 +103,12 @@ func (h GrpcAuthHandler) UpdateProfilePass(ctx context.Context, in *generated.Us
 }
 
 func (h GrpcAuthHandler) UpdateProfileBio(ctx context.Context, in *generated.UserUpdateBio) (*generated.Empty, error) {
-	id, _ := uuid.Parse(in.ID)
+	id, err := uuid.Parse(in.ID)
+	if err != nil {
+		return &generated.Empty{
+			Status: grpc.StatusCode(models.InternalError),
+		}, nil
+	}
 	user := models.Profile{
 		Id:    id,
 		Login: in.Login,

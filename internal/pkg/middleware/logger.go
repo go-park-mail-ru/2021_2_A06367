@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+type ContextKey string
+
+var ReqID = "ReqId"
+
 type LoggerMiddleware struct {
 	logger *zap.SugaredLogger
 }
@@ -23,7 +27,7 @@ func (m *LoggerMiddleware) LogRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		reqId := fmt.Sprintf("%016x", rand.Int())[:10]
-		ctx = context.WithValue(ctx, "ReqId", reqId)
+		ctx = context.WithValue(ctx, ContextKey(ReqID), reqId)
 
 		start := time.Now()
 		next.ServeHTTP(w, r.WithContext(ctx))

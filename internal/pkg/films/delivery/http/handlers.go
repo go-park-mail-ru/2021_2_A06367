@@ -49,7 +49,7 @@ func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
@@ -78,7 +78,7 @@ func (h FilmsHandler) FilmBySelection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
@@ -112,7 +112,7 @@ func (h FilmsHandler) FilmByActor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
@@ -173,12 +173,16 @@ func (h FilmsHandler) FilmsByUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
 func (h FilmsHandler) FilmStartSelection(w http.ResponseWriter, r *http.Request) {
 	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
 
 	if access == nil {
 		access = &models.AccessDetails{}
@@ -187,7 +191,7 @@ func (h FilmsHandler) FilmStartSelection(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		return
 	}
-	film := h.FilmsToModels(*selection)
+	film := h.FilmsToModels(selection)
 	util.Response(w, models.StatusCode(selection.Status), film)
 }
 
@@ -387,7 +391,7 @@ func (h FilmsHandler) GetStarred(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.NotFound, nil)
 		return
 	}
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 func (h FilmsHandler) GetWatchlist(w http.ResponseWriter, r *http.Request) {
@@ -405,7 +409,7 @@ func (h FilmsHandler) GetWatchlist(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.NotFound, nil)
 		return
 	}
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
@@ -421,33 +425,28 @@ func (h FilmsHandler) RandomFilm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h FilmsHandler) FilmToModel(film *generated.Film) models.Film {
-	id, _ := uuid.Parse(film.Id)
-	releaseru, _ := time.Parse("", film.ReleaseRus)
-	release, _ := time.Parse("", film.Release)
+	id, err := uuid.Parse(film.Id)
+	if err != nil {
+		return models.Film{}
+	}
+	releaseru, err := time.Parse("", film.ReleaseRus)
+	if err != nil {
+		return models.Film{}
+	}
+	release, err := time.Parse("", film.Release)
+	if err != nil {
+		return models.Film{}
+	}
 
 	var actors []uuid.UUID
 	for i := 0; i < len(film.Actors); i++ {
-		id, _ := uuid.Parse(film.Actors[i])
-		actors = append(actors, id)
+		id2, err2 := uuid.Parse(film.Actors[i])
+		if err2 != nil {
+			return models.Film{}
+		}
+		actors = append(actors, id2)
 	}
 
-	//out := &[]models.Season{}
-	//if film.Seasons != nil {
-	//
-	//	SeasonsOut := []models.Season{}
-	//	for _, season := range film.Seasons {
-	//		temp := models.Season{
-	//			Num:  int(season.Num),
-	//			Src:  season.Src,
-	//			Pics: season.Pics,
-	//		}
-	//		SeasonsOut = append(SeasonsOut, temp)
-	//	}
-	//	log.Println(SeasonsOut)
-	//	out = &SeasonsOut
-	//} else {
-	//	out = nil
-	//}
 	SeasonsOut := []models.Season{}
 	for _, season := range film.Seasons {
 		temp := models.Season{
@@ -484,7 +483,7 @@ func (h FilmsHandler) FilmToModel(film *generated.Film) models.Film {
 	}
 }
 
-func (h FilmsHandler) FilmsToModels(films generated.Films) []models.Film {
+func (h FilmsHandler) FilmsToModels(films *generated.Films) []models.Film {
 	var result []models.Film
 	for i := 0; i < len(films.Data); i++ {
 		film := h.FilmToModel(films.Data[i])

@@ -18,10 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      #- name: golangci-lint
-      #  uses: golangci/golangci-lint-action@v1
-      #  with:
-      #    version: v1.42
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v1
+        with:
+          version: v1.42
   test:
     name: test
     runs-on: ubuntu-latest

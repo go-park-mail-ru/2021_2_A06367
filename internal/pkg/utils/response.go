@@ -30,7 +30,10 @@ func Response(w http.ResponseWriter, status models.StatusCode, body interface{})
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	if body != nil {
-		jsn, _ := json.Marshal(body)
+		jsn, err := json.Marshal(body)
+		if err != nil {
+			return
+		}
 		_, _ = w.Write(jsn)
 	}
 
