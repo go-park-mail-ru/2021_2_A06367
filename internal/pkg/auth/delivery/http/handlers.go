@@ -321,7 +321,10 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	hash := md5.New()
-	hash.Write(all)
+	_, err = hash.Write(all)
+	if err != nil {
+		return
+	}
 	name := hash.Sum(nil)
 
 	err = os.WriteFile("/image/"+hex.EncodeToString(name[:])+".png", all, 0644)

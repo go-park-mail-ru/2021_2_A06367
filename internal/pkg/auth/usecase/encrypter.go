@@ -17,7 +17,13 @@ func NewEncrypter() *Encrypter {
 
 func (ec *Encrypter) EncryptPswd(pswd string) string {
 	Encryptedpswd := sha256.New()
-	Encryptedpswd.Write([]byte(pswd))
-	Encryptedpswd.Write([]byte(ec.salt))
+	_, err := Encryptedpswd.Write([]byte(pswd))
+	if err != nil {
+		return ""
+	}
+	_, err =Encryptedpswd.Write([]byte(ec.salt))
+	if err != nil {
+		return ""
+	}
 	return fmt.Sprintf("%x", Encryptedpswd.Sum(nil))
 }
