@@ -425,15 +425,18 @@ func (h FilmsHandler) RandomFilm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h FilmsHandler) FilmToModel(film *generated.Film) models.Film {
+	layout := "2006-01-02"
 	id, err := uuid.Parse(film.Id)
 	if err != nil {
 		return models.Film{}
 	}
-	releaseru, err := time.Parse("", film.ReleaseRus)
+	dateRus := film.ReleaseRus[0:len(layout)]
+	releaseru, err := time.Parse(layout, dateRus)
 	if err != nil {
 		return models.Film{}
 	}
-	release, err := time.Parse("", film.Release)
+	dateRelease := film.Release[0:len(layout)]
+	release, err := time.Parse(layout, dateRelease)
 	if err != nil {
 		return models.Film{}
 	}
