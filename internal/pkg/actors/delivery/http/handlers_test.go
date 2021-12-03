@@ -27,12 +27,12 @@ func TestActorById(t *testing.T) {
 
 	logger, err := zap.NewProduction()
 	if err != nil {
-		panic(err)
+		log.Print(err)
 	}
 	defer func(logger *zap.Logger) {
 		err = logger.Sync()
 		if err != nil {
-			panic(err)
+			log.Print(err)
 		}
 	}(logger)
 	zapSugar := logger.Sugar()
@@ -60,13 +60,12 @@ func TestActorByIdNotFound(t *testing.T) {
 
 	logger, err := zap.NewProduction()
 	if err != nil {
-		t.Error(err.Error())
+		log.Print(err)
 	}
 	defer func(logger *zap.Logger) {
-		err := logger.Sync()
+		err = logger.Sync()
 		if err != nil {
-			panic(err)
-
+			log.Print(err)
 		}
 	}(logger)
 	zapSugar := logger.Sugar()

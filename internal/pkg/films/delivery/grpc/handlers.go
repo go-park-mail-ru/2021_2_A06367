@@ -211,6 +211,39 @@ func (g *GrpcFilmsHandler) Random(ctx context.Context, in *generated.Nothing) (*
 	return data, nil
 }
 
+func (g *GrpcFilmsHandler) SetRating(ctx context.Context, in *generated.RatingPair) (*generated.Nothing, error) {
+	userId, err := uuid.Parse(in.UserUUID)
+	if err != nil {
+		return nil, nil
+	}
+	user := models.User{Id: userId}
+
+	filmId, err := uuid.Parse(in.FilmUUID)
+	if err != nil {
+		return nil, nil
+	}
+	film := models.Film{Id: filmId}
+
+	status := g.uc.SetRating(film, user, float64(in.Rating))
+	return &generated.Nothing{
+		Status: grpc.StatusCode(status),
+	}, nil
+}
+
+func (g *GrpcFilmsHandler) GetRating(ctx context.Context, in *generated.UUID) (*generated.Film, error) {
+	filmId, err := uuid.Parse(in.Id)
+	if err != nil {
+		return nil, nil
+	}
+	film := models.Film{Id: filmId}
+
+	status := g.uc.GetRating(film)
+	data := g.FilmAdaptor(film)
+	data.Status = grpc.StatusCode(status)
+
+	return data, nil
+}
+
 func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *generated.Film {
 
 	if film.Seasons != nil {
@@ -240,6 +273,7 @@ func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *generated.Film {
 		Description:        film.Description,
 		IsSeries:           film.IsSeries,
 		Seasons:            nil,
+		Rating:             float32(film.Rating),
 	}
 
 	if film.Seasons != nil {

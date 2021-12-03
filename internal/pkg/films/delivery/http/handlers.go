@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -424,6 +425,76 @@ func (h FilmsHandler) RandomFilm(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (h FilmsHandler) SetRating(w http.ResponseWriter, r *http.Request) {
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	rating := r.URL.Query().Get("rating")
+	mark, err := strconv.ParseFloat(rating, 32)
+
+	res, err := h.client.SetRating(context.Background(), &generated.RatingPair{
+		FilmUUID: film.Id.String(),
+		UserUUID: user.Id.String(),
+		Rating:   float32(mark),
+	})
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	util.Response(w, models.StatusCode(res.Status), film)
+
+}
+
+func (h FilmsHandler) GetRating(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	res, err := h.client.GetRating(context.Background(), &generated.UUID{
+		Id: film.Id.String(),
+	})
+
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	film.Rating = float64(res.Rating)
+	util.Response(w, models.StatusCode(res.Status), film)
+
+}
+
 func (h FilmsHandler) FilmToModel(film *generated.Film) models.Film {
 	layout := "2006-01-02"
 	id, err := uuid.Parse(film.Id)
@@ -483,6 +554,7 @@ func (h FilmsHandler) FilmToModel(film *generated.Film) models.Film {
 		Description: film.Description,
 		IsSeries:    film.IsSeries,
 		Seasons:     &SeasonsOut,
+		Rating:      float64(film.Rating),
 	}
 }
 

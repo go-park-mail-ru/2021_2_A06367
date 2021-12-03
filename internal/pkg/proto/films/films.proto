@@ -1,5 +1,5 @@
 syntax = "proto3";
-option go_package = "internal/pkg/films/delivery/grpc";
+option go_package = "internal/pkg/films/delivery/grpc/generated";
 
 import "codes.proto";
 
@@ -38,6 +38,7 @@ message Film {
   bool IsSeries =18;
   repeated Season Seasons = 19;
   codes.StatusCode Status= 20;
+  float Rating = 21;
 }
 
 message Films {
@@ -49,6 +50,13 @@ message Pair {
   string FilmUUID = 1;
   string UserUUID = 2;
 }
+
+message RatingPair {
+  string FilmUUID = 1;
+  string UserUUID = 2;
+  float Rating = 3;
+}
+
 
 message UUID {
   string id = 1;
@@ -70,4 +78,7 @@ service FilmsService {
   rpc IfStarred(Pair) returns (Nothing) {}
   rpc WatchList(UUID) returns (Films) {}
   rpc Random(Nothing) returns (Film) {}
+
+  rpc SetRating(RatingPair) returns (Nothing) {}
+  rpc GetRating(UUID) returns (Film) {}
 }

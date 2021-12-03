@@ -10,6 +10,11 @@ import (
 )
 
 const (
+	SET_RATING = "INSERT INTO ratings(id, film_id, rating)" +
+		"values($1, $2, $3) on conflict(id, film_id) do update set rating = $3;"
+
+	GET_RATING = "SELECT AVG(rating) FROM ratings WHERE film_id=$1;"
+
 	SElECT_FILM_BY_TOPIC = "SELECT id, genres, country, releaseRus, title, year, director, " +
 		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
 		"FROM films " +
@@ -108,6 +113,11 @@ func (r *FilmsRepo) GetFilmsByTopic(topic string) ([]models.Film, models.StatusC
 				return nil, models.InternalError
 			}
 		}
+
+		code := r.GetRating(film)
+		if code != models.Okey {
+			return nil, models.InternalError
+		}
 		films = append(films, film)
 	}
 
@@ -137,6 +147,10 @@ func (r *FilmsRepo) GetHottestFilms() ([]models.Film, models.StatusCode) {
 			if code != models.Okey {
 				return nil, models.InternalError
 			}
+		}
+		code := r.GetRating(film)
+		if code != models.Okey {
+			return nil, models.InternalError
 		}
 		films = append(films, film)
 	}
@@ -168,6 +182,10 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 				return nil, models.InternalError
 			}
 		}
+		code := r.GetRating(film)
+		if code != models.Okey {
+			return nil, models.InternalError
+		}
 		films = append(films, film)
 	}
 
@@ -196,6 +214,10 @@ func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.Sta
 			if code != models.Okey {
 				return nil, models.InternalError
 			}
+		}
+		code := r.GetRating(film)
+		if code != models.Okey {
+			return nil, models.InternalError
 		}
 		films = append(films, film)
 	}
@@ -226,6 +248,10 @@ func (r *FilmsRepo) GetFilmsByActor(actor models.Actors) ([]models.Film, models.
 				return nil, models.InternalError
 			}
 		}
+		code := r.GetRating(film)
+		if code != models.Okey {
+			return nil, models.InternalError
+		}
 		films = append(films, film)
 	}
 	return films, models.Okey
@@ -245,6 +271,10 @@ func (r *FilmsRepo) GetFilmById(film models.Film) (models.Film, models.StatusCod
 		}
 	}
 
+	code := r.GetRating(film)
+	if code != models.Okey {
+		return film, models.InternalError
+	}
 	if err != nil {
 		return models.Film{}, models.InternalError
 	}
@@ -272,6 +302,10 @@ func (r *FilmsRepo) GetFilmsByUser(user models.User) ([]models.Film, models.Stat
 			if code != models.Okey {
 				return nil, models.InternalError
 			}
+		}
+		code := r.GetRating(film)
+		if code != models.Okey {
+			return nil, models.InternalError
 		}
 		films = append(films, film)
 	}
@@ -445,4 +479,24 @@ func (r *FilmsRepo) GetRandom() (models.Film, models.StatusCode) {
 	}
 
 	return film, models.Okey
+}
+
+func (r *FilmsRepo) SetRating(film models.Film, user models.User, rating float64) models.StatusCode {
+	exec, err := r.pool.Exec(context.Background(), SET_RATING, user.Id, film.Id, rating)
+	if err != nil {
+		return models.InternalError
+	}
+	if exec.RowsAffected() != 1 {
+		return models.Conflict
+	}
+	return models.Okey
+}
+
+func (r *FilmsRepo) GetRating(film models.Film) models.StatusCode {
+	row := r.pool.QueryRow(context.Background(), GET_RATING, film.Id)
+	err := row.Scan(&film.Rating)
+	if err != nil {
+		return models.InternalError
+	}
+	return models.Okey
 }

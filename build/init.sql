@@ -78,6 +78,17 @@ ALTER TABLE watchlist
     ADD CONSTRAINT watchlist_uniq_list UNIQUE(id,film_id);
 
 
+CREATE TABLE ratings
+(
+    id UUID NOT NULL,
+    film_id UUID NOT NULL,
+    rating float NOT NULL
+);
+
+ALTER TABLE ratings
+    ADD CONSTRAINT ratings_uniq_list UNIQUE(id,film_id);
+
+
 CREATE TABLE rating
 (
     film_id UUID REFERENCES films(id) NOT NULL,

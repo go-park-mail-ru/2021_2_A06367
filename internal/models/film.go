@@ -27,6 +27,7 @@ type Film struct {
 	Description string      `json:"description"`
 	IsSeries    bool        `json:"is_series"`
 	Seasons     *[]Season   `json:"seasons,omitempty"`
+	Rating      float64     `json:"rating"`
 }
 
 type Season struct {
