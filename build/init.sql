@@ -70,8 +70,8 @@ CREATE INDEX films_actors_idx ON films USING gin(actors);
 
 CREATE TABLE watchlist
 (
-    id UUID REFERENCES users(id) NOT NULL,
-    film_id UUID REFERENCES films(id) NOT NULL
+    id UUID NOT NULL,
+    film_id UUID NOT NULL
 );
 
 ALTER TABLE watchlist
