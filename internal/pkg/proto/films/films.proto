@@ -39,6 +39,7 @@ message Film {
   repeated Season Seasons = 19;
   codes.StatusCode Status= 20;
   float Rating = 21;
+  bool NeedsPayment = 22;
 }
 
 message Films {
@@ -74,11 +75,10 @@ service FilmsService {
   rpc AddWatchList(Pair) returns (Nothing) {}
   rpc RemoveWatchList(Pair) returns (Nothing) {}
   rpc Starred(UUID) returns (Films) {}
-
   rpc IfStarred(Pair) returns (Nothing) {}
   rpc WatchList(UUID) returns (Films) {}
+  rpc IfWatchList(Pair) returns (Nothing) {}
   rpc Random(Nothing) returns (Film) {}
-
   rpc SetRating(RatingPair) returns (Nothing) {}
   rpc GetRating(UUID) returns (Film) {}
 }

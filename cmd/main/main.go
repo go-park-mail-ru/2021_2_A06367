@@ -149,6 +149,7 @@ func run() error {
 		film.HandleFunc("/wl", filmsHandler.GetWatchlist).Methods(http.MethodGet)
 		film.HandleFunc("/wl/{id}", filmsHandler.AddWatchlist).Methods(http.MethodPost)
 		film.HandleFunc("/wl/{id}", filmsHandler.RemoveWatchlist).Methods(http.MethodDelete)
+		film.HandleFunc("/wl/check/{id}", filmsHandler.IfWl).Methods(http.MethodGet)
 	}
 
 	actors := r.PathPrefix("/api/actors").Subrouter()

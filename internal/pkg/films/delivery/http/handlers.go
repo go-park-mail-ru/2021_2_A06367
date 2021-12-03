@@ -268,6 +268,42 @@ func (h FilmsHandler) IfStarred(w http.ResponseWriter, r *http.Request) {
 	util.Response(w, models.StatusCode(none.Status), nil)
 }
 
+func (h FilmsHandler) IfWl(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	none, err := h.client.IfWatchList(context.Background(), &generated.Pair{
+		FilmUUID: film.Id.String(),
+		UserUUID: user.Id.String(),
+	})
+	if err != nil {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	util.Response(w, models.StatusCode(none.Status), nil)
+}
+
 func (h FilmsHandler) RemoveStarred(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
@@ -395,6 +431,7 @@ func (h FilmsHandler) GetStarred(w http.ResponseWriter, r *http.Request) {
 	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
+
 func (h FilmsHandler) GetWatchlist(w http.ResponseWriter, r *http.Request) {
 
 	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
@@ -536,25 +573,26 @@ func (h FilmsHandler) FilmToModel(film *generated.Film) models.Film {
 	}
 
 	return models.Film{
-		Id:          id,
-		Title:       film.Title,
-		Genres:      film.Genres,
-		Country:     film.Country,
-		ReleaseRus:  releaseru,
-		Year:        int(film.Year),
-		Director:    film.Director,
-		Authors:     film.Authors,
-		Actors:      actors,
-		Release:     release,
-		Duration:    int(film.Duration),
-		Budget:      film.Budget,
-		Age:         int(film.Age),
-		Pic:         film.Pic,
-		Src:         film.Src,
-		Description: film.Description,
-		IsSeries:    film.IsSeries,
-		Seasons:     &SeasonsOut,
-		Rating:      float64(film.Rating),
+		Id:           id,
+		Title:        film.Title,
+		Genres:       film.Genres,
+		Country:      film.Country,
+		ReleaseRus:   releaseru,
+		Year:         int(film.Year),
+		Director:     film.Director,
+		Authors:      film.Authors,
+		Actors:       actors,
+		Release:      release,
+		Duration:     int(film.Duration),
+		Budget:       film.Budget,
+		Age:          int(film.Age),
+		Pic:          film.Pic,
+		Src:          film.Src,
+		Description:  film.Description,
+		IsSeries:     film.IsSeries,
+		Seasons:      &SeasonsOut,
+		Rating:       float64(film.Rating),
+		NeedsPayment: film.NeedsPayment,
 	}
 }
 

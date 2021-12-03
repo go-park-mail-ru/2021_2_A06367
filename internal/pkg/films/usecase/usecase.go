@@ -63,6 +63,10 @@ func (u *FilmsUsecase) GetIfStarred(film models.Film, user models.User) models.S
 	return u.repo.IfStarred(film, user)
 }
 
+func (u *FilmsUsecase) GetIfWatchlist(film models.Film, user models.User) models.StatusCode {
+	return u.repo.IfWatchList(film, user)
+}
+
 func (u *FilmsUsecase) RemoveStarred(film models.Film, user models.User) models.StatusCode {
 	return u.repo.DeleteStarred(film, user)
 }

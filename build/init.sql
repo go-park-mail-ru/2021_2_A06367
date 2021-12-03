@@ -41,6 +41,7 @@ CREATE TABLE films
     src text[] NOT NULL,
     description text NOT NULL,
     isSeries bool DEFAULT false,
+    needsPayment bool DEFAULT false,
     PRIMARY KEY (id),
     Check(year > 0),
 	Check(duration > 0)
