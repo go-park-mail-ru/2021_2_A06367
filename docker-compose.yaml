@@ -27,4 +27,11 @@ services:
       - type: bind
         source: ../image
         target: /image
+  subs:
+    build:
+      context: .
+      dockerfile: ./build/subs.Dockerfile
+    ports:
+      - 8030:8030
+
 

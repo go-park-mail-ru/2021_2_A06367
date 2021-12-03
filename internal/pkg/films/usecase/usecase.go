@@ -98,3 +98,7 @@ func (u FilmsUsecase) GetRating(film models.Film) models.StatusCode {
 func (u FilmsUsecase) SetRating(film models.Film, user models.User, rating float64) models.StatusCode {
 	return u.repo.SetRating(film, user, rating)
 }
+
+func (u FilmsUsecase) GetIdBySlug(slug string) (models.Film, models.StatusCode)  {
+	return u.GetIdBySlug(slug)
+}

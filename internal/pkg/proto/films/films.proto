@@ -17,6 +17,7 @@ message Season {
   repeated string Pics = 3;
 
 }
+
 message Film {
   string  Id = 1;
   string Title =2;
@@ -40,6 +41,7 @@ message Film {
   codes.StatusCode Status= 20;
   float Rating = 21;
   bool NeedsPayment = 22;
+  string Slug = 23;
 }
 
 message Films {

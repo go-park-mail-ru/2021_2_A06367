@@ -30,6 +30,7 @@ type Film struct {
 	Rating       float64     `json:"rating"`
 	NeedsPayment bool        `json:"-"`         //платный или нет
 	IsAvailable  bool        `json:"available"` //может ли пользователь смотреть
+	Slug		string       `json:"slug"`
 }
 
 type Season struct {

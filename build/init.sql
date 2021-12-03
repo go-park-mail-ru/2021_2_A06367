@@ -42,9 +42,11 @@ CREATE TABLE films
     description text NOT NULL,
     isSeries bool DEFAULT false,
     needsPayment bool DEFAULT false,
+    slug text NOT NULL,
     PRIMARY KEY (id),
     Check(year > 0),
-	Check(duration > 0)
+	Check(duration > 0),
+	UNIQUE (slug)
 );
 
 CREATE TABLE series_seasons

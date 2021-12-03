@@ -275,6 +275,7 @@ func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *generated.Film {
 		Seasons:            nil,
 		Rating:             float32(film.Rating),
 		NeedsPayment:       film.NeedsPayment,
+		Slug:               film.Slug,
 	}
 
 	if film.Seasons != nil {

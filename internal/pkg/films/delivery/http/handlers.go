@@ -4,11 +4,11 @@ import (
 	"context"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc/generated"
+	subs "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/subs/delivery/grpc/generated"
 	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -17,6 +17,7 @@ import (
 type FilmsHandler struct {
 	logger *zap.SugaredLogger
 	client generated.FilmsServiceClient
+	subsClient subs.SubsServiceClient
 }
 
 func NewFilmsHandler(logger *zap.SugaredLogger, cl generated.FilmsServiceClient) *FilmsHandler {
@@ -51,6 +52,7 @@ func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filmSet := h.FilmsToModels(films)
+
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
@@ -146,8 +148,27 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.NotFound, nil)
 		return
 	}
-	log.Println(film.Seasons)
 	filmSet := h.FilmToModel(film)
+
+	if filmSet.NeedsPayment {
+		//если токена нет и пользователь неавторизован
+		access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+		if err != nil || access == nil {
+			filmSet.IsAvailable = false
+		} else {
+			//если токен есть
+			license, err := h.subsClient.GetLicense(context.Background(), &subs.LicenseUUID{ID: access.Id.String()})
+			//если микросервис отвалился
+			if err != nil {
+				filmSet.IsAvailable = false
+			} else {
+				//если микросервис ок и надо просто проверить лицензию
+				parsed, _ := time.Parse(time.RFC3339, license.ExpiresDate)
+				filmSet.IsAvailable = time.Now().Before(parsed)
+			}
+		}
+	}
+
 	util.Response(w, models.StatusCode(film.Status), filmSet)
 
 }
@@ -593,6 +614,7 @@ func (h FilmsHandler) FilmToModel(film *generated.Film) models.Film {
 		Seasons:      &SeasonsOut,
 		Rating:       float64(film.Rating),
 		NeedsPayment: film.NeedsPayment,
+		Slug:         film.Slug,
 	}
 }
 
