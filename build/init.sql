@@ -6,7 +6,7 @@ CREATE TABLE users(
     id UUID PRIMARY KEY,
     login text UNIQUE NOT NULL,
     encrypted_password text NOT NULL,
-    about text DEFAULT 'no data',
+    about text DEFAULT '',
     avatar text DEFAULT 'userpic.png',
     subscriptions int DEFAULT 0,
     subscribers int DEFAULT 0,

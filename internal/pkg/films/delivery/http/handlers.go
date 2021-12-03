@@ -15,15 +15,16 @@ import (
 )
 
 type FilmsHandler struct {
-	logger *zap.SugaredLogger
-	client generated.FilmsServiceClient
+	logger     *zap.SugaredLogger
+	client     generated.FilmsServiceClient
 	subsClient subs.SubsServiceClient
 }
 
-func NewFilmsHandler(logger *zap.SugaredLogger, cl generated.FilmsServiceClient) *FilmsHandler {
+func NewFilmsHandler(logger *zap.SugaredLogger, cl generated.FilmsServiceClient, sl subs.SubsServiceClient) *FilmsHandler {
 	return &FilmsHandler{
-		logger: logger,
-		client: cl,
+		logger:     logger,
+		subsClient: sl,
+		client:     cl,
 	}
 }
 

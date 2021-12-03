@@ -18,6 +18,7 @@ import (
 	filmsUsecase "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/usecase"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/search/delivery"
+	generated3 "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/subs/delivery/grpc/generated"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -96,6 +97,16 @@ func run() error {
 
 	authClient := generated2.NewAuthServiceClient(authConn)
 
+	subConn, err := grpc.Dial(
+		"subs:8030",
+		grpc.WithInsecure(),
+	)
+
+	if err != nil {
+		log.Fatalf("cant connect to session grpc")
+	}
+
+	subsClient := generated3.NewSubsServiceClient(subConn)
 	encrypter := authUsecase.NewEncrypter()
 	tokenGenerator := authUsecase.NewTokenator()
 	authRepo := authRepository.NewAuthRepo(pool, zapSugar)
@@ -104,7 +115,7 @@ func run() error {
 
 	filmsRepo := filmsRepository.NewFilmsRepo(pool, zapSugar)
 	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo, zapSugar)
-	filmsHandler := filmsDelivery.NewFilmsHandler(zapSugar, filmsClient)
+	filmsHandler := filmsDelivery.NewFilmsHandler(zapSugar, filmsClient, subsClient)
 
 	actorsRepo := actorsRepository.NewActorsRepo(pool, zapSugar)
 	actorsUse := actorsUsecase.NewActorsUsecase(actorsRepo, zapSugar)
