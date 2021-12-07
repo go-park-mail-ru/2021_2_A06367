@@ -237,7 +237,8 @@ func (g *GrpcFilmsHandler) GetRating(ctx context.Context, in *generated.UUID) (*
 	}
 	film := models.Film{Id: filmId}
 
-	status := g.uc.GetRating(film)
+	f, status := g.uc.GetRating(film)
+	film.Rating = f.Rating
 	data := g.FilmAdaptor(film)
 	data.Status = grpc.StatusCode(status)
 

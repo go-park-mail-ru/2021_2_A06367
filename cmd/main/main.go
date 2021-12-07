@@ -76,7 +76,7 @@ func run() error {
 	}
 
 	filmsConn, err := grpc.Dial(
-		"films:8010",
+		":8010",
 		grpc.WithInsecure(),
 	)
 
@@ -87,7 +87,7 @@ func run() error {
 	filmsClient := generated.NewFilmsServiceClient(filmsConn)
 
 	authConn, err := grpc.Dial(
-		"auth:8020",
+		":8020",
 		grpc.WithInsecure(),
 	)
 
@@ -148,6 +148,8 @@ func run() error {
 		film.HandleFunc("/genre/{genre}", filmsHandler.FilmByGenre).Methods(http.MethodGet)
 		film.HandleFunc("/selection/{selection}", filmsHandler.FilmBySelection).Methods(http.MethodGet)
 		film.HandleFunc("/film/{film_id}", filmsHandler.FilmById).Methods(http.MethodGet)
+		film.HandleFunc("/film/{id}/rating", filmsHandler.GetRating).Methods(http.MethodGet)
+		film.HandleFunc("/film/{id}/rating", filmsHandler.SetRating).Methods(http.MethodPost)
 		film.HandleFunc("/selection/actor/{actor_id}", filmsHandler.FilmByActor).Methods(http.MethodGet)
 		film.HandleFunc("/selection/user/personal", filmsHandler.FilmsByUser).Methods(http.MethodGet)
 		film.HandleFunc("/selection", filmsHandler.FilmStartSelection).Methods(http.MethodGet)

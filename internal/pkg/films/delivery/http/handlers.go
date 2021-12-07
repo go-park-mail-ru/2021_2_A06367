@@ -168,6 +168,8 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 				filmSet.IsAvailable = time.Now().Before(parsed)
 			}
 		}
+	} else {
+		filmSet.IsAvailable = true
 	}
 
 	util.Response(w, models.StatusCode(film.Status), filmSet)
