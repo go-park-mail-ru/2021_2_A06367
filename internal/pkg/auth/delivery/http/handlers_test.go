@@ -434,6 +434,7 @@ func TestAuthHandler_GetProfile2(t *testing.T) {
 
 	r.AddCookie(SSCookie)
 	mockUsecase := generated2.NewMockAuthServiceClient(ctl)
+	mockUsecase.EXPECT().GetProfile(gomock.Any(), gomock.Any()).Return(&generated2.Profile{},nil)
 	handler := NewAuthHandler(mockUsecase, nil)
 
 	handler.GetProfile(w, r)
