@@ -91,7 +91,7 @@ func (u FilmsUsecase) Randomize() (models.Film, models.StatusCode) {
 	return u.repo.GetRandom()
 }
 
-func (u FilmsUsecase) GetRating(film models.Film) models.StatusCode {
+func (u FilmsUsecase) GetRating(film models.Film) (models.Film, models.StatusCode) {
 	return u.repo.GetRating(film)
 }
 

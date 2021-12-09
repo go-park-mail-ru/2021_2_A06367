@@ -126,10 +126,11 @@ func (r *FilmsRepo) GetFilmsByTopic(topic string) ([]models.Film, models.StatusC
 			}
 		}
 
-		code := r.GetRating(film)
+		f, code := r.GetRating(film)
 		if code != models.Okey {
 			return nil, models.InternalError
 		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 
@@ -160,10 +161,11 @@ func (r *FilmsRepo) GetHottestFilms() ([]models.Film, models.StatusCode) {
 				return nil, models.InternalError
 			}
 		}
-		code := r.GetRating(film)
+		f, code := r.GetRating(film)
 		if code != models.Okey {
 			return nil, models.InternalError
 		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 
@@ -194,10 +196,11 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 				return nil, models.InternalError
 			}
 		}
-		code := r.GetRating(film)
+		f, code := r.GetRating(film)
 		if code != models.Okey {
 			return nil, models.InternalError
 		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 
@@ -227,10 +230,11 @@ func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.Sta
 				return nil, models.InternalError
 			}
 		}
-		code := r.GetRating(film)
+		f, code := r.GetRating(film)
 		if code != models.Okey {
 			return nil, models.InternalError
 		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 
@@ -260,10 +264,11 @@ func (r *FilmsRepo) GetFilmsByActor(actor models.Actors) ([]models.Film, models.
 				return nil, models.InternalError
 			}
 		}
-		code := r.GetRating(film)
+		f, code := r.GetRating(film)
 		if code != models.Okey {
 			return nil, models.InternalError
 		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 	return films, models.Okey
@@ -283,10 +288,11 @@ func (r *FilmsRepo) GetFilmById(film models.Film) (models.Film, models.StatusCod
 		}
 	}
 
-	code := r.GetRating(film)
+	f, code := r.GetRating(film)
 	if code != models.Okey {
-		return film, models.InternalError
+		f = models.Film{}
 	}
+	film.Rating = f.Rating
 	if err != nil {
 		return models.Film{}, models.InternalError
 	}
@@ -315,10 +321,11 @@ func (r *FilmsRepo) GetFilmsByUser(user models.User) ([]models.Film, models.Stat
 				return nil, models.InternalError
 			}
 		}
-		code := r.GetRating(film)
+		f, code := r.GetRating(film)
 		if code != models.Okey {
 			return nil, models.InternalError
 		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 	return films, models.Okey
@@ -517,13 +524,13 @@ func (r *FilmsRepo) SetRating(film models.Film, user models.User, rating float64
 	return models.Okey
 }
 
-func (r *FilmsRepo) GetRating(film models.Film) models.StatusCode {
+func (r *FilmsRepo) GetRating(film models.Film) (models.Film, models.StatusCode) {
 	row := r.pool.QueryRow(context.Background(), GET_RATING, film.Id)
 	err := row.Scan(&film.Rating)
 	if err != nil {
-		return models.InternalError
+		return film, models.NotFound
 	}
-	return models.Okey
+	return film, models.Okey
 }
 
 func (r *FilmsRepo) GetIdBySlug(slug string) (models.Film, models.StatusCode) {
