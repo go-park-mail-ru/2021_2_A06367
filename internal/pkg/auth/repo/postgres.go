@@ -47,7 +47,7 @@ func (r *AuthRepo) CreateUser(user models.User) (models.User, models.StatusCode)
 		user.Id, user.Login, user.EncryptedPassword, time.Now())
 
 	err := row.Scan(&id)
-	if err != nil && id == user.Id {
+	if err != nil  {
 		return models.User{}, models.InternalError
 	}
 	userOut := models.User{

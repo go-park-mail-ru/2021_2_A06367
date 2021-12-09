@@ -362,7 +362,7 @@ func (h *AuthHandler) UpdateProfilePass(w http.ResponseWriter, r *http.Request) 
 	}
 
 	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
-	if err != nil && err.Error() != "no token" {
+	if err != nil  {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}

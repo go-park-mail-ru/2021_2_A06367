@@ -129,38 +129,28 @@ func TestAuthUsecase_SignUp(t *testing.T) {
 		returnToken string
 	}{
 		{
-			Login:       testUsers[1].Login,
+			Login:       testUsers[0].Login,
 			fields:      fields{mockAuthRepo, mockTokenGenereator, mockEncrypter},
-			args:        args{statusReturn: models.Okey, OnlineStatus: models.Unauthed},
+			args:        args{statusReturn: models.Okey, OnlineStatus: models.InternalError},
 			returnToken: "TEST TOKEN",
 		},
 		{
-			Login:       testUsers[2].Login,
+			Login:       testUsers[1].Login,
 			fields:      fields{mockAuthRepo, mockTokenGenereator, mockEncrypter},
 			args:        args{statusReturn: models.Conflict, OnlineStatus: models.Unauthed},
 			returnToken: "",
 		},
 	}
+	mockAuthRepo.EXPECT().CheckUser(models.User{Login: testUsers[0].Login, EncryptedPassword: testUsers[0].EncryptedPassword}).
+		Return(testUsers[0], tests[0].args.OnlineStatus).Times(1)
+	mockEncrypter.EXPECT().EncryptPswd(testUsers[0].EncryptedPassword).Return(testUsers[0].EncryptedPassword).Times(1)
 
-	for i := 0; i < len(tests); i++ {
-		CreateUser := models.User{
-			Login:             testUsers[i].Login,
-			EncryptedPassword: testUsers[i].EncryptedPassword,
-		}
-		if tests[i].args.statusReturn == models.BadRequest {
-			continue
-		}
+	mockAuthRepo.EXPECT().CheckUser(models.User{Login: testUsers[1].Login, EncryptedPassword: testUsers[1].EncryptedPassword}).
+		Return(testUsers[1], tests[1].args.OnlineStatus).Times(1)
 
-		if tests[i].args.statusReturn == models.Conflict && tests[i].args.OnlineStatus == models.Okey {
-			mockAuthRepo.EXPECT().CheckUser(models.User{Login: testUsers[i].Login,
-				EncryptedPassword: testUsers[i].EncryptedPassword}).Return(testUsers[i], tests[i].args.OnlineStatus)
-			continue
-		}
-		mockAuthRepo.EXPECT().CreateUser(CreateUser).Return(testUsers[i], tests[i].args.statusReturn)
-		mockTokenGenereator.EXPECT().GetToken(testUsers[i]).Return(tests[i].returnToken)
-		mockEncrypter.EXPECT().EncryptPswd(testUsers[i].EncryptedPassword).Return(testUsers[i].EncryptedPassword)
-		mockAuthRepo.EXPECT().CheckUser(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).Return(testUsers[i], tests[i].args.OnlineStatus)
-	}
+	mockEncrypter.EXPECT().EncryptPswd(testUsers[1].EncryptedPassword).Return(testUsers[1].EncryptedPassword).Times(1)
+	mockAuthRepo.EXPECT().CreateUser(gomock.Any()).Return(testUsers[0], tests[0].args.statusReturn).Times(1)
+	mockTokenGenereator.EXPECT().GetToken(gomock.Any()).Return(tests[0].returnToken).Times(1)
 
 	for i, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
@@ -197,7 +187,7 @@ func TestAuthUsecase_Follow(t *testing.T) {
 	}
 }
 
-func TestAuthUsecase_GetProfile(t *testing.T) {
+func TestAuthUsecase_Unfollow(t *testing.T) {
 	who := uuid.New()
 	whom := uuid.New()
 	ctl := gomock.NewController(t)
@@ -207,6 +197,21 @@ func TestAuthUsecase_GetProfile(t *testing.T) {
 	mockAuthRepo.EXPECT().RemoveFollowing(who, whom).Return(models.Okey)
 	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
 	st := usecase.Unfollow(who, whom)
+	if st != models.Okey {
+		t.Error("wrong status code returned")
+	}
+}
+
+
+func TestAuthUsecase_GetProfile(t *testing.T) {
+	who := uuid.New()
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	os.Setenv("SECRET", "TESTS")
+	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
+	mockAuthRepo.EXPECT().GetProfile(gomock.Any()).Return(models.Profile{}, models.Okey)
+	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
+	_, st := usecase.GetProfile(models.Profile{Id: who})
 	if st != models.Okey {
 		t.Error("wrong status code returned")
 	}
@@ -228,6 +233,7 @@ func TestAuthUsecase_GetSubscriptions(t *testing.T) {
 	}
 }
 
+
 func TestAuthUsecase_GetByKeyword(t *testing.T) {
 	keyword := "test"
 	ctl := gomock.NewController(t)
@@ -235,8 +241,88 @@ func TestAuthUsecase_GetByKeyword(t *testing.T) {
 	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
 	mockAuthRepo.EXPECT().GetProfileByKeyword(keyword).Return(nil, models.Okey)
 	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
-	_, st := usecase.repo.GetProfileByKeyword(keyword)
+	_, st := usecase.GetByKeyword(keyword)
 	if st != models.Okey {
 		t.Error("wrong status code returned")
+	}
+}
+
+
+func TestAuthUsecase_UpdateBio(t *testing.T) {
+	data := models.Profile{}
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
+	mockAuthRepo.EXPECT().UpdateBio(gomock.Any()).Return( models.Okey)
+	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
+	st := usecase.SetBio(data)
+	if st != models.Okey {
+		t.Error("wrong status code returned")
+	}
+}
+
+func TestAuthUsecase_UpdateAvatar(t *testing.T) {
+	data := models.Profile{}
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
+	mockAuthRepo.EXPECT().UpdateAvatar(gomock.Any()).Return( models.Okey)
+	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
+	st := usecase.SetAvatar(data)
+	if st != models.Okey {
+		t.Error("wrong status code returned")
+	}
+}
+
+func TestAuthUsecase_UpdatePass(t *testing.T) {
+	data := models.User{}
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
+	mockEncrypter := mocks.NewMockEncrypter(ctl)
+	mockAuthRepo.EXPECT().UpdatePass(gomock.Any()).Return( models.Okey)
+	mockEncrypter.EXPECT().EncryptPswd(gomock.Any()).Return("password")
+	usecase := NewAuthUsecase(mockAuthRepo, nil, mockEncrypter, nil)
+	st := usecase.SetPass(data)
+	if st != models.Okey {
+		t.Error("wrong status code returned")
+	}
+}
+
+func TestNewEncrypter(t *testing.T) {
+	t.Setenv("SECRET", "salt")
+	enc := NewEncrypter()
+	if enc == nil {
+		t.Error("nothing here")
+	}
+}
+
+
+func TestNewEncrypterPass(t *testing.T) {
+	t.Setenv("SECRET", "salt")
+	enc := NewEncrypter()
+
+	str := enc.EncryptPswd("")
+	if str == "" {
+		t.Error("nothing here")
+	}
+}
+
+
+func TestNewTokenator(t *testing.T) {
+	t.Setenv("SECRET", "salt")
+	enc := NewTokenator()
+	if enc == nil {
+		t.Error("nothing here")
+	}
+}
+
+func TestNewTokenatorGet(t *testing.T) {
+	t.Setenv("SECRET", "salt")
+	enc := NewTokenator()
+
+	str := enc.GetToken(models.User{})
+	if str == "" {
+		t.Error("nothing here")
 	}
 }

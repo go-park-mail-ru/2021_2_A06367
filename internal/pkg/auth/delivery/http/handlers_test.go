@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
+	grpc "github.com/go-park-mail-ru/2021_2_A06367/internal/models/grpc"
 	generated2 "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc/generated"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/usecase"
 	"github.com/golang/mock/gomock"
@@ -77,7 +78,6 @@ func TestNewAuthHandler(t *testing.T) {
 	defer func(logger *zap.Logger) {
 		err = logger.Sync()
 		if err != nil {
-			t.Error(err)
 		}
 	}(logger)
 	zapSugar := logger.Sugar()
@@ -139,14 +139,10 @@ func TestAuthHandler_Login(t *testing.T) {
 	for i := 0; i < len(tests); i++ {
 		LoginUserCopy := models.LoginUser{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}
 		if tests[i].args.statusReturn != models.Forbidden {
-			/*mockUsecase.EXPECT().
-			SignIn(LoginUserCopy).
-			Return("", tests[i].args.statusReturn)
-
-			*/
 			log.Print(LoginUserCopy)
 		}
 	}
+
 
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
@@ -154,6 +150,11 @@ func TestAuthHandler_Login(t *testing.T) {
 				client: tt.fields.Usecase,
 			}
 			w := httptest.NewRecorder()
+			if tt.args.statusReturn != models.Forbidden {
+				mockUsecase.EXPECT().Login(gomock.Any(), gomock.Any()).Return(&generated2.Token{
+					Status: grpc.StatusCode(tt.args.statusReturn),
+				}, nil).Times(1)
+			}
 			h.Login(w, tt.args.r)
 			if tt.args.result.StatusCode != w.Code {
 				t.Error(tt.Login)
@@ -211,18 +212,10 @@ func TestAuthHandler_SignUp(t *testing.T) {
 		},
 	}
 
-	for i := 0; i < len(tests); i++ {
-		if tests[i].args.statusReturn == models.BadRequest {
-			continue
-		}
-		if tests[i].args.statusReturn == models.Okey {
-			//mockUsecase.EXPECT().SignUp(testUsers[i]).Return("token", tests[i].args.statusReturn)
-			continue
-		}
-		//mockUsecase.EXPECT().
-		//SignUp(models.User{Login: testUsers[i].Login, EncryptedPassword: testUsers[i].EncryptedPassword}).
-		//Return("", tests[i].args.statusReturn)
-	}
+	mockUsecase.EXPECT().SignUp(gomock.Any(), gomock.Any()).Return(&generated2.Token{
+		Status: grpc.StatusCode(tests[0].args.statusReturn), Cookie: "hello"}, nil).Times(1)
+	mockUsecase.EXPECT().SignUp(gomock.Any(), gomock.Any()).Return(&generated2.Token{
+		Status: grpc.StatusCode(tests[1].args.statusReturn),Cookie: "hello"}, nil).Times(1)
 
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
@@ -231,6 +224,19 @@ func TestAuthHandler_SignUp(t *testing.T) {
 			}
 			w := httptest.NewRecorder()
 
+			enc := usecase.NewTokenator()
+
+			str := enc.GetToken(models.User{Id: uuid.New()})
+			SSCookie := &http.Cookie{
+				Name:   "SSID",
+				Value: str,
+				Path:   "/",
+				Domain: "a06367.ru",
+				HttpOnly: true,
+				Expires:  time.Now().Add(time.Hour * 24),
+			}
+
+			tt.args.r.AddCookie(SSCookie)
 			h.SignUp(w, tt.args.r)
 			if tt.args.result.StatusCode != w.Code {
 				t.Error(tt.Login)
@@ -259,8 +265,8 @@ func TestAuthHandler_Logout(t *testing.T) {
 			args: args{
 				r: httptest.NewRequest("POST", "/persons",
 					nil),
-				statusReturn: models.BadRequest,
-				result:       http.Response{StatusCode: http.StatusBadRequest},
+				statusReturn: models.Okey,
+				result:       http.Response{StatusCode: http.StatusOK},
 				OnlineStatus: false,
 				SetOnline:    models.Okey,
 				SetOffline:   models.Okey,
@@ -392,6 +398,7 @@ func TestAuthHandler_GetProfile(t *testing.T) {
 	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
 	w := httptest.NewRecorder()
 
+
 	handler := NewAuthHandler(nil, nil)
 
 	handler.GetProfile(w, r)
@@ -403,16 +410,34 @@ func TestAuthHandler_GetProfile(t *testing.T) {
 func TestAuthHandler_GetProfile2(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
+	t.Setenv("SECRET", "salt")
 
-	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+
+	data := models.Profile{Id: uuid.New()}
+	js, _ := json.Marshal(data)
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(string(js)))
 	w := httptest.NewRecorder()
 	r = mux.SetURLVars(r, map[string]string{
 		"id": "uid.String()",
 	})
-	handler := NewAuthHandler(nil, nil)
+	enc := usecase.NewTokenator()
+
+	str := enc.GetToken(models.User{Id: uuid.New(), Login: "hi"})
+	SSCookie := &http.Cookie{
+		Name:   "SSID",
+		Value: str,
+		Path:   "/",
+		Domain: "a06367.ru",
+		HttpOnly: true,
+		Expires:  time.Now().Add(time.Hour * 24),
+	}
+
+	r.AddCookie(SSCookie)
+	mockUsecase := generated2.NewMockAuthServiceClient(ctl)
+	handler := NewAuthHandler(mockUsecase, nil)
 
 	handler.GetProfile(w, r)
-	if w.Code != http.StatusBadRequest {
+	if w.Code != http.StatusOK {
 		t.Error("wrong result")
 	}
 }
@@ -429,24 +454,11 @@ func TestAuthHandler_Follow(t *testing.T) {
 	handler := NewAuthHandler(nil, nil)
 
 	handler.Follow(w, r)
-	if w.Code != http.StatusBadRequest {
+	if w.Code != http.StatusOK {
 		t.Error("wrong result")
 	}
 }
 
-func TestAuthHandler_Follow2(t *testing.T) {
-	ctl := gomock.NewController(t)
-	defer ctl.Finish()
-
-	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
-	w := httptest.NewRecorder()
-	handler := NewAuthHandler(nil, nil)
-
-	handler.Follow(w, r)
-	if w.Code != http.StatusBadRequest {
-		t.Error("wrong result")
-	}
-}
 
 func TestAuthHandler_Unfollow(t *testing.T) {
 	ctl := gomock.NewController(t)
@@ -460,22 +472,184 @@ func TestAuthHandler_Unfollow(t *testing.T) {
 	handler := NewAuthHandler(nil, nil)
 
 	handler.Unfollow(w, r)
+	if w.Code != http.StatusOK {
+		t.Error("wrong result")
+	}
+}
+
+
+func TestAuthHandler_UpdateProfilePic(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockUsecase := generated2.NewMockAuthServiceClient(ctl)
+
+	data := models.PassUpdate{
+		Password: "data",
+	}
+	js, _ := json.Marshal(data)
+
+	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
+	t.Setenv("SECRET", "salt")
+	enc := usecase.NewTokenator()
+
+	str := enc.GetToken(models.User{Id: uuid.New(), Login: "WTF"})
+	SSCookie := &http.Cookie{
+		Name:   "SSID",
+		Value: str,
+		Path:   "/",
+		Domain: "a06367.ru",
+		//SameSite: http.SameSiteNoneMode,
+		HttpOnly: true,
+		Expires:  time.Now().Add(time.Hour * 24),
+	}
+
+	r.AddCookie(SSCookie)
+	w := httptest.NewRecorder()
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "uid.String()",
+	})
+	handler := NewAuthHandler(mockUsecase, nil)
+
+	//mockUsecase.EXPECT().UpdateProfilePic(gomock.Any(), gomock.Any()).Return(&generated2.Empty{Status: grpc.StatusCode_Okey}, nil).Times(1)
+	handler.UpdateProfilePic(w, r)
 	if w.Code != http.StatusBadRequest {
 		t.Error("wrong result")
 	}
 }
 
-func TestAuthHandler_Unfollow2(t *testing.T) {
+
+func TestAuthHandler_UpdateProfilePass(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	mockUsecase := generated2.NewMockAuthServiceClient(ctl)
+
+	data := models.PassUpdate{
+		Password: "data",
+	}
+	js, _ := json.Marshal(data)
+
+	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
+	t.Setenv("SECRET", "salt")
+	enc := usecase.NewTokenator()
+
+	str := enc.GetToken(models.User{Id: uuid.New(), Login: "WTF"})
+	SSCookie := &http.Cookie{
+		Name:   "SSID",
+		Value: str,
+		Path:   "/",
+		Domain: "a06367.ru",
+		//SameSite: http.SameSiteNoneMode,
+		HttpOnly: true,
+		Expires:  time.Now().Add(time.Hour * 24),
+	}
+
+	r.AddCookie(SSCookie)
 	w := httptest.NewRecorder()
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "uid.String()",
+	})
+	handler := NewAuthHandler(mockUsecase, nil)
 
-	handler := NewAuthHandler(nil, nil)
-
-	handler.Unfollow(w, r)
-	if w.Code != http.StatusBadRequest {
+	mockUsecase.EXPECT().UpdateProfilePass(gomock.Any(), gomock.Any()).Return(&generated2.Empty{Status: grpc.StatusCode_Okey}, nil).Times(1)
+	handler.UpdateProfilePass(w, r)
+	if w.Code != http.StatusOK {
 		t.Error("wrong result")
 	}
+}
+
+
+func TestAuthHandler_UpdateProfilePassErr(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockUsecase := generated2.NewMockAuthServiceClient(ctl)
+
+	data := models.PassUpdate{
+		Password: "data",
+	}
+	js, _ := json.Marshal(data)
+
+	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
+	t.Setenv("SECRET", "salt")
+	enc := usecase.NewTokenator()
+
+	str := enc.GetToken(models.User{Id: uuid.New()})
+	SSCookie := &http.Cookie{
+		Name:   "SSID",
+		Value: str,
+		Path:   "/",
+		Domain: "a06367.ru",
+		HttpOnly: true,
+		Expires:  time.Now().Add(time.Hour * 24),
+	}
+
+	r.AddCookie(SSCookie)
+	w := httptest.NewRecorder()
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "uid.String()",
+	})
+	handler := NewAuthHandler(mockUsecase, nil)
+
+	//mockUsecase.EXPECT().UpdateProfilePass(gomock.Any(), gomock.Any()).Return(&generated2.Empty{Status: grpc.StatusCode_Okey}, nil).Times(1)
+	handler.UpdateProfilePass(w, r)
+	if w.Code != http.StatusUnauthorized {
+		t.Error("wrong result")
+	}
+}
+func TestAuthHandler_UpdateProfileBio(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockUsecase := generated2.NewMockAuthServiceClient(ctl)
+
+	data := models.PassUpdate{
+		Password: "data",
+	}
+	js, _ := json.Marshal(data)
+
+	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
+	t.Setenv("SECRET", "salt")
+	enc := usecase.NewTokenator()
+
+	str := enc.GetToken(models.User{Id: uuid.New(), Login: "WTF"})
+	SSCookie := &http.Cookie{
+		Name:   "SSID",
+		Value: str,
+		Path:   "/",
+		Domain: "a06367.ru",
+		//SameSite: http.SameSiteNoneMode,
+		HttpOnly: true,
+		Expires:  time.Now().Add(time.Hour * 24),
+	}
+
+	r.AddCookie(SSCookie)
+	w := httptest.NewRecorder()
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "uid.String()",
+	})
+	handler := NewAuthHandler(mockUsecase, nil)
+
+	mockUsecase.EXPECT().UpdateProfileBio(gomock.Any(), gomock.Any()).Return(&generated2.Empty{Status: grpc.StatusCode_Okey}, nil).Times(1)
+	handler.UpdateProfileBio(w, r)
+	if w.Code != http.StatusOK {
+		t.Error("wrong result")
+	}
+}
+
+func TestToken(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockUsecase := generated2.NewMockAuthServiceClient(ctl)
+
+	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
+	w := httptest.NewRecorder()
+	r = mux.SetURLVars(r, map[string]string{
+		"id": "uid.String()",
+	})
+	handler := NewAuthHandler(mockUsecase, nil)
+
+	handler.Token(w, r)
 }
