@@ -61,7 +61,6 @@ func (h ActorHandler) FetchActors(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.BadRequest, nil)
 		return
 	}
-
 	out, status := h.uc.GetByActors(actorsArr)
 	util.Response(w, status, out)
 }

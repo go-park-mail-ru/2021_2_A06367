@@ -47,3 +47,18 @@ func TestActorsUsecase_GetByActors(t *testing.T) {
 		t.Error("Wrong work of usecase")
 	}
 }
+
+func TestActorsUsecase_GetByKeyword(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	repo := mocks.NewMockActorsRepository(ctl)
+	repo.EXPECT().GetActorsByKeyword("actors").Times(1).Return([]models.Actors{}, models.Okey)
+
+	usecase := NewActorsUsecase(repo, nil)
+
+	_, st := usecase.GetByKeyword("actors")
+	if st != models.Okey {
+		t.Error("Wrong work of usecase")
+	}
+}
