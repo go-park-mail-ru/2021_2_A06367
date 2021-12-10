@@ -127,8 +127,8 @@ func (r *FilmsRepo) GetFilmsByTopic(topic string) ([]models.Film, models.StatusC
 		}
 
 		f, code := r.GetRating(film)
-		if code != models.Okey {
-			return nil, models.InternalError
+		if code == models.NotFound {
+			f.Rating = 0
 		}
 		film.Rating = f.Rating
 		films = append(films, film)
@@ -163,7 +163,7 @@ func (r *FilmsRepo) GetHottestFilms() ([]models.Film, models.StatusCode) {
 		}
 		f, code := r.GetRating(film)
 		if code != models.Okey {
-			return nil, models.InternalError
+		   f.Rating = 0
 		}
 		film.Rating = f.Rating
 		films = append(films, film)
@@ -198,7 +198,7 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 		}
 		f, code := r.GetRating(film)
 		if code != models.Okey {
-			return nil, models.InternalError
+			f.Rating = 0
 		}
 		film.Rating = f.Rating
 		films = append(films, film)
@@ -231,8 +231,8 @@ func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.Sta
 			}
 		}
 		f, code := r.GetRating(film)
-		if code != models.Okey {
-			return nil, models.InternalError
+		if code == models.NotFound {
+			f.Rating = 0
 		}
 		film.Rating = f.Rating
 		films = append(films, film)
@@ -265,8 +265,8 @@ func (r *FilmsRepo) GetFilmsByActor(actor models.Actors) ([]models.Film, models.
 			}
 		}
 		f, code := r.GetRating(film)
-		if code != models.Okey {
-			return nil, models.InternalError
+		if code == models.NotFound {
+			f.Rating = 0
 		}
 		film.Rating = f.Rating
 		films = append(films, film)
@@ -322,8 +322,8 @@ func (r *FilmsRepo) GetFilmsByUser(user models.User) ([]models.Film, models.Stat
 			}
 		}
 		f, code := r.GetRating(film)
-		if code != models.Okey {
-			return nil, models.InternalError
+		if code == models.NotFound {
+			f.Rating = 0
 		}
 		film.Rating = f.Rating
 		films = append(films, film)
@@ -401,7 +401,7 @@ func (r FilmsRepo) GetStarredFilms(user models.User) ([]models.Film, models.Stat
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.Slug)
+			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries,  &film.NeedsPayment, &film.Slug)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -508,6 +508,10 @@ func (r *FilmsRepo) GetRandom() (models.Film, models.StatusCode) {
 		if code != models.Okey {
 			return models.Film{}, models.InternalError
 		}
+	}
+	f, code := r.GetRating(film)
+	if code == models.NotFound {
+		f.Rating = 0
 	}
 
 	return film, models.Okey

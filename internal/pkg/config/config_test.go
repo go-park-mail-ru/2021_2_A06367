@@ -1,14 +1,21 @@
 package config
 
 import (
-	"fmt"
 	"testing"
 )
 
-func TestFilmsRepo_GetFilmById(t *testing.T) {
-	conn, err := GetConnectionString()
+func TestCheckConfig(t *testing.T) {
+	t.Setenv("DATABASE_URL", "value")
+	_, err := GetConnectionString()
 	if err != nil {
 		t.Error("not env")
 	}
-	fmt.Println(conn)
+}
+
+func TestCheckConfigError(t *testing.T)  {
+	t.Setenv("DATABASE_URL", "")
+	_, err := GetConnectionString()
+	if err == nil {
+		t.Error("not env")
+	}
 }

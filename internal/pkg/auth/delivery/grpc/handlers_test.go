@@ -6,6 +6,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc/generated"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/mocks"
 	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	"log"
@@ -28,7 +29,7 @@ func TestLogin(t *testing.T) {
 	defer conn.Close()
 	cl := generated.NewAuthServiceClient(conn)
 
-	usecase.EXPECT().SignIn(gomock.Any()).Return(models.Okey)
+	usecase.EXPECT().SignIn(gomock.Any()).Return("", models.Okey)
 
 	_, err = cl.Login(context.Background(), &generated.LoginUser{})
 	if err != nil {
@@ -78,7 +79,7 @@ func TestGetProfile(t *testing.T) {
 
 	usecase.EXPECT().GetProfile(gomock.Any()).Return(models.Profile{}, models.Okey)
 
-	_, err = cl.GetProfile(context.Background(), &generated.UserUUID{})
+	_, err = cl.GetProfile(context.Background(), &generated.UserUUID{ID: uuid.New().String()})
 	if err != nil {
 		t.Fatalf("failed due to err: %v", err)
 	}
@@ -102,7 +103,7 @@ func TestUpdateProfilePic(t *testing.T) {
 
 	usecase.EXPECT().SetAvatar(gomock.Any()).Return(models.Okey)
 
-	_, err = cl.UpdateProfilePic(context.Background(), &generated.UserUpdatePic{})
+	_, err = cl.UpdateProfilePic(context.Background(), &generated.UserUpdatePic{ID: uuid.New().String()})
 	if err != nil {
 		t.Fatalf("failed due to err: %v", err)
 	}
@@ -126,7 +127,7 @@ func TestUpdateProfileBio(t *testing.T) {
 
 	usecase.EXPECT().SetBio(gomock.Any()).Return(models.Okey)
 
-	_, err = cl.UpdateProfileBio(context.Background(), &generated.UserUpdateBio{})
+	_, err = cl.UpdateProfileBio(context.Background(), &generated.UserUpdateBio{ID: uuid.New().String()})
 	if err != nil {
 		t.Fatalf("failed due to err: %v", err)
 	}
@@ -150,7 +151,7 @@ func TestUpdateProfilePass(t *testing.T) {
 
 	usecase.EXPECT().SetPass(gomock.Any()).Return(models.Okey)
 
-	_, err = cl.UpdateProfilePass(context.Background(), &generated.UserUpdatePass{})
+	_, err = cl.UpdateProfilePass(context.Background(), &generated.UserUpdatePass{ID: uuid.New().String()})
 	if err != nil {
 		t.Fatalf("failed due to err: %v", err)
 	}
