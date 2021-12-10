@@ -157,11 +157,11 @@ func run() error {
 		film.HandleFunc("/starred", filmsHandler.GetStarred).Methods(http.MethodGet)
 		film.HandleFunc("/starred/check/{id}", filmsHandler.IfStarred).Methods(http.MethodGet)
 		film.HandleFunc("/starred/{id}", filmsHandler.AddStarred).Methods(http.MethodPost)
-		film.HandleFunc("/starred/{id}", filmsHandler.RemoveStarred).Methods(http.MethodDelete)
+		film.HandleFunc("/starred/{id}", filmsHandler.RemoveStarred).Methods(http.MethodDelete, http.MethodOptions)
 
 		film.HandleFunc("/wl", filmsHandler.GetWatchlist).Methods(http.MethodGet)
 		film.HandleFunc("/wl/{id}", filmsHandler.AddWatchlist).Methods(http.MethodPost)
-		film.HandleFunc("/wl/{id}", filmsHandler.RemoveWatchlist).Methods(http.MethodDelete)
+		film.HandleFunc("/wl/{id}", filmsHandler.RemoveWatchlist).Methods(http.MethodDelete, http.MethodOptions)
 		film.HandleFunc("/wl/check/{id}", filmsHandler.IfWl).Methods(http.MethodGet)
 	}
 

@@ -163,6 +163,24 @@ func (g *GrpcFilmsHandler) IfStarred(ctx context.Context, in *generated.Pair) (*
 		Status: grpc.StatusCode(status),
 	}, nil
 }
+
+func (g *GrpcFilmsHandler) IfWatchList(ctx context.Context, in *generated.Pair) (*generated.Nothing, error) {
+	filmId, err := uuid.Parse(in.FilmUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
+	film := models.Film{Id: filmId}
+	userId, err := uuid.Parse(in.UserUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
+	user := models.User{Id: userId}
+	status := g.uc.GetIfWatchlist(film, user)
+	return &generated.Nothing{
+		Status: grpc.StatusCode(status),
+	}, nil
+}
+
 func (g *GrpcFilmsHandler) RemoveWatchList(ctx context.Context, in *generated.Pair) (*generated.Nothing, error) {
 	filmId, err := uuid.Parse(in.FilmUUID)
 	if err != nil {

@@ -128,66 +128,66 @@ VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 'Павел', 'Табаков', 
         '1985-11-01 22:10:57.000000', 'Умный', '{Комедия, Триллер}');
 
 -- films
-INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
+INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, slug)
 VALUES ('c7020e69-6a77-4153-97bc-54dc905321a4', '{Комедия}', 'США', '2001-01-01', 'История о том, как обычный паренёк из провинции превратился в одного из самых состоятельных людей США. Джордж Джанга (Джонни Депп) с детства мечтал о роскошной жизни: шикарном доме, дорогих автомобилях и лучших девушках США. Находчивый паренёк быстро отыскал оригинальный способ осуществить свою мечту: он решил распространять кокаин в промышленных масштабах. Как найти рынки сбыта? Очень просто — необходимо подсадить на белый порошок главных знаменитостей Америки!',
         '007', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1970-01-01', 120, 'Русский', '120 млн', 12, '{matrix.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1970-01-01', 120, 'Русский', '120 млн', 12, '{matrix.png}', '{video.mp4}', 'matrix');
 
-INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
+INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, slug)
 VALUES ('f8405178-3b47-11ec-8d3d-0242ac130003', '{Триллер}', 'США', '2001-01-01', 'История о том, как обычный паренёк из провинции превратился в одного из самых состоятельных людей США. Джордж Джанга (Джонни Депп) с детства мечтал о роскошной жизни: шикарном доме, дорогих автомобилях и лучших девушках США. Находчивый паренёк быстро отыскал оригинальный способ осуществить свою мечту: он решил распространять кокаин в промышленных масштабах. Как найти рынки сбыта? Очень просто — необходимо подсадить на белый порошок главных знаменитостей Америки!',
         'Птичий короб', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{bird.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{bird.png}', '{video.mp4}', 'birdbox');
 
-INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
+INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, slug)
 VALUES ('649be5f4-46e6-11ec-81d3-0242ac130003', '{Триллер}', 'США', '2001-01-01', 'История о том, как обычный паренёк из провинции превратился в одного из самых состоятельных людей США. Джордж Джанга (Джонни Депп) с детства мечтал о роскошной жизни: шикарном доме, дорогих автомобилях и лучших девушках США. Находчивый паренёк быстро отыскал оригинальный способ осуществить свою мечту: он решил распространять кокаин в промышленных масштабах. Как найти рынки сбыта? Очень просто — необходимо подсадить на белый порошок главных знаменитостей Америки!',
         'Кровавый алмаз', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{blood.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{blood.png}', '{video.mp4}', 'blooddiamond');
 
-INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
+INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, slug)
 VALUES ('68896eac-46e6-11ec-81d3-0242ac130003', '{Боевик}', 'США', '2001-01-01', 'История о том, как обычный паренёк из провинции превратился в одного из самых состоятельных людей США. Джордж Джанга (Джонни Депп) с детства мечтал о роскошной жизни: шикарном доме, дорогих автомобилях и лучших девушках США. Находчивый паренёк быстро отыскал оригинальный способ осуществить свою мечту: он решил распространять кокаин в промышленных масштабах. Как найти рынки сбыта? Очень просто — необходимо подсадить на белый порошок главных знаменитостей Америки!',
         'Отцовство', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{father.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{father.png}', '{video.mp4}', 'dad');
 
-INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
+INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, slug)
 VALUES ('7f1ff974-46e6-11ec-81d3-0242ac130003', '{Фантастика}', 'США', '2001-01-01', 'История о том, как обычный паренёк из провинции превратился в одного из самых состоятельных людей США. Джордж Джанга (Джонни Депп) с детства мечтал о роскошной жизни: шикарном доме, дорогих автомобилях и лучших девушках США. Находчивый паренёк быстро отыскал оригинальный способ осуществить свою мечту: он решил распространять кокаин в промышленных масштабах. Как найти рынки сбыта? Очень просто — необходимо подсадить на белый порошок главных знаменитостей Америки!',
         'Изгой', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{izgoy.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{izgoy.png}', '{video.mp4}', 'alone');
 
-INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
+INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, slug)
 VALUES ('9dd8cef4-46e6-11ec-81d3-0242ac130003', '{Комедия}', 'Англия', '2001-01-01', 'История о том, как обычный паренёк из провинции превратился в одного из самых состоятельных людей США. Джордж Джанга (Джонни Депп) с детства мечтал о роскошной жизни: шикарном доме, дорогих автомобилях и лучших девушках США. Находчивый паренёк быстро отыскал оригинальный способ осуществить свою мечту: он решил распространять кокаин в промышленных масштабах. Как найти рынки сбыта? Очень просто — необходимо подсадить на белый порошок главных знаменитостей Америки!',
         'Убийство', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{kill.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{kill.png}', '{video.mp4}', 'murder');
 
-INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
+INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, slug)
 VALUES ('a8c67370-46e6-11ec-81d3-0242ac130003', '{Фентези}', 'Южная Корея', '2001-01-01', 'История о том, как обычный паренёк из провинции превратился в одного из самых состоятельных людей США. Джордж Джанга (Джонни Депп) с детства мечтал о роскошной жизни: шикарном доме, дорогих автомобилях и лучших девушках США. Находчивый паренёк быстро отыскал оригинальный способ осуществить свою мечту: он решил распространять кокаин в промышленных масштабах. Как найти рынки сбыта? Очень просто — необходимо подсадить на белый порошок главных знаменитостей Америки!',
         'Кокаин', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{img.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '1995-01-01', 120, 'Русский', '120 млн', 12, '{img.png}', '{video.mp4}', 'cocain');
 
-INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
+INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, slug)
 VALUES ('ac615b08-46e6-11ec-81d3-0242ac130003', '{Триллер}', 'США', '2001-01-01', 'История о том, как обычный паренёк из провинции превратился в одного из самых состоятельных людей США. Джордж Джанга (Джонни Депп) с детства мечтал о роскошной жизни: шикарном доме, дорогих автомобилях и лучших девушках США. Находчивый паренёк быстро отыскал оригинальный способ осуществить свою мечту: он решил распространять кокаин в промышленных масштабах. Как найти рынки сбыта? Очень просто — необходимо подсадить на белый порошок главных знаменитостей Америки!',
         'Красное уведомление', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}','1995-01-01', 120, 'Русский', '120 млн', 12, '{red.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}','1995-01-01', 120, 'Русский', '120 млн', 12, '{red.png}', '{video.mp4}', 'rednotification');
 
-INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src)
+INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, slug)
 VALUES ('b0840514-46e6-11ec-81d3-0242ac130003', '{Триллер}', 'США','2001-01-01',
         'История о том, как обычный паренёк из провинции превратился в одного из самых состоятельных людей США. Джордж Джанга (Джонни Депп) с детства мечтал о роскошной жизни: шикарном доме, дорогих автомобилях и лучших девушках США. Находчивый паренёк быстро отыскал оригинальный способ осуществить свою мечту: он решил распространять кокаин в промышленных масштабах. Как найти рынки сбыта? Очень просто — необходимо подсадить на белый порошок главных знаменитостей Америки!',
         'Варкрафт', 2015, '{S. Borunov,
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}','1995-01-01', 120, 'Русский', '120 млн', 12, '{warcraft.png}', '{video.mp4}');
+        9743f488-3b47-11ec-8d3d-0242ac130003}','1995-01-01', 120, 'Русский', '120 млн', 12, '{warcraft.png}', '{video.mp4}', 'warcraft');
 
-INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, isSeries)
+INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, isSeries, slug)
 VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', '{Фентези}', 'США', '2001-01-01',
         'История о том, как обычный паренёк из провинции превратился в одного из самых состоятельных людей США. Джордж Джанга (Джонни Депп) с детства мечтал о роскошной жизни: шикарном доме, дорогих автомобилях и лучших девушках США. Находчивый паренёк быстро отыскал оригинальный способ осуществить свою мечту: он решил распространять кокаин в промышленных масштабах. Как найти рынки сбыта? Очень просто — необходимо подсадить на белый порошок главных знаменитостей Америки!',
         'Ирландец', 2015, '{S. Borunov, K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '2001-01-02', 120, 'Русский', '120 млн', 12, '{irish.png}', '{video.mp4}', true);
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '2001-01-02', 120, 'Русский', '120 млн', 12, '{irish.png}', '{video.mp4}', true, 'irishman');
 
 INSERT INTO public.series_seasons (series_id, id, pic, src)
 VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 1, '{warcraft_s1_ser1.png, warcraft_s1_ser2.png, warcraft_s1_ser3.png, warcraft_s1_ser4.png, warcraft_s1_ser5.png}',

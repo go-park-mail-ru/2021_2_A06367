@@ -71,17 +71,17 @@ const (
 		"FROM films f JOIN starred_films sf ON f.id  = sf.film_id " +
 		"WHERE sf.user_id=$1 AND id=$2"
 
-	GET_IF_WL_FILMS = "SELECT f.id, genres, country, releaseRus, title, year, director, " +
-		"authors, actors, release, duration, language, pic, src, description, isSeries, needsPayment, slug" +
+	GET_IF_WL_FILMS = "SELECT f.id, genres, country, releaseRus, title, year, director, authors, actors, " +
+		"release, duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		"FROM films f JOIN watchlist w ON f.id  = w.film_id " +
-		"WHERE w.id=$1 AND  w.film_id = $2"
+		"WHERE w.id=$1 AND w.film_id = $2"
 
 	INSERT_FILM_TO_WATCHLIST = "INSERT INTO watchlist (id, film_id) VALUES($1, $2);"
 
 	DELETE_FILM_FROM_WATCHLIST = "DELETE FROM watchlist WHERE film_id=$1 AND id=$2;"
 
 	GET_WATCHLIST_FILMS = "SELECT f.id, genres, country, releaseRus, title, year, director," +
-		" authors, actors, release, duration, language, pic, src, description, isSeries, needsPayment, slug " +
+		" authors, actors, release, duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		"FROM films f JOIN watchlist w ON f.id  = w.film_id " +
 		"WHERE w.id=$1"
 
@@ -163,7 +163,7 @@ func (r *FilmsRepo) GetHottestFilms() ([]models.Film, models.StatusCode) {
 		}
 		f, code := r.GetRating(film)
 		if code != models.Okey {
-		   f.Rating = 0
+			f.Rating = 0
 		}
 		film.Rating = f.Rating
 		films = append(films, film)
@@ -401,7 +401,7 @@ func (r FilmsRepo) GetStarredFilms(user models.User) ([]models.Film, models.Stat
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries,  &film.NeedsPayment, &film.Slug)
+			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -412,7 +412,7 @@ func (r FilmsRepo) GetStarredFilms(user models.User) ([]models.Film, models.Stat
 }
 
 func (r FilmsRepo) IfStarred(film models.Film, user models.User) models.StatusCode {
-	rows := r.pool.QueryRow(context.Background(), GET_IF_WL_FILMS, user.Id, film.Id)
+	rows := r.pool.QueryRow(context.Background(), GET_IF_STARRED_FILMS, user.Id, film.Id)
 
 	err := rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 		&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
@@ -425,7 +425,7 @@ func (r FilmsRepo) IfStarred(film models.Film, user models.User) models.StatusCo
 }
 
 func (r FilmsRepo) IfWatchList(film models.Film, user models.User) models.StatusCode {
-	rows := r.pool.QueryRow(context.Background(), GET_IF_STARRED_FILMS, user.Id, film.Id)
+	rows := r.pool.QueryRow(context.Background(), GET_IF_WL_FILMS, user.Id, film.Id)
 
 	err := rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 		&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
