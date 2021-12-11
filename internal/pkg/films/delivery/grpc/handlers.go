@@ -307,8 +307,6 @@ func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *generated.Film {
 			})
 		}
 		gfilm.Seasons = gs
-		log.Println()
-		log.Println("HERE NOW =============")
 	}
 
 	return gfilm

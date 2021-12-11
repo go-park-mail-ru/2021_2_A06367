@@ -111,9 +111,7 @@ func TestFilmByGenre2(t *testing.T) {
 	defer ctl.Finish()
 
 	usecase := mocks.NewMockFilmsServiceClient(ctl)
-	usecase.EXPECT().FilmByGenre(gomock.Any(), gomock.Any()).Times(1).Return(&generated.Films{
-		Data: []*generated.Film{prepare()},
-	}, nil)
+
 
 	use2 := mocks2.NewMockSubsServiceClient(ctl)
 	logger, err := zap.NewProduction()
@@ -165,6 +163,7 @@ func TestFilmByGenre3(t *testing.T) {
 
 	r := httptest.NewRequest("GET", "/films/genres", strings.NewReader(fmt.Sprint()))
 	r = mux.SetURLVars(r, map[string]string{
+		"genre": "topic",
 	})
 	w := httptest.NewRecorder()
 

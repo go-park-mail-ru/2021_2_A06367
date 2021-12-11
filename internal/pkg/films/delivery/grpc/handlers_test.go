@@ -8,6 +8,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"log"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
@@ -30,7 +31,33 @@ func TestFilmByGenre(t *testing.T) {
 	defer conn.Close()
 	cl := generated.NewFilmsServiceClient(conn)
 
-	usecase.EXPECT().GetCompilation("").Times(1).Return([]models.Film{}, models.Okey)
+	usecase.EXPECT().GetCompilation("").Times(1).Return([]models.Film{
+		models.Film{
+			Id:           uuid.UUID{},
+			Title:        "",
+			Genres:       nil,
+			Country:      "",
+			ReleaseRus:   time.Time{},
+			Year:         0,
+			Director:     nil,
+			Authors:      nil,
+			Actors:       nil,
+			Release:      time.Time{},
+			Duration:     0,
+			Language:     "",
+			Budget:       "",
+			Age:          0,
+			Pic:          nil,
+			Src:          nil,
+			Description:  "",
+			IsSeries:     true,
+			Seasons:      nil,
+			Rating:       0,
+			NeedsPayment: true,
+			IsAvailable:  false,
+			Slug:         "",
+		},
+	}, models.Okey)
 
 	genre, err := cl.FilmByGenre(context.Background(), &generated.KeyWord{})
 	log.Println(genre)
