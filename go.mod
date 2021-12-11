@@ -5,7 +5,6 @@ go 1.16
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/driftprogramming/pgxpoolmock v1.1.0
-	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -27,8 +26,7 @@ require (
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.19.1
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.7 // indirect
+	golang.org/x/tools v0.1.8 // indirect
 	google.golang.org/grpc v1.42.0
 	google.golang.org/protobuf v1.27.1
 )

@@ -345,9 +345,9 @@ func TestAuthRepo_UpdateBioErr(t *testing.T) {
 	repo := NewAuthRepo(mockPool, nil)
 	mockPool.EXPECT().Exec(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgconn.CommandTag{}, errors.New(""))
 
-	st := repo.UpdateBio(models.Profile{})
+	st := repo.UpdateBio(models.Profile{Id: uid})
 
-	if st != models.NotFound {
+	if st != models.InternalError {
 		t.Error("wrong status returned")
 	}
 }
@@ -387,7 +387,7 @@ func TestAuthRepo_UpdatePicErr(t *testing.T) {
 
 	st := repo.UpdateAvatar(models.Profile{})
 
-	if st != models.NotFound {
+	if st != models.InternalError {
 		t.Error("wrong status returned")
 	}
 }
@@ -426,7 +426,7 @@ func TestAuthRepo_UpdatePassErr(t *testing.T) {
 
 	st := repo.UpdatePass(models.User{})
 
-	if st != models.NotFound {
+	if st != models.InternalError {
 		t.Error("wrong status returned")
 	}
 }

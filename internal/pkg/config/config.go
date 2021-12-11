@@ -10,7 +10,7 @@ import (
 func init() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal("config not loaded")
+		log.Print("config not loaded")
 	}
 }
 

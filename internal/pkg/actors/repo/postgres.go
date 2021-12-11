@@ -101,5 +101,9 @@ func (r *ActorsRepo) GetActorsByKeyword(keyword string) ([]models.Actors, models
 		}
 		actors = append(actors, actor)
 	}
+	
+	if len(actors) == 0 {
+		return actors, models.NotFound
+	}
 	return actors, models.Okey
 }

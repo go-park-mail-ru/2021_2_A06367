@@ -82,7 +82,7 @@ func TestFilmsByActor(t *testing.T) {
 
 	usecase.EXPECT().GetFilmsOfActor(gomock.Any()).Times(1).Return([]models.Film{}, models.Okey)
 
-	genre, err := cl.FilmsByActor(context.Background(), &generated.UUID{})
+	genre, err := cl.FilmsByActor(context.Background(), &generated.UUID{Id: uuid.New().String()})
 	log.Println(genre)
 	if err != nil {
 		t.Fatalf("failed due to err: %v", err)
@@ -107,7 +107,7 @@ func TestFilmById(t *testing.T) {
 
 	usecase.EXPECT().GetFilm(gomock.Any()).Times(1).Return(models.Film{}, models.Okey)
 
-	genre, err := cl.FilmById(context.Background(), &generated.UUID{})
+	genre, err := cl.FilmById(context.Background(), &generated.UUID{Id: uuid.New().String()})
 	log.Println(genre)
 	if err != nil {
 		t.Fatalf("failed due to err: %v", err)
@@ -132,7 +132,7 @@ func TestFilmsByUser(t *testing.T) {
 
 	usecase.EXPECT().GetCompilationForUser(gomock.Any()).Times(1).Return([]models.Film{}, models.Okey)
 
-	genre, err := cl.FilmsByUser(context.Background(), &generated.UUID{})
+	genre, err := cl.FilmsByUser(context.Background(), &generated.UUID{Id: uuid.NewString()})
 	log.Println(genre)
 	if err != nil {
 		t.Fatalf("failed due to err: %v", err)
