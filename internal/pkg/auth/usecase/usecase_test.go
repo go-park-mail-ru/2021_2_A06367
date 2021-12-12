@@ -202,7 +202,6 @@ func TestAuthUsecase_Unfollow(t *testing.T) {
 	}
 }
 
-
 func TestAuthUsecase_GetProfile(t *testing.T) {
 	who := uuid.New()
 	ctl := gomock.NewController(t)
@@ -233,7 +232,6 @@ func TestAuthUsecase_GetSubscriptions(t *testing.T) {
 	}
 }
 
-
 func TestAuthUsecase_GetByKeyword(t *testing.T) {
 	keyword := "test"
 	ctl := gomock.NewController(t)
@@ -247,13 +245,12 @@ func TestAuthUsecase_GetByKeyword(t *testing.T) {
 	}
 }
 
-
 func TestAuthUsecase_UpdateBio(t *testing.T) {
 	data := models.Profile{}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
-	mockAuthRepo.EXPECT().UpdateBio(gomock.Any()).Return( models.Okey)
+	mockAuthRepo.EXPECT().UpdateBio(gomock.Any()).Return(models.Okey)
 	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
 	st := usecase.SetBio(data)
 	if st != models.Okey {
@@ -266,7 +263,7 @@ func TestAuthUsecase_UpdateAvatar(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
-	mockAuthRepo.EXPECT().UpdateAvatar(gomock.Any()).Return( models.Okey)
+	mockAuthRepo.EXPECT().UpdateAvatar(gomock.Any()).Return(models.Okey)
 	usecase := NewAuthUsecase(mockAuthRepo, nil, nil, nil)
 	st := usecase.SetAvatar(data)
 	if st != models.Okey {
@@ -280,7 +277,7 @@ func TestAuthUsecase_UpdatePass(t *testing.T) {
 	defer ctl.Finish()
 	mockAuthRepo := mocks.NewMockAuthRepo(ctl)
 	mockEncrypter := mocks.NewMockEncrypter(ctl)
-	mockAuthRepo.EXPECT().UpdatePass(gomock.Any()).Return( models.Okey)
+	mockAuthRepo.EXPECT().UpdatePass(gomock.Any()).Return(models.Okey)
 	mockEncrypter.EXPECT().EncryptPswd(gomock.Any()).Return("password")
 	usecase := NewAuthUsecase(mockAuthRepo, nil, mockEncrypter, nil)
 	st := usecase.SetPass(data)
@@ -290,16 +287,15 @@ func TestAuthUsecase_UpdatePass(t *testing.T) {
 }
 
 func TestNewEncrypter(t *testing.T) {
-	t.Setenv("SECRET", "salt")
+	os.Setenv("SECRET", "salt")
 	enc := NewEncrypter()
 	if enc == nil {
 		t.Error("nothing here")
 	}
 }
 
-
 func TestNewEncrypterPass(t *testing.T) {
-	t.Setenv("SECRET", "salt")
+	os.Setenv("SECRET", "salt")
 	enc := NewEncrypter()
 
 	str := enc.EncryptPswd("")
@@ -308,9 +304,8 @@ func TestNewEncrypterPass(t *testing.T) {
 	}
 }
 
-
 func TestNewTokenator(t *testing.T) {
-	t.Setenv("SECRET", "salt")
+	os.Setenv("SECRET", "salt")
 	enc := NewTokenator()
 	if enc == nil {
 		t.Error("nothing here")
@@ -318,7 +313,7 @@ func TestNewTokenator(t *testing.T) {
 }
 
 func TestNewTokenatorGet(t *testing.T) {
-	t.Setenv("SECRET", "salt")
+	os.Setenv("SECRET", "salt")
 	enc := NewTokenator()
 
 	str := enc.GetToken(models.User{})

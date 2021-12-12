@@ -143,7 +143,6 @@ func TestAuthHandler_Login(t *testing.T) {
 		}
 	}
 
-
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
 			h := &AuthHandler{
@@ -215,7 +214,7 @@ func TestAuthHandler_SignUp(t *testing.T) {
 	mockUsecase.EXPECT().SignUp(gomock.Any(), gomock.Any()).Return(&generated2.Token{
 		Status: grpc.StatusCode(tests[0].args.statusReturn), Cookie: "hello"}, nil).Times(1)
 	mockUsecase.EXPECT().SignUp(gomock.Any(), gomock.Any()).Return(&generated2.Token{
-		Status: grpc.StatusCode(tests[1].args.statusReturn),Cookie: "hello"}, nil).Times(1)
+		Status: grpc.StatusCode(tests[1].args.statusReturn), Cookie: "hello"}, nil).Times(1)
 
 	for _, tt := range tests {
 		t.Run(tt.Login, func(t *testing.T) {
@@ -228,10 +227,10 @@ func TestAuthHandler_SignUp(t *testing.T) {
 
 			str := enc.GetToken(models.User{Id: uuid.New()})
 			SSCookie := &http.Cookie{
-				Name:   "SSID",
-				Value: str,
-				Path:   "/",
-				Domain: "a06367.ru",
+				Name:     "SSID",
+				Value:    str,
+				Path:     "/",
+				Domain:   "a06367.ru",
 				HttpOnly: true,
 				Expires:  time.Now().Add(time.Hour * 24),
 			}
@@ -398,7 +397,6 @@ func TestAuthHandler_GetProfile(t *testing.T) {
 	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(fmt.Sprint()))
 	w := httptest.NewRecorder()
 
-
 	handler := NewAuthHandler(nil, nil)
 
 	handler.GetProfile(w, r)
@@ -410,8 +408,7 @@ func TestAuthHandler_GetProfile(t *testing.T) {
 func TestAuthHandler_GetProfile2(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
-	t.Setenv("SECRET", "salt")
-
+	os.Setenv("SECRET", "salt")
 
 	data := models.Profile{Id: uuid.New()}
 	js, _ := json.Marshal(data)
@@ -424,17 +421,17 @@ func TestAuthHandler_GetProfile2(t *testing.T) {
 
 	str := enc.GetToken(models.User{Id: uuid.New(), Login: "hi"})
 	SSCookie := &http.Cookie{
-		Name:   "SSID",
-		Value: str,
-		Path:   "/",
-		Domain: "a06367.ru",
+		Name:     "SSID",
+		Value:    str,
+		Path:     "/",
+		Domain:   "a06367.ru",
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24),
 	}
 
 	r.AddCookie(SSCookie)
 	mockUsecase := generated2.NewMockAuthServiceClient(ctl)
-	mockUsecase.EXPECT().GetProfile(gomock.Any(), gomock.Any()).Return(&generated2.Profile{},nil)
+	mockUsecase.EXPECT().GetProfile(gomock.Any(), gomock.Any()).Return(&generated2.Profile{}, nil)
 	handler := NewAuthHandler(mockUsecase, nil)
 
 	handler.GetProfile(w, r)
@@ -460,7 +457,6 @@ func TestAuthHandler_Follow(t *testing.T) {
 	}
 }
 
-
 func TestAuthHandler_Unfollow(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -478,7 +474,6 @@ func TestAuthHandler_Unfollow(t *testing.T) {
 	}
 }
 
-
 func TestAuthHandler_UpdateProfilePic(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -491,13 +486,13 @@ func TestAuthHandler_UpdateProfilePic(t *testing.T) {
 	js, _ := json.Marshal(data)
 
 	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
-	t.Setenv("SECRET", "salt")
+	os.Setenv("SECRET", "salt")
 	enc := usecase.NewTokenator()
 
 	str := enc.GetToken(models.User{Id: uuid.New(), Login: "WTF"})
 	SSCookie := &http.Cookie{
 		Name:   "SSID",
-		Value: str,
+		Value:  str,
 		Path:   "/",
 		Domain: "a06367.ru",
 		//SameSite: http.SameSiteNoneMode,
@@ -519,7 +514,6 @@ func TestAuthHandler_UpdateProfilePic(t *testing.T) {
 	}
 }
 
-
 func TestAuthHandler_UpdateProfilePass(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -532,13 +526,13 @@ func TestAuthHandler_UpdateProfilePass(t *testing.T) {
 	js, _ := json.Marshal(data)
 
 	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
-	t.Setenv("SECRET", "salt")
+	os.Setenv("SECRET", "salt")
 	enc := usecase.NewTokenator()
 
 	str := enc.GetToken(models.User{Id: uuid.New(), Login: "WTF"})
 	SSCookie := &http.Cookie{
 		Name:   "SSID",
-		Value: str,
+		Value:  str,
 		Path:   "/",
 		Domain: "a06367.ru",
 		//SameSite: http.SameSiteNoneMode,
@@ -560,7 +554,6 @@ func TestAuthHandler_UpdateProfilePass(t *testing.T) {
 	}
 }
 
-
 func TestAuthHandler_UpdateProfilePassErr(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
@@ -573,15 +566,15 @@ func TestAuthHandler_UpdateProfilePassErr(t *testing.T) {
 	js, _ := json.Marshal(data)
 
 	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
-	t.Setenv("SECRET", "salt")
+	os.Setenv("SECRET", "salt")
 	enc := usecase.NewTokenator()
 
 	str := enc.GetToken(models.User{Id: uuid.New()})
 	SSCookie := &http.Cookie{
-		Name:   "SSID",
-		Value: str,
-		Path:   "/",
-		Domain: "a06367.ru",
+		Name:     "SSID",
+		Value:    str,
+		Path:     "/",
+		Domain:   "a06367.ru",
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24),
 	}
@@ -611,13 +604,13 @@ func TestAuthHandler_UpdateProfileBio(t *testing.T) {
 	js, _ := json.Marshal(data)
 
 	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
-	t.Setenv("SECRET", "salt")
+	os.Setenv("SECRET", "salt")
 	enc := usecase.NewTokenator()
 
 	str := enc.GetToken(models.User{Id: uuid.New(), Login: "WTF"})
 	SSCookie := &http.Cookie{
 		Name:   "SSID",
-		Value: str,
+		Value:  str,
 		Path:   "/",
 		Domain: "a06367.ru",
 		//SameSite: http.SameSiteNoneMode,
