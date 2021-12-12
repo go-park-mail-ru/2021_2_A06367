@@ -35,6 +35,7 @@ type FilmsServiceClient interface {
 	Random(ctx context.Context, in *Nothing, opts ...grpc.CallOption) (*Film, error)
 	SetRating(ctx context.Context, in *RatingPair, opts ...grpc.CallOption) (*Nothing, error)
 	GetRating(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Film, error)
+	GetRatingByUser(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Film, error)
 }
 
 type filmsServiceClient struct {
@@ -198,6 +199,15 @@ func (c *filmsServiceClient) GetRating(ctx context.Context, in *UUID, opts ...gr
 	return out, nil
 }
 
+func (c *filmsServiceClient) GetRatingByUser(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Film, error) {
+	out := new(Film)
+	err := c.cc.Invoke(ctx, "/FilmsService/GetRatingByUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FilmsServiceServer is the server API for FilmsService service.
 // All implementations must embed UnimplementedFilmsServiceServer
 // for forward compatibility
@@ -219,6 +229,7 @@ type FilmsServiceServer interface {
 	Random(context.Context, *Nothing) (*Film, error)
 	SetRating(context.Context, *RatingPair) (*Nothing, error)
 	GetRating(context.Context, *UUID) (*Film, error)
+	GetRatingByUser(context.Context, *Pair) (*Film, error)
 	mustEmbedUnimplementedFilmsServiceServer()
 }
 
@@ -276,6 +287,9 @@ func (UnimplementedFilmsServiceServer) SetRating(context.Context, *RatingPair) (
 }
 func (UnimplementedFilmsServiceServer) GetRating(context.Context, *UUID) (*Film, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRating not implemented")
+}
+func (UnimplementedFilmsServiceServer) GetRatingByUser(context.Context, *Pair) (*Film, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRatingByUser not implemented")
 }
 func (UnimplementedFilmsServiceServer) mustEmbedUnimplementedFilmsServiceServer() {}
 
@@ -596,6 +610,24 @@ func _FilmsService_GetRating_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FilmsService_GetRatingByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Pair)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FilmsServiceServer).GetRatingByUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/FilmsService/GetRatingByUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FilmsServiceServer).GetRatingByUser(ctx, req.(*Pair))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FilmsService_ServiceDesc is the grpc.ServiceDesc for FilmsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -670,6 +702,10 @@ var FilmsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRating",
 			Handler:    _FilmsService_GetRating_Handler,
+		},
+		{
+			MethodName: "GetRatingByUser",
+			Handler:    _FilmsService_GetRatingByUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

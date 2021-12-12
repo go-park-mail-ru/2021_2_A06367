@@ -263,6 +263,27 @@ func (g *GrpcFilmsHandler) GetRating(ctx context.Context, in *generated.UUID) (*
 	return data, nil
 }
 
+func (g *GrpcFilmsHandler) GetRatingByUser(ctx context.Context, in *generated.Pair) (*generated.Film, error) {
+	filmId, err := uuid.Parse(in.FilmUUID)
+	if err != nil {
+		return nil, nil
+	}
+	film := models.Film{Id: filmId}
+
+	userId, err := uuid.Parse(in.UserUUID)
+	if err != nil {
+		return nil, nil
+	}
+	user := models.User{Id: userId}
+
+	f, status := g.uc.GetRatingByUser(film, user)
+	film.Rating = f.Rating
+	data := g.FilmAdaptor(film)
+	data.Status = grpc.StatusCode(status)
+
+	return data, nil
+}
+
 func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *generated.Film {
 
 	if film.Seasons != nil {

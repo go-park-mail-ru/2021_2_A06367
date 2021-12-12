@@ -26,7 +26,8 @@ type FilmsUsecase interface {
 	RemoveWatchlist(film models.Film, user models.User) models.StatusCode
 
 	Randomize() (models.Film, models.StatusCode)
-	GetRating(film models.Film)  (models.Film, models.StatusCode)
+	GetRating(film models.Film) (models.Film, models.StatusCode)
+	GetRatingByUser(film models.Film, user models.User) (models.Film, models.StatusCode)
 	SetRating(film models.Film, user models.User, rating float64) models.StatusCode
 	GetIdBySlug(slug string) (models.Film, models.StatusCode)
 }
@@ -53,5 +54,6 @@ type FilmsRepository interface {
 	GetRandom() (models.Film, models.StatusCode)
 	SetRating(film models.Film, user models.User, rating float64) models.StatusCode
 	GetRating(film models.Film) (models.Film, models.StatusCode)
+	GetRatingByUser(film models.Film, user models.User) (models.Film, models.StatusCode)
 	GetIdBySlug(slug string) (models.Film, models.StatusCode)
 }

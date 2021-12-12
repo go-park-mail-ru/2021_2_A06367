@@ -556,6 +556,44 @@ func (h FilmsHandler) GetRating(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (h FilmsHandler) GetRatingByUser(w http.ResponseWriter, r *http.Request) {
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	res, err := h.client.GetRatingByUser(context.Background(), &generated.Pair{
+		FilmUUID: film.Id.String(),
+		UserUUID: user.Id.String(),
+	})
+
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	film.Rating = float64(res.Rating)
+	util.Response(w, models.StatusCode(res.Status), film)
+
+}
+
 func (h FilmsHandler) FilmToModel(film *generated.Film) models.Film {
 	layout := "2006-01-02"
 	id, err := uuid.Parse(film.Id)

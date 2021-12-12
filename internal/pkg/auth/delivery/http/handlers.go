@@ -61,10 +61,11 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	SSCookie := &http.Cookie{
-		Name:   "SSID",
-		Value:  login.Cookie,
-		Path:   "/",
-		Domain: "a06367.ru",
+		Name:  "SSID",
+		Value: login.Cookie,
+		Path:  "/",
+		//Domain: "a06367.ru",
+		Domain: "localhost",
 		//SameSite: http.SameSiteNoneMode,
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24),
@@ -104,10 +105,11 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	//user.Login = accesToken.Login
 
 	SSCookie := &http.Cookie{
-		Name:     "SSID",
-		Value:    "",
-		Path:     "/",
-		Domain:   "a06367.ru",
+		Name:  "SSID",
+		Value: "",
+		Path:  "/",
+		//Domain: "a06367.ru",
+		Domain:   "localhost",
 		HttpOnly: true,
 		Expires:  time.Unix(0, 0),
 	}
@@ -149,10 +151,11 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	SSCookie := &http.Cookie{
-		Name:   "SSID",
-		Value:  us.Cookie,
-		Path:   "/",
-		Domain: "a06367.ru",
+		Name:  "SSID",
+		Value: us.Cookie,
+		Path:  "/",
+		//Domain: "a06367.ru",
+		Domain: "localhost",
 		//SameSite: http.SameSiteNoneMode,
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24),
@@ -362,7 +365,7 @@ func (h *AuthHandler) UpdateProfilePass(w http.ResponseWriter, r *http.Request) 
 	}
 
 	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
-	if err != nil  {
+	if err != nil {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}

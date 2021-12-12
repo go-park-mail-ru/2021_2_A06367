@@ -195,6 +195,21 @@ func (mr *MockFilmsUsecaseMockRecorder) GetRating(film interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRating", reflect.TypeOf((*MockFilmsUsecase)(nil).GetRating), film)
 }
 
+// GetRatingByUser mocks base method.
+func (m *MockFilmsUsecase) GetRatingByUser(film models.Film, user models.User) (models.Film, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRatingByUser", film, user)
+	ret0, _ := ret[0].(models.Film)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetRatingByUser indicates an expected call of GetRatingByUser.
+func (mr *MockFilmsUsecaseMockRecorder) GetRatingByUser(film, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRatingByUser", reflect.TypeOf((*MockFilmsUsecase)(nil).GetRatingByUser), film, user)
+}
+
 // GetSelection mocks base method.
 func (m *MockFilmsUsecase) GetSelection(selection string) ([]models.Film, models.StatusCode) {
 	m.ctrl.T.Helper()
@@ -511,6 +526,21 @@ func (m *MockFilmsRepository) GetRating(film models.Film) (models.Film, models.S
 func (mr *MockFilmsRepositoryMockRecorder) GetRating(film interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRating", reflect.TypeOf((*MockFilmsRepository)(nil).GetRating), film)
+}
+
+// GetRatingByUser mocks base method.
+func (m *MockFilmsRepository) GetRatingByUser(film models.Film, user models.User) (models.Film, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRatingByUser", film, user)
+	ret0, _ := ret[0].(models.Film)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetRatingByUser indicates an expected call of GetRatingByUser.
+func (mr *MockFilmsRepositoryMockRecorder) GetRatingByUser(film, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRatingByUser", reflect.TypeOf((*MockFilmsRepository)(nil).GetRatingByUser), film, user)
 }
 
 // GetStarredFilms mocks base method.

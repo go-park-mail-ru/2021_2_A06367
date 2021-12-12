@@ -83,4 +83,5 @@ service FilmsService {
   rpc Random(Nothing) returns (Film) {}
   rpc SetRating(RatingPair) returns (Nothing) {}
   rpc GetRating(UUID) returns (Film) {}
+  rpc GetRatingByUser(Pair) returns (Film) {}
 }

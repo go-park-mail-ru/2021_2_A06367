@@ -17,6 +17,8 @@ const (
 
 	GET_RATING = "SELECT AVG(rating) FROM ratings WHERE film_id=$1;"
 
+	GET_RATING_BY_USER = "SELECT rating FROM ratings WHERE id=$1 AND film_id=$2"
+
 	SElECT_FILM_BY_TOPIC = "SELECT id, genres, country, releaseRus, title, year, director, " +
 		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		"FROM films " +
@@ -530,6 +532,15 @@ func (r *FilmsRepo) SetRating(film models.Film, user models.User, rating float64
 
 func (r *FilmsRepo) GetRating(film models.Film) (models.Film, models.StatusCode) {
 	row := r.pool.QueryRow(context.Background(), GET_RATING, film.Id)
+	err := row.Scan(&film.Rating)
+	if err != nil {
+		return film, models.NotFound
+	}
+	return film, models.Okey
+}
+
+func (r *FilmsRepo) GetRatingByUser(film models.Film, user models.User) (models.Film, models.StatusCode) {
+	row := r.pool.QueryRow(context.Background(), GET_RATING_BY_USER, user.Id, film.Id)
 	err := row.Scan(&film.Rating)
 	if err != nil {
 		return film, models.NotFound

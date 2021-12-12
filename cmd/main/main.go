@@ -150,6 +150,7 @@ func run() error {
 		film.HandleFunc("/film/{film_id}", filmsHandler.FilmById).Methods(http.MethodGet)
 		film.HandleFunc("/film/{id}/rating", filmsHandler.GetRating).Methods(http.MethodGet)
 		film.HandleFunc("/film/{id}/rating", filmsHandler.SetRating).Methods(http.MethodPost)
+		film.HandleFunc("/film/{id}/user/rating", filmsHandler.GetRatingByUser).Methods(http.MethodGet)
 		film.HandleFunc("/selection/actor/{actor_id}", filmsHandler.FilmByActor).Methods(http.MethodGet)
 		film.HandleFunc("/selection/user/personal", filmsHandler.FilmsByUser).Methods(http.MethodGet)
 		film.HandleFunc("/selection", filmsHandler.FilmStartSelection).Methods(http.MethodGet)
