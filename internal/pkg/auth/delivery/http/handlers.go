@@ -61,11 +61,10 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	SSCookie := &http.Cookie{
-		Name:  "SSID",
-		Value: login.Cookie,
-		Path:  "/",
-		//Domain: "a06367.ru",
-		Domain: "localhost",
+		Name:   "SSID",
+		Value:  login.Cookie,
+		Path:   "/",
+		Domain: "a06367.ru",
 		//SameSite: http.SameSiteNoneMode,
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24),
@@ -105,11 +104,10 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	//user.Login = accesToken.Login
 
 	SSCookie := &http.Cookie{
-		Name:  "SSID",
-		Value: "",
-		Path:  "/",
-		//Domain: "a06367.ru",
-		Domain:   "localhost",
+		Name:     "SSID",
+		Value:    "",
+		Path:     "/",
+		Domain:   "a06367.ru",
 		HttpOnly: true,
 		Expires:  time.Unix(0, 0),
 	}
@@ -151,11 +149,10 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	SSCookie := &http.Cookie{
-		Name:  "SSID",
-		Value: us.Cookie,
-		Path:  "/",
-		//Domain: "a06367.ru",
-		Domain: "localhost",
+		Name:   "SSID",
+		Value:  us.Cookie,
+		Path:   "/",
+		Domain: "a06367.ru",
 		//SameSite: http.SameSiteNoneMode,
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24),
