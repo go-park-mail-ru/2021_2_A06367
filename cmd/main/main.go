@@ -76,7 +76,7 @@ func run() error {
 	}
 
 	filmsConn, err := grpc.Dial(
-		":8010",
+		"films:8010",
 		grpc.WithInsecure(),
 	)
 
@@ -87,7 +87,7 @@ func run() error {
 	filmsClient := generated.NewFilmsServiceClient(filmsConn)
 
 	authConn, err := grpc.Dial(
-		":8020",
+		"auth:8020",
 		grpc.WithInsecure(),
 	)
 
