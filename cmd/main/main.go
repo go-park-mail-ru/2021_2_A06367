@@ -46,6 +46,7 @@ func main() {
 }
 func run() error {
 	r := mux.NewRouter()
+	r2 := mux.NewRouter()
 
 	//key, err := config.GetCsrfToken()
 	//if err != nil {
@@ -180,7 +181,7 @@ func run() error {
 		searching.HandleFunc("/{keyword}", search.Search).Methods(http.MethodGet)
 	}
 
-	licensing := r.PathPrefix("/api/licenses").Subrouter()
+	licensing := r2.PathPrefix("/api/licenses").Subrouter()
 	{
 		licensing.HandleFunc("/licenses", h.GetLicense).Methods(http.MethodGet)
 		licensing.HandleFunc("/licenses", h.SetLicense).Methods(http.MethodPost)
@@ -193,6 +194,7 @@ func run() error {
 	r.Use(m2.LogMetrics)
 
 	http.Handle("/", r)
+	http.Handle("/", r2)
 	log.Print("main running on: ", srv.Addr)
 
 	return srv.ListenAndServe()
