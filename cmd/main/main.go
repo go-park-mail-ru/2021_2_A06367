@@ -182,8 +182,11 @@ func run() error {
 
 	licensing := r.PathPrefix("/api/licenses").Subrouter()
 	{
-		licensing.HandleFunc("/licenses", h.GetLicense).Methods(http.MethodGet)
-		licensing.HandleFunc("/licenses", h.SetLicense).Methods(http.MethodPost)
+		licensing.HandleFunc("/licenses", h.SetLicense).Methods(http.MethodPost, http.MethodGet)
+	}
+	licensing2 := r.PathPrefix("/api/check").Subrouter()
+	{
+		licensing2.HandleFunc("/check", h.GetLicense).Methods(http.MethodGet)
 	}
 
 	// swag init -g ./cmd/main/main.go

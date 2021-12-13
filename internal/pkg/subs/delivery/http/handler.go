@@ -39,9 +39,6 @@ func (h SubsHandler) SetLicense(w http.ResponseWriter, r *http.Request) {
 	label := r.URL.Query().Get("label")
 	fmt.Println(label)
 	fmt.Println(r.URL.Query())
-	fmt.Println(r.URL.RawQuery)
-	fmt.Println(r.URL.RawPath)
-	fmt.Println(r.Header.Clone())
 	util.Response(w, models.Okey, nil)
 	return
 
