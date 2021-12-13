@@ -194,7 +194,7 @@ func run() error {
 	r.Use(m2.LogMetrics)
 
 	http.Handle("/", r)
-	http.Handle("/", r2)
+	http.Handle("/v0", r2)
 	log.Print("main running on: ", srv.Addr)
 
 	return srv.ListenAndServe()
