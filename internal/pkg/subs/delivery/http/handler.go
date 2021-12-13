@@ -5,8 +5,6 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	subs "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/subs/delivery/grpc/generated"
 	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
-	"github.com/mailru/easyjson"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -37,34 +35,27 @@ func (h SubsHandler) GetLicense(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h SubsHandler) SetLicense(w http.ResponseWriter, r *http.Request) {
-	var check models.UMoney
 
-	all, _ := ioutil.ReadAll(r.Body)
-	log.Println(string(all))
-
-	_ = easyjson.UnmarshalFromReader(r.Body, &check)
+	label := r.URL.Query().Get("label")
+	log.Print(label)
 	util.Response(w, models.Okey, nil)
-
-	log.Println(string(all))
-	log.Println(check)
-	log.Println(check.Label)
 	return
 
 	/*
-	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
-	if err != nil || access == nil {
-		util.Response(w, models.BadRequest, nil)
-	}
+		access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+		if err != nil || access == nil {
+			util.Response(w, models.BadRequest, nil)
+		}
 
-	l, err := h.subsClient.SetLicense(context.Background(), &subs.LicenseReq{
-		ID:   access.Id.String(),
-		Type: "MONTH"})
-	//если микросервис отвалился
-	if err != nil {
-		util.Response(w, models.InternalError, nil)
-	}
-	parsed, _ := time.Parse(time.RFC3339, l.ExpiresDate)
-	license := models.License{IsValid: true, ExpDate: parsed}
-	util.Response(w, models.Okey, license)
-	 */
+		l, err := h.subsClient.SetLicense(context.Background(), &subs.LicenseReq{
+			ID:   access.Id.String(),
+			Type: "MONTH"})
+		//если микросервис отвалился
+		if err != nil {
+			util.Response(w, models.InternalError, nil)
+		}
+		parsed, _ := time.Parse(time.RFC3339, l.ExpiresDate)
+		license := models.License{IsValid: true, ExpDate: parsed}
+		util.Response(w, models.Okey, license)
+	*/
 }
