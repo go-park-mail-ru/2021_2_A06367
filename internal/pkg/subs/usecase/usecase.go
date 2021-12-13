@@ -14,10 +14,10 @@ func NewSubsUsecase() *SubsUsecase {
 }
 
 func (u SubsUsecase) GetLicense(id uuid.UUID) (models.License, models.StatusCode) {
-	return models.License{ExpDate: time.Now().Add(time.Hour), IsValid: true}, models.Okey
+	return models.License{ExpDate: time.Now().AddDate(0, 1, 0), IsValid: true}, models.Okey
 
 }
 
 func (u SubsUsecase) SetLicense(id uuid.UUID, license string) (models.License, models.StatusCode) {
-	return models.License{ExpDate: time.Now().Add(time.Hour), IsValid: true}, models.Okey
+	return models.License{ExpDate: time.Now().AddDate(0, 1, 0), IsValid: true}, models.Okey
 }

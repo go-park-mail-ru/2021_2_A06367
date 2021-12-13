@@ -19,6 +19,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/middleware"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/search/delivery"
 	generated3 "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/subs/delivery/grpc/generated"
+	http2 "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/subs/delivery/http"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -123,6 +124,8 @@ func run() error {
 
 	search := delivery.NewSearchHandler(filmsUse, authUse, actorsUse)
 
+	h := http2.NewSubsHandler(subsClient)
+
 	m := middleware.NewMiddleware(zapSugar)
 	m2 := middleware.NewMetricsMiddleware()
 	m2.Register(middleware.ServiceMainLabel)
@@ -172,9 +175,15 @@ func run() error {
 		actors.HandleFunc("/film", actorsHandler.FetchActors).Methods(http.MethodPost, http.MethodGet)
 	}
 
-	seraching := r.PathPrefix("/api/search").Subrouter()
+	searching := r.PathPrefix("/api/search").Subrouter()
 	{
-		seraching.HandleFunc("/{keyword}", search.Search).Methods(http.MethodGet)
+		searching.HandleFunc("/{keyword}", search.Search).Methods(http.MethodGet)
+	}
+
+	licensing := r.PathPrefix("/api/licenses").Subrouter()
+	{
+		licensing.HandleFunc("/licenses", h.GetLicense).Methods(http.MethodGet)
+		licensing.HandleFunc("/licenses", h.SetLicense).Methods(http.MethodPost)
 	}
 
 	// swag init -g ./cmd/main/main.go
