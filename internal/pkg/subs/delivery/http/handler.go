@@ -39,7 +39,7 @@ func (h SubsHandler) SetLicense(w http.ResponseWriter, r *http.Request) {
 
 	all, err := ioutil.ReadAll(r.Body)
 	if err == nil {
-		fmt.Println(all)
+		fmt.Println(string(all))
 	}
 	label := r.URL.Query().Get("label")
 	fmt.Println(label)
