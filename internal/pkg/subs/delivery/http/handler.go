@@ -6,6 +6,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	subs "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/subs/delivery/grpc/generated"
 	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
+	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -36,6 +37,10 @@ func (h SubsHandler) GetLicense(w http.ResponseWriter, r *http.Request) {
 
 func (h SubsHandler) SetLicense(w http.ResponseWriter, r *http.Request) {
 
+	all, err := ioutil.ReadAll(r.Body)
+	if err == nil {
+		fmt.Println(all)
+	}
 	label := r.URL.Query().Get("label")
 	fmt.Println(label)
 	fmt.Println(r.URL.Query())
