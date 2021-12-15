@@ -164,7 +164,7 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 				filmSet.IsAvailable = false
 			} else {
 				//если микросервис ок и надо просто проверить лицензию
-				parsed, err := time.Parse("2006-01-02",  license.ExpiresDate)
+				parsed, err := time.Parse("2006-01-02",  license.ExpiresDate[:10])
 				if err != nil {
 					filmSet.IsAvailable = false
 				} else {
