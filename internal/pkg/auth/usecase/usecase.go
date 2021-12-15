@@ -58,7 +58,7 @@ func (u *AuthUsecase) CheckUser(user models.User) (models.User, models.StatusCod
 	return u.repo.CheckUser(user)
 }
 func (u *AuthUsecase) CheckUserLogin(user models.User) (models.User, models.StatusCode) {
-	return u.repo.CheckUser(user)
+	return u.repo.CheckUserLogin(user)
 }
 
 
