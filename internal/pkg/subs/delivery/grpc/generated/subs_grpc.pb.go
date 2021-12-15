@@ -13,6 +13,7 @@ import (
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion7
 
+//go:generate mockgen -source=subs_grpc.pb.go -destination=subs_grpc.go -package=generated
 //go:generate mockgen -source=subs_grpc.pb.go -destination=./../../../mocks/client_mock.go -package=mocks
 // SubsServiceClient is the client API for SubsService service.
 //
