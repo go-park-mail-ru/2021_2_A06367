@@ -34,7 +34,7 @@ func (h SubsHandler) GetLicense(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		util.Response(w, models.InternalError, nil)
 	}
-	parsed, err := time.Parse("2006-01-02 15:04:05", l.ExpiresDate)
+	parsed, err := time.Parse("2006-01-02", l.ExpiresDate[:10])
 	if err != nil {
 		fmt.Println(l, err)
 		log.Println(l, err)
