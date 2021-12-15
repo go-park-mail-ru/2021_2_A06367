@@ -11,4 +11,3 @@ type SubsUsecase interface {
 	GetLicense(id uuid.UUID) (models.License, models.StatusCode)
 	SetLicense(id uuid.UUID, license string) (models.License, models.StatusCode)
 }
-

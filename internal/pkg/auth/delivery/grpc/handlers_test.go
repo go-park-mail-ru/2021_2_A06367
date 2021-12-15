@@ -134,6 +134,30 @@ func TestUpdateProfileBio(t *testing.T) {
 
 }
 
+func TestCheckUser(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	usecase := mocks.NewMockAuthUsecase(ctrl)
+	client := NewGrpcAuthHandler(usecase)
+	srv, listener := startGRPCServer(client)
+	defer srv.Stop()
+	conn, err := grpc.DialContext(context.Background(), "bufnet", grpc.WithContextDialer(getBufDialer(listener)), grpc.WithInsecure())
+	if err != nil {
+		t.Fatalf("failed to dial: %v", err)
+	}
+	defer conn.Close()
+	cl := generated.NewAuthServiceClient(conn)
+
+	usecase.EXPECT().CheckUser(gomock.Any()).Return(models.User{}, models.Okey)
+
+	_, err = cl.CheckByLogin(context.Background(), &generated.LoginUser{Login: uuid.New().String()})
+	if err != nil {
+		t.Fatalf("failed due to err: %v", err)
+	}
+
+}
+
 func TestUpdateProfilePass(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

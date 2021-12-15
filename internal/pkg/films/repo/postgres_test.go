@@ -42,14 +42,14 @@ func TestFilmsRepo_GetFilmById(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -65,8 +65,8 @@ func TestFilmsRepo_GetFilmById(t *testing.T) {
 
 	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows)
 
-	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr2, nil)
-	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr)
+	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr2, nil)
+	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr)
 	filmRequest := models.Film{
 		Id: uid,
 	}
@@ -104,19 +104,19 @@ func TestFilmsRepo_GetFilmsByKeyword(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -132,8 +132,8 @@ func TestFilmsRepo_GetFilmsByKeyword(t *testing.T) {
 
 	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows, nil)
 
-	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr2, nil)
-	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr)
+	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr2, nil)
+	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr)
 
 	_, status := filmRepo.GetFilmsByKeyword("filmRequest")
 	if status != models.Okey {
@@ -154,19 +154,19 @@ func TestFilmsRepo_GetFilmsByTopicOk(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -182,8 +182,8 @@ func TestFilmsRepo_GetFilmsByTopicOk(t *testing.T) {
 
 	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows, nil)
 
-	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr2, nil)
-	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr)
+	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr2, nil)
+	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr)
 
 	_, status := filmRepo.GetFilmsByTopic("filmRequest")
 	if status != models.Okey {
@@ -204,19 +204,19 @@ func TestFilmsRepo_GetFilmsHottestOk(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -232,8 +232,8 @@ func TestFilmsRepo_GetFilmsHottestOk(t *testing.T) {
 
 	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows, nil)
 
-	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr2, nil)
-	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr)
+	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr2, nil)
+	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr)
 
 	_, status := filmRepo.GetHottestFilms()
 	if status != models.Okey {
@@ -254,19 +254,19 @@ func TestFilmsRepo_GetFilmsNewestOk(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -282,8 +282,8 @@ func TestFilmsRepo_GetFilmsNewestOk(t *testing.T) {
 
 	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows, nil)
 
-	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr2, nil)
-	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr)
+	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr2, nil)
+	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr)
 
 	_, status := filmRepo.GetNewestFilms()
 	if status != models.Okey {
@@ -305,19 +305,19 @@ func TestFilmsRepo_GetFilmsByKeywordOk(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-		time.Now(),"Policeman from Rublevka",2017,
-		[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
-		time.Now(), int(time.Hour), "200",
-		"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", false, false, "avc").
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
+			time.Now(), int(time.Hour), "200",
+			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", false, false, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", false, false, "avc").
 		ToPgxRows()
@@ -327,7 +327,7 @@ func TestFilmsRepo_GetFilmsByKeywordOk(t *testing.T) {
 		AddRow("4").AddRow("4").ToPgxRows()
 	pgxRowsr.Next()
 
-	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr)
+	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr)
 
 	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows, nil)
 	_, status := filmRepo.GetFilmsByKeyword(keyword)
@@ -362,19 +362,19 @@ func TestFilmsRepo_GetFilmsByActors(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -390,8 +390,8 @@ func TestFilmsRepo_GetFilmsByActors(t *testing.T) {
 
 	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows, nil)
 
-	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr2, nil)
-	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr)
+	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr2, nil)
+	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr)
 
 	_, status := filmRepo.GetFilmsByActor(models.Actors{Id: uid})
 	if status != models.Okey {
@@ -412,19 +412,19 @@ func TestFilmsRepo_GetFilmsByUserOk(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -440,8 +440,8 @@ func TestFilmsRepo_GetFilmsByUserOk(t *testing.T) {
 
 	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows, nil)
 
-	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr2, nil)
-	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr)
+	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr2, nil)
+	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr)
 
 	_, status := filmRepo.GetFilmsByUser(models.User{Id: uid})
 	if status != models.Okey {
@@ -483,7 +483,6 @@ func TestFilmsRepo_GetNewestFilms(t *testing.T) {
 	//assert.Equal(t, 2017, film[0].Year)
 }
 
-
 func TestFilmsRepo_InsertStarred(t *testing.T) {
 	ctl := gomock.NewController(t)
 
@@ -492,12 +491,11 @@ func TestFilmsRepo_InsertStarred(t *testing.T) {
 
 	filmRepo := NewFilmsRepo(mockPool, nil)
 
-    status := filmRepo.InsertStarred(models.Film{}, models.User{})
+	status := filmRepo.InsertStarred(models.Film{}, models.User{})
 	if status != models.Conflict {
 		t.Error("Wrong result")
 	}
 }
-
 
 func TestFilmsRepo_DeleteStarred(t *testing.T) {
 	ctl := gomock.NewController(t)
@@ -513,7 +511,6 @@ func TestFilmsRepo_DeleteStarred(t *testing.T) {
 	}
 }
 
-
 func TestFilmsRepo_InsertWL(t *testing.T) {
 	ctl := gomock.NewController(t)
 
@@ -527,7 +524,6 @@ func TestFilmsRepo_InsertWL(t *testing.T) {
 		t.Error("Wrong result")
 	}
 }
-
 
 func TestFilmsRepo_DeleteWL(t *testing.T) {
 	ctl := gomock.NewController(t)
@@ -543,7 +539,6 @@ func TestFilmsRepo_DeleteWL(t *testing.T) {
 	}
 }
 
-
 func TestFilmsRepo_GetStarredOk(t *testing.T) {
 	ctl := gomock.NewController(t)
 
@@ -557,19 +552,19 @@ func TestFilmsRepo_GetStarredOk(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -604,19 +599,19 @@ func TestFilmsRepo_GetWLOk(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -665,19 +660,19 @@ func TestFilmsRepo_IfStarred(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -692,7 +687,6 @@ func TestFilmsRepo_IfStarred(t *testing.T) {
 	pgxRowsr.Next()
 
 	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows)
-
 
 	status := filmRepo.IfStarred(models.Film{}, models.User{})
 	if status != models.Okey {
@@ -712,19 +706,19 @@ func TestFilmsRepo_IfWl(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -759,19 +753,19 @@ func TestFilmsRepo_Random(t *testing.T) {
 	columns := []string{"id", "genres", "country",
 		"releaseRus", "title", "year",
 		"director", "authors", "actors",
-		"release","duration", "language",
+		"release", "duration", "language",
 		"budget", "age", "pic",
-		"src","description", "isSeries",
+		"src", "description", "isSeries",
 		"needsPayment", "slug"}
 	pgxRows := pgxpoolmock.NewRows(columns).
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		AddRow(uid, []string{"comedy"}, "abc",
-			time.Now(),"Policeman from Rublevka",2017,
-			[]string{"Alex"}, []string{"Alex"},		[]uuid.UUID{uid},
+			time.Now(), "Policeman from Rublevka", 2017,
+			[]string{"Alex"}, []string{"Alex"}, []uuid.UUID{uid},
 			time.Now(), int(time.Hour), "200",
 			"120", 120, []string{"img.png"}, []string{"img.png"}, "avc", true, true, "avc").
 		ToPgxRows()
@@ -785,11 +779,10 @@ func TestFilmsRepo_Random(t *testing.T) {
 		AddRow(4).ToPgxRows()
 	pgxRowsr.Next()
 
-
 	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr)
 	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRows)
-	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr2, nil)
-	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(),  gomock.Any()).Return(pgxRowsr)
+	mockPool.EXPECT().Query(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr2, nil)
+	mockPool.EXPECT().QueryRow(gomock.Any(), gomock.Any(), gomock.Any()).Return(pgxRowsr)
 
 	_, status := filmRepo.GetRandom()
 	if status != models.Okey {

@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // AuthServiceClient is the client API for AuthService service.
@@ -23,6 +24,7 @@ type AuthServiceClient interface {
 	UpdateProfilePic(ctx context.Context, in *UserUpdatePic, opts ...grpc.CallOption) (*Empty, error)
 	UpdateProfilePass(ctx context.Context, in *UserUpdatePass, opts ...grpc.CallOption) (*Empty, error)
 	UpdateProfileBio(ctx context.Context, in *UserUpdateBio, opts ...grpc.CallOption) (*Empty, error)
+	CheckByLogin(ctx context.Context, in *LoginUser, opts ...grpc.CallOption) (*UserUUID, error)
 }
 
 type authServiceClient struct {
@@ -87,6 +89,15 @@ func (c *authServiceClient) UpdateProfileBio(ctx context.Context, in *UserUpdate
 	return out, nil
 }
 
+func (c *authServiceClient) CheckByLogin(ctx context.Context, in *LoginUser, opts ...grpc.CallOption) (*UserUUID, error) {
+	out := new(UserUUID)
+	err := c.cc.Invoke(ctx, "/AuthService/CheckByLogin", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -97,6 +108,7 @@ type AuthServiceServer interface {
 	UpdateProfilePic(context.Context, *UserUpdatePic) (*Empty, error)
 	UpdateProfilePass(context.Context, *UserUpdatePass) (*Empty, error)
 	UpdateProfileBio(context.Context, *UserUpdateBio) (*Empty, error)
+	CheckByLogin(context.Context, *LoginUser) (*UserUUID, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -122,6 +134,9 @@ func (UnimplementedAuthServiceServer) UpdateProfilePass(context.Context, *UserUp
 func (UnimplementedAuthServiceServer) UpdateProfileBio(context.Context, *UserUpdateBio) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfileBio not implemented")
 }
+func (UnimplementedAuthServiceServer) CheckByLogin(context.Context, *LoginUser) (*UserUUID, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckByLogin not implemented")
+}
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
 // UnsafeAuthServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -132,7 +147,7 @@ type UnsafeAuthServiceServer interface {
 }
 
 func RegisterAuthServiceServer(s grpc.ServiceRegistrar, srv AuthServiceServer) {
-	s.RegisterService(&_AuthService_serviceDesc, srv)
+	s.RegisterService(&AuthService_ServiceDesc, srv)
 }
 
 func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -243,7 +258,28 @@ func _AuthService_UpdateProfileBio_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-var _AuthService_serviceDesc = grpc.ServiceDesc{
+func _AuthService_CheckByLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginUser)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).CheckByLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/AuthService/CheckByLogin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).CheckByLogin(ctx, req.(*LoginUser))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AuthService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -270,6 +306,10 @@ var _AuthService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateProfileBio",
 			Handler:    _AuthService_UpdateProfileBio_Handler,
+		},
+		{
+			MethodName: "CheckByLogin",
+			Handler:    _AuthService_CheckByLogin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

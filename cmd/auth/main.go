@@ -48,7 +48,7 @@ func run() error {
 	authUse := authUsecase.NewAuthUsecase(authRepo, tokenGenerator, encrypter, zapSugar)
 	service := grpc3.NewGrpcAuthHandler(authUse)
 
-	srv, ok := net.Listen("tcp", ":8020")
+	srv, ok := net.Listen("tcp", ":8120")
 	if ok != nil {
 		log.Fatalln("can't listen port", err)
 	}

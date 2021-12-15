@@ -16,6 +16,7 @@ type AuthUsecase interface {
 	SetBio(profile models.Profile) models.StatusCode
 	SetPass(profile models.User) models.StatusCode
 	SetAvatar(profile models.Profile) models.StatusCode
+	CheckUser(user models.User) (models.User, models.StatusCode)
 }
 
 type AuthRepo interface {

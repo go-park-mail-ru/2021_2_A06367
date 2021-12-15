@@ -124,7 +124,7 @@ func run() error {
 
 	search := delivery.NewSearchHandler(filmsUse, authUse, actorsUse)
 
-	h := http2.NewSubsHandler(subsClient)
+	h := http2.NewSubsHandler(subsClient, authClient)
 
 	m := middleware.NewMiddleware(zapSugar)
 	m2 := middleware.NewMetricsMiddleware()

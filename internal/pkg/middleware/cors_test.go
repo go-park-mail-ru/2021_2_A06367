@@ -14,7 +14,7 @@ import (
 type HandlerTest struct {
 }
 
-func prepare()  *zap.SugaredLogger{
+func prepare() *zap.SugaredLogger {
 	logger, err := zap.NewProduction()
 	if err != nil {
 		return nil
@@ -29,7 +29,6 @@ func prepare()  *zap.SugaredLogger{
 	zapSugar := logger.Sugar()
 	return zapSugar
 }
-
 
 func (t HandlerTest) ServeHTTP(http.ResponseWriter, *http.Request) {
 
@@ -78,8 +77,8 @@ func TestLoggerMiddleware_LogRequest(t *testing.T) {
 		args   args
 	}{
 		{
-			args: args{next: HandlerTest{}},
-			fields: fields{logger:prepare()},
+			args:   args{next: HandlerTest{}},
+			fields: fields{logger: prepare()},
 		},
 	}
 	r := httptest.NewRequest("POST", "/persons",
@@ -114,11 +113,11 @@ func TestLoginUserIsValid(t *testing.T) {
 			want: false,
 		},
 		{
-			args: args{user: models.LoginUser{Login: "abc",EncryptedPassword: "abc"}},
+			args: args{user: models.LoginUser{Login: "abc", EncryptedPassword: "abc"}},
 			want: true,
 		},
 	}
-		for _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := LoginUserIsValid(tt.args.user); got != tt.want {
 				t.Errorf("LoginUserIsValid() = %v, want %v", got, tt.want)
@@ -132,11 +131,11 @@ func TestNewMetricsMiddleware(t *testing.T) {
 		name string
 		want *MetricsMiddleware
 	}{
-		{ },
+		{},
 	}
-		for _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMetricsMiddleware();got == nil {
+			if got := NewMetricsMiddleware(); got == nil {
 				t.Errorf("NewMetricsMiddleware() = %v, want %v", got, tt.want)
 			}
 		})
@@ -197,7 +196,7 @@ func TestUserIsValid(t *testing.T) {
 			want: false,
 		},
 		{
-			args: args{user: models.User{Login: "abc",EncryptedPassword: "abc"}},
+			args: args{user: models.User{Login: "abc", EncryptedPassword: "abc"}},
 			want: true,
 		},
 	}

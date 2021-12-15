@@ -120,3 +120,12 @@ func (h GrpcAuthHandler) UpdateProfileBio(ctx context.Context, in *generated.Use
 		Status: grpc.StatusCode(status),
 	}, nil
 }
+
+func (h GrpcAuthHandler) CheckByLogin(ctx context.Context, in *generated.LoginUser) (*generated.UserUUID, error) {
+
+	user := models.User{Login: in.Login}
+
+	token, _ := h.uc.CheckUser(user)
+
+	return &generated.UserUUID{ID: token.Id.String()}, nil
+}

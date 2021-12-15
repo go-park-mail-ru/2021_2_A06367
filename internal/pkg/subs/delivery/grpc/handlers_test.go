@@ -16,7 +16,7 @@ func TestGrpcSubsHandler_GetLicense(t *testing.T) {
 	defer ctl.Finish()
 
 	type fields struct {
-		uc                subs.SubsUsecase
+		uc subs.SubsUsecase
 	}
 	type args struct {
 		ctx context.Context
@@ -26,9 +26,8 @@ func TestGrpcSubsHandler_GetLicense(t *testing.T) {
 	mock := mocks.NewMockSubsUsecase(ctl)
 	mock.EXPECT().GetLicense(gomock.Any()).Return(models.License{}, models.Okey)
 
-
 	tests := []struct {
-		name string
+		name    string
 		fields  fields
 		args    args
 		want    *generated.License
@@ -36,17 +35,17 @@ func TestGrpcSubsHandler_GetLicense(t *testing.T) {
 	}{
 		{
 			fields: fields{uc: mock},
-			args: args{in: &generated.LicenseUUID{ID: uuid.New().String()}},
+			args:   args{in: &generated.LicenseUUID{ID: uuid.New().String()}},
 		},
 		{
 			fields: fields{uc: mock},
-			args: args{in: &generated.LicenseUUID{ID: ""}},
+			args:   args{in: &generated.LicenseUUID{ID: ""}},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			h := GrpcSubsHandler{
-				uc:                tt.fields.uc,
+				uc: tt.fields.uc,
 			}
 			_, err := h.GetLicense(tt.args.ctx, tt.args.in)
 			if (err != nil) != tt.wantErr {
@@ -62,7 +61,7 @@ func TestGrpcSubsHandler_SetLicense(t *testing.T) {
 	defer ctl.Finish()
 
 	type fields struct {
-		uc                subs.SubsUsecase
+		uc subs.SubsUsecase
 	}
 	type args struct {
 		ctx context.Context
@@ -70,11 +69,10 @@ func TestGrpcSubsHandler_SetLicense(t *testing.T) {
 	}
 
 	mock := mocks.NewMockSubsUsecase(ctl)
-	mock.EXPECT().SetLicense(gomock.Any(),gomock.Any()).Return(models.License{}, models.Okey)
-
+	mock.EXPECT().SetLicense(gomock.Any(), gomock.Any()).Return(models.License{}, models.Okey)
 
 	tests := []struct {
-		name string
+		name    string
 		fields  fields
 		args    args
 		want    *generated.License
@@ -82,17 +80,17 @@ func TestGrpcSubsHandler_SetLicense(t *testing.T) {
 	}{
 		{
 			fields: fields{uc: mock},
-			args: args{in: &generated.LicenseReq{ID: uuid.New().String()}},
+			args:   args{in: &generated.LicenseReq{ID: uuid.New().String()}},
 		},
 		{
 			fields: fields{uc: mock},
-			args: args{in: &generated.LicenseReq{ID: ""}},
+			args:   args{in: &generated.LicenseReq{ID: ""}},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			h := GrpcSubsHandler{
-				uc:                tt.fields.uc,
+				uc: tt.fields.uc,
 			}
 			_, err := h.SetLicense(tt.args.ctx, tt.args.in)
 			if (err != nil) != tt.wantErr {
@@ -112,11 +110,11 @@ func TestNewGrpcSubsHandler(t *testing.T) {
 		args args
 		want *GrpcSubsHandler
 	}{
-		{ },
+		{},
 	}
-		for _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewGrpcSubsHandler(tt.args.uc); got == nil{
+			if got := NewGrpcSubsHandler(tt.args.uc); got == nil {
 				t.Errorf("NewGrpcSubsHandler() = %v, want %v", got, tt.want)
 			}
 		})

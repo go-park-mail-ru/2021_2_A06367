@@ -21,7 +21,7 @@ func (ec *Encrypter) EncryptPswd(pswd string) string {
 	if err != nil {
 		return ""
 	}
-	_, err =Encryptedpswd.Write([]byte(ec.salt))
+	_, err = Encryptedpswd.Write([]byte(ec.salt))
 	if err != nil {
 		return ""
 	}

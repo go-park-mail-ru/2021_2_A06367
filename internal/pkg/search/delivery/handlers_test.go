@@ -29,11 +29,9 @@ func TestNewSearchHandler(t *testing.T) {
 		args args
 		want *SearchHandler
 	}{
-		{
-
-		},
+		{},
 	}
-		for _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := NewSearchHandler(tt.args.fu, tt.args.pu, tt.args.au)
 			if got == nil {
@@ -82,8 +80,6 @@ func TestSearchHandler_Search(t *testing.T) {
 	})
 	w := httptest.NewRecorder()
 
-
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			sh := &SearchHandler{
@@ -128,8 +124,6 @@ func TestSearchHandler_SearchFail(t *testing.T) {
 
 	r := httptest.NewRequest("GET", "/actor/id", strings.NewReader(fmt.Sprint()))
 	w := httptest.NewRecorder()
-
-
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
