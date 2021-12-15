@@ -58,5 +58,5 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.PRIVATE_KEY }}
-          script: cd /home/ubuntu/backend/2021_2_A06367 && docker-compose down && docker rm $(docker ps -aq) && docker-compose up -d
+          script: cd /home/ubuntu/backend/2021_2_A06367 && docker-compose down && docker-compose up -d
 
