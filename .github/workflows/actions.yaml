@@ -18,6 +18,8 @@ jobs:
           version: v1.29
   test:
     name: test
+    needs:
+      - lint
     runs-on: ubuntu-latest
     steps:
       - name: Install Go
@@ -27,18 +29,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.3.4
       - name: Run tests
-        run:  go test -v -coverpkg=./... -coverprofile=profile.cov ./... && go tool cover -func profile.cov
-  prebuild:
-    name: prebuild
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo 1
+        run: go test  -v -coverprofile=coverage.out.tmp -coverpkg=./...  ./... && cat coverage.out.tmp | grep -v _mock.go | grep -v _easyjson.go | grep -v .pb.go | grep -v _grpc.go > coverage.out && go tool cover -func=coverage.out
   deploy:
     name: deploy
     runs-on: ubuntu-latest
     needs:
       - lint
+      - test
     steps:
       - name: Pull code
         uses: appleboy/ssh-action@master
