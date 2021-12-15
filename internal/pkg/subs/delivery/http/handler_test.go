@@ -8,8 +8,11 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/subs/delivery/grpc/generated"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"reflect"
 	"strings"
@@ -105,7 +108,7 @@ func TestSubsHandler_GetLicense(t *testing.T) {
 }
 
 func TestSubsHandler_SetLicense(t *testing.T) {
-	/*ctrl := gomock.NewController(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	a := generated.NewMockSubsServiceClient(ctrl)
@@ -114,7 +117,7 @@ func TestSubsHandler_SetLicense(t *testing.T) {
 	b := generated2.NewMockAuthServiceClient(ctrl)
 	b.EXPECT().CheckByLogin(gomock.Any(), gomock.Any()).Return(&generated2.UserUUID{ID: uuid.New().String()}, nil)
 	pr, pw := io.Pipe()
-	writer := part.NewWriter(pw)
+	writer := multipart.NewWriter(pw)
 	go func() {
 		defer writer.Close()
 		part, err := writer.CreateFormField("label")
@@ -128,6 +131,8 @@ func TestSubsHandler_SetLicense(t *testing.T) {
 	}()
 
 	r := httptest.NewRequest("GET", "/abcd/", pr)
+	r.PostForm = url.Values{}
+	r.PostForm.Set("label", "ktlh")
 	r.Header.Add("Content-Type", writer.FormDataContentType())
 	os.Setenv("SECRET", "salt")
 	enc := usecase2.NewTokenator()
@@ -171,5 +176,4 @@ func TestSubsHandler_SetLicense(t *testing.T) {
 			h.SetLicense(w, r)
 		})
 	}
-	 */
 }
