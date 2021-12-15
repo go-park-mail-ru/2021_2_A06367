@@ -28,11 +28,13 @@ func (h SubsHandler) GetLicense(w http.ResponseWriter, r *http.Request) {
 
 	l, err := h.subsClient.GetLicense(context.Background(), &subs.LicenseUUID{ID: access.Id.String()})
 	//если микросервис отвалился
+	fmt.Print(l, err)
 	if err != nil {
 		util.Response(w, models.InternalError, nil)
 	}
 	parsed, err := time.Parse(time.RFC3339, l.ExpiresDate)
 	if err != nil {
+		fmt.Print(l, err)
 		util.Response(w, models.InternalError, nil)
 	}
 	license := models.License{IsValid: true, ExpDate: parsed}
@@ -57,14 +59,17 @@ func (h SubsHandler) SetLicense(w http.ResponseWriter, r *http.Request) {
 	}
 	profile, err := h.cl.CheckByLogin(context.Background(), &generated2.LoginUser{Login: data})
 	if err != nil {
+		fmt.Print( err)
 		util.Response(w, models.InternalError, nil)
 	}
 
+	fmt.Print(profile)
 	_, err = h.subsClient.SetLicense(context.Background(), &subs.LicenseReq{
 		ID:   profile.ID,
 		Type: "MONTH"})
 	//если микросервис отвалился
 	if err != nil {
+		fmt.Print( err)
 		util.Response(w, models.InternalError, nil)
 	}
 	util.Response(w, models.Okey, nil)
