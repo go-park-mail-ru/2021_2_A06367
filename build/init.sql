@@ -183,11 +183,11 @@ VALUES ('b0840514-46e6-11ec-81d3-0242ac130003', '{Триллер}', 'США','20
         K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
         9743f488-3b47-11ec-8d3d-0242ac130003}','1995-01-01', 120, 'Русский', '120 млн', 12, '{warcraft.png}', '{video.mp4}', 'warcraft');
 
-INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, isSeries, slug)
+INSERT INTO public.films (id, genres, country, releaseRus, description, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, isSeries, needsPayment ,slug)
 VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', '{Фентези}', 'США', '2001-01-01',
         'История о том, как обычный паренёк из провинции превратился в одного из самых состоятельных людей США. Джордж Джанга (Джонни Депп) с детства мечтал о роскошной жизни: шикарном доме, дорогих автомобилях и лучших девушках США. Находчивый паренёк быстро отыскал оригинальный способ осуществить свою мечту: он решил распространять кокаин в промышленных масштабах. Как найти рынки сбыта? Очень просто — необходимо подсадить на белый порошок главных знаменитостей Америки!',
         'Ирландец', 2015, '{S. Borunov, K. Тарантино}', '{Роберт Уэйд}', '{3e06d4e4-3b47-11ec-8d3d-0242ac130003,
-        9743f488-3b47-11ec-8d3d-0242ac130003}', '2001-01-02', 120, 'Русский', '120 млн', 12, '{irish.png}', '{video.mp4}', true, 'irishman');
+        9743f488-3b47-11ec-8d3d-0242ac130003}', '2001-01-02', 120, 'Русский', '120 млн', 12, '{irish.png}', '{video.mp4}', true, true,'irishman');
 
 INSERT INTO public.series_seasons (series_id, id, pic, src)
 VALUES ('9743f488-3b47-11ec-8d3d-0242ac130003', 1, '{warcraft_s1_ser1.png, warcraft_s1_ser2.png, warcraft_s1_ser3.png, warcraft_s1_ser4.png, warcraft_s1_ser5.png}',
