@@ -127,7 +127,7 @@ func (h GrpcAuthHandler) CheckByLogin(ctx context.Context, in *generated.LoginUs
 	log.Println(in)
 	user := models.User{Login: in.Login}
 
-	token, err := h.uc.CheckUser(user)
+	token, err := h.uc.CheckUserLogin(user)
 	log.Println(token, err)
 	return &generated.UserUUID{ID: token.Id.String()}, nil
 }

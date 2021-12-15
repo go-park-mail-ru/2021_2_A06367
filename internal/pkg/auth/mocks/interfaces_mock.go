@@ -166,6 +166,21 @@ func (mr *MockAuthUsecaseMockRecorder) CheckUser(user interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckUser", reflect.TypeOf((*MockAuthUsecase)(nil).CheckUser), user)
 }
 
+// CheckUserLogin mocks base method.
+func (m *MockAuthUsecase) CheckUserLogin(user models.User) (models.User, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckUserLogin", user)
+	ret0, _ := ret[0].(models.User)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// CheckUserLogin indicates an expected call of CheckUserLogin.
+func (mr *MockAuthUsecaseMockRecorder) CheckUserLogin(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckUserLogin", reflect.TypeOf((*MockAuthUsecase)(nil).CheckUserLogin), user)
+}
+
 // MockAuthRepo is a mock of AuthRepo interface.
 type MockAuthRepo struct {
 	ctrl     *gomock.Controller
@@ -217,6 +232,21 @@ func (m *MockAuthRepo) CheckUser(user models.User) (models.User, models.StatusCo
 func (mr *MockAuthRepoMockRecorder) CheckUser(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckUser", reflect.TypeOf((*MockAuthRepo)(nil).CheckUser), user)
+}
+
+// CheckUserLogin mocks base method.
+func (m *MockAuthRepo) CheckUserLogin(user models.User) (models.User, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckUserLogin", user)
+	ret0, _ := ret[0].(models.User)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// CheckUserLogin indicates an expected call of CheckUserLogin.
+func (mr *MockAuthRepoMockRecorder) CheckUserLogin(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckUserLogin", reflect.TypeOf((*MockAuthRepo)(nil).CheckUserLogin), user)
 }
 
 // GetProfile mocks base method.

@@ -27,6 +27,27 @@ func prepare(t *testing.T, pgxRows pgx.Rows) *AuthRepo { // mock on repo and uid
 	return repo
 }
 
+func TestAuthRepo_CheckUserLogin(t *testing.T) {
+	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
+	uid, err := uuid.Parse(uidStr)
+	if err != nil {
+		t.Error(err)
+	}
+	ecnryptedPswd := usecase.NewEncrypter().EncryptPswd(pswd)
+	columns := []string{"id", "encrypted_password"}
+	pgxRows := pgxpoolmock.NewRows(columns).
+		AddRow(uid, ecnryptedPswd).ToPgxRows()
+	pgxRows.Next()
+	repo := prepare(t, pgxRows)
+	user := models.User{Id: uid, Login: "tester2", EncryptedPassword: ecnryptedPswd}
+	_, st := repo.CheckUserLogin(user)
+
+	if st != models.Okey {
+		t.Error("wrong status returned")
+	}
+}
+
+
 func TestAuthRepo_CheckUser(t *testing.T) {
 	uidStr := "40266371-008c-4911-813d-65d222eb4d47"
 	uid, err := uuid.Parse(uidStr)

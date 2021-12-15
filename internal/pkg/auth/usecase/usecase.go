@@ -57,6 +57,10 @@ func (u *AuthUsecase) SignUp(user models.User) (string, models.StatusCode) {
 func (u *AuthUsecase) CheckUser(user models.User) (models.User, models.StatusCode) {
 	return u.repo.CheckUser(user)
 }
+func (u *AuthUsecase) CheckUserLogin(user models.User) (models.User, models.StatusCode) {
+	return u.repo.CheckUser(user)
+}
+
 
 func (u *AuthUsecase) GetProfile(user models.Profile) (models.Profile, models.StatusCode) {
 	return u.repo.GetProfile(user)

@@ -17,11 +17,13 @@ type AuthUsecase interface {
 	SetPass(profile models.User) models.StatusCode
 	SetAvatar(profile models.Profile) models.StatusCode
 	CheckUser(user models.User) (models.User, models.StatusCode)
+	CheckUserLogin(user models.User) (models.User, models.StatusCode)
 }
 
 type AuthRepo interface {
 	CreateUser(user models.User) (models.User, models.StatusCode)
 	CheckUser(user models.User) (models.User, models.StatusCode)
+	CheckUserLogin(user models.User) (models.User, models.StatusCode)
 	GetProfile(user models.Profile) (models.Profile, models.StatusCode)
 	AddFollowing(who, whom uuid.UUID) models.StatusCode
 	RemoveFollowing(who, whom uuid.UUID) models.StatusCode

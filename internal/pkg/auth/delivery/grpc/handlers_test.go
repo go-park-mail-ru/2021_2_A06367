@@ -149,7 +149,7 @@ func TestCheckUser(t *testing.T) {
 	defer conn.Close()
 	cl := generated.NewAuthServiceClient(conn)
 
-	usecase.EXPECT().CheckUser(gomock.Any()).Return(models.User{}, models.Okey)
+	usecase.EXPECT().CheckUserLogin(gomock.Any()).Return(models.User{}, models.Okey)
 
 	_, err = cl.CheckByLogin(context.Background(), &generated.LoginUser{Login: uuid.New().String()})
 	if err != nil {
