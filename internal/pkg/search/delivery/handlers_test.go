@@ -12,7 +12,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -57,14 +56,9 @@ func TestSearchHandler_Search(t *testing.T) {
 		pu auth.AuthUsecase
 		au actors.ActorsUsecase
 	}
-	type args struct {
-		w http.ResponseWriter
-		r *http.Request
-	}
 	tests := []struct {
 		name   string
 		fields fields
-		args   args
 	}{{
 		fields: fields{
 			fu: f,
@@ -105,14 +99,9 @@ func TestSearchHandler_SearchFail(t *testing.T) {
 		pu auth.AuthUsecase
 		au actors.ActorsUsecase
 	}
-	type args struct {
-		w http.ResponseWriter
-		r *http.Request
-	}
 	tests := []struct {
 		name   string
 		fields fields
-		args   args
 	}{{
 		fields: fields{
 			fu: f,

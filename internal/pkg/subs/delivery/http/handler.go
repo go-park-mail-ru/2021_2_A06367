@@ -31,7 +31,10 @@ func (h SubsHandler) GetLicense(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		util.Response(w, models.InternalError, nil)
 	}
-	parsed, _ := time.Parse(time.RFC3339, l.ExpiresDate)
+	parsed, err := time.Parse(time.RFC3339, l.ExpiresDate)
+	if err != nil {
+		util.Response(w, models.InternalError, nil)
+	}
 	license := models.License{IsValid: true, ExpDate: parsed}
 	util.Response(w, models.Okey, license)
 }
@@ -53,7 +56,7 @@ func (h SubsHandler) SetLicense(w http.ResponseWriter, r *http.Request) {
 	}
 	profile, err := h.cl.CheckByLogin(context.Background(), &generated2.LoginUser{Login: data})
 	if err != nil {
-		return
+		util.Response(w, models.InternalError, nil)
 	}
 
 	_, err = h.subsClient.SetLicense(context.Background(), &subs.LicenseReq{

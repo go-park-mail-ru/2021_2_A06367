@@ -209,29 +209,3 @@ func TestUserIsValid(t *testing.T) {
 	}
 }
 
-func Test_writer_WriteHeader(t *testing.T) {
-	type fields struct {
-		ResponseWriter http.ResponseWriter
-		statusCode     int
-	}
-	type args struct {
-		code int
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			w := &writer{
-				ResponseWriter: tt.fields.ResponseWriter,
-				statusCode:     tt.fields.statusCode,
-			}
-
-			w.Header()
-		})
-	}
-}

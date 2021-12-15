@@ -161,7 +161,10 @@ func TestActorHandler_FetchActors(t *testing.T) {
 	zapSugar := logger.Sugar()
 	handler := NewActorsHandler(usecase, zapSugar)
 
-	js, _ := json.Marshal([]models.Actors{{Id: uid}})
+	js, err := json.Marshal([]models.Actors{{Id: uid}})
+	if err != nil {
+		t.Skip()
+	}
 	r := httptest.NewRequest("GET", "/film", strings.NewReader(string(js)))
 	w := httptest.NewRecorder()
 

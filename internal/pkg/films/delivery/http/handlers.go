@@ -164,8 +164,12 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 				filmSet.IsAvailable = false
 			} else {
 				//если микросервис ок и надо просто проверить лицензию
-				parsed, _ := time.Parse(time.RFC3339, license.ExpiresDate)
-				filmSet.IsAvailable = time.Now().Before(parsed)
+				parsed, err := time.Parse(time.RFC3339, license.ExpiresDate)
+				if err != nil {
+					filmSet.IsAvailable = false
+				} else {
+					filmSet.IsAvailable = time.Now().Before(parsed)
+				}
 			}
 		}
 	} else {
@@ -512,6 +516,10 @@ func (h FilmsHandler) SetRating(w http.ResponseWriter, r *http.Request) {
 
 	rating := r.URL.Query().Get("rating")
 	mark, err := strconv.ParseFloat(rating, 32)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
 
 	res, err := h.client.SetRating(context.Background(), &generated.RatingPair{
 		FilmUUID: film.Id.String(),

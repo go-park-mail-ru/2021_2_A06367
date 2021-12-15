@@ -422,11 +422,11 @@ func TestFilmsHandler_SetRatingById(t *testing.T) {
 	handler := NewFilmsHandler(nil, usecase, use2)
 
 	uid := uuid.New()
-	r := httptest.NewRequest("GET", "/film/"+uid.String(), strings.NewReader(fmt.Sprint()))
+	r := httptest.NewRequest("GET", "/film/"+uid.String()+"?rating=2", strings.NewReader(fmt.Sprint()))
 	r = mux.SetURLVars(r, map[string]string{
 		"id": uid.String(),
 	})
-	r.URL.Query().Set("rating", "2")
+
 
 	os.Setenv("SECRET", "salt")
 	enc := usecase2.NewTokenator()

@@ -83,14 +83,9 @@ func TestSubsHandler_GetLicense(t *testing.T) {
 		subsClient generated.SubsServiceClient
 		cl         generated2.AuthServiceClient
 	}
-	type args struct {
-		w http.ResponseWriter
-		r *http.Request
-	}
 	tests := []struct {
 		name   string
 		fields fields
-		args   args
 	}{
 		{
 			name: "simple check",
@@ -98,7 +93,6 @@ func TestSubsHandler_GetLicense(t *testing.T) {
 				subsClient: a,
 				cl:         b,
 			},
-			args: args{},
 		},
 	}
 	for _, tt := range tests {
@@ -125,8 +119,14 @@ func TestSubsHandler_SetLicense(t *testing.T) {
 	writer := multipart.NewWriter(pw)
 	go func() {
 		defer writer.Close()
-		part, _ := writer.CreateFormField("label")
-		part.Write([]byte("test"))
+		part, err := writer.CreateFormField("label")
+		if err != nil {
+			return
+		}
+		write, err := part.Write([]byte("test"))
+		if err != nil || write == 0 {
+			return
+		}
 	}()
 
 	r := httptest.NewRequest("GET", "/abcd/", pr)
@@ -152,14 +152,9 @@ func TestSubsHandler_SetLicense(t *testing.T) {
 		subsClient generated.SubsServiceClient
 		cl         generated2.AuthServiceClient
 	}
-	type args struct {
-		w http.ResponseWriter
-		r *http.Request
-	}
 	tests := []struct {
 		name   string
 		fields fields
-		args   args
 	}{
 		{
 			name: "simple check",
@@ -167,7 +162,6 @@ func TestSubsHandler_SetLicense(t *testing.T) {
 				subsClient: a,
 				cl:         b,
 			},
-			args: args{},
 		},
 	}
 	for _, tt := range tests {

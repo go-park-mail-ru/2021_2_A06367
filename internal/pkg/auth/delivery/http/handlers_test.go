@@ -78,6 +78,7 @@ func TestNewAuthHandler(t *testing.T) {
 	defer func(logger *zap.Logger) {
 		err = logger.Sync()
 		if err != nil {
+			return
 		}
 	}(logger)
 	zapSugar := logger.Sugar()
@@ -411,7 +412,10 @@ func TestAuthHandler_GetProfile2(t *testing.T) {
 	os.Setenv("SECRET", "salt")
 
 	data := models.Profile{Id: uuid.New()}
-	js, _ := json.Marshal(data)
+	js, err := json.Marshal(data)
+	if err != nil {
+		t.Skip()
+	}
 	r := httptest.NewRequest("GET", "/selection/user/personal", strings.NewReader(string(js)))
 	w := httptest.NewRecorder()
 	r = mux.SetURLVars(r, map[string]string{
@@ -483,7 +487,10 @@ func TestAuthHandler_UpdateProfilePic(t *testing.T) {
 	data := models.PassUpdate{
 		Password: "data",
 	}
-	js, _ := json.Marshal(data)
+	js, err := json.Marshal(data)
+	if err != nil {
+		t.Skip()
+	}
 
 	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
 	os.Setenv("SECRET", "salt")
@@ -523,7 +530,10 @@ func TestAuthHandler_UpdateProfilePass(t *testing.T) {
 	data := models.PassUpdate{
 		Password: "data",
 	}
-	js, _ := json.Marshal(data)
+	js, err := json.Marshal(data)
+	if err != nil {
+		t.Skip()
+	}
 
 	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
 	os.Setenv("SECRET", "salt")
@@ -563,7 +573,10 @@ func TestAuthHandler_UpdateProfilePassErr(t *testing.T) {
 	data := models.PassUpdate{
 		Password: "data",
 	}
-	js, _ := json.Marshal(data)
+	js, err := json.Marshal(data)
+	if err != nil {
+		t.Skip()
+	}
 
 	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
 	os.Setenv("SECRET", "salt")
@@ -601,7 +614,10 @@ func TestAuthHandler_UpdateProfileBio(t *testing.T) {
 	data := models.PassUpdate{
 		Password: "data",
 	}
-	js, _ := json.Marshal(data)
+	js, err := json.Marshal(data)
+	if err != nil {
+		t.Skip()
+	}
 
 	r := httptest.NewRequest("GET", "/", strings.NewReader(string(js)))
 	os.Setenv("SECRET", "salt")
