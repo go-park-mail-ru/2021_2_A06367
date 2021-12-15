@@ -41,8 +41,9 @@ func (h SubsHandler) GetLicense(w http.ResponseWriter, r *http.Request) {
 
 func (h SubsHandler) SetLicense(w http.ResponseWriter, r *http.Request) {
 
-	err := r.ParseMultipartForm(5 * 1024 * 1025)
+	err := r.ParseForm()
 	if err != nil {
+		fmt.Print(err)
 		util.Response(w, models.BadRequest, nil)
 		return
 	}
