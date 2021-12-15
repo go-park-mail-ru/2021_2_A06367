@@ -5,14 +5,8 @@ on:
     branches:
       - main
       - grpc-magic
+      - ktlh-raitings
 jobs:
-  prebuild:
-    name: prebuild
-    runs-on: ubuntu-latest
-    steps:
-      - name: echo
-        run: echo 0
-    # TODO: добавить шаг с тестами
   lint:
     name: lint
     runs-on: ubuntu-latest
@@ -26,9 +20,20 @@ jobs:
     name: test
     runs-on: ubuntu-latest
     steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17.x
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      - name: Run tests
+        run:  go test -v -coverpkg=./... -coverprofile=profile.cov ./... && go tool cover -func profile.cov
+  prebuild:
+    name: prebuild
+    runs-on: ubuntu-latest
+    steps:
       - name: echo
-        run: echo 0
-    # TODO: добавить шаг с тестами
+        run: echo 1
   deploy:
     name: deploy
     runs-on: ubuntu-latest
