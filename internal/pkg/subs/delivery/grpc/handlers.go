@@ -6,7 +6,6 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/subs"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/subs/delivery/grpc/generated"
 	"github.com/google/uuid"
-	"time"
 )
 
 type GrpcSubsHandler struct {
@@ -39,7 +38,7 @@ func (h GrpcSubsHandler) SetLicense(ctx context.Context, in *generated.LicenseRe
 	l, status := h.uc.SetLicense(id, in.Type)
 	return &generated.License{
 		IsValid:     l.IsValid,
-		ExpiresDate: l.ExpDate.Format(time.RFC3339),
+		ExpiresDate: l.ExpDate.Format("2006-01-02 15:04:05"),
 		Status:      grpc.StatusCode(status),
 	}, nil
 }
