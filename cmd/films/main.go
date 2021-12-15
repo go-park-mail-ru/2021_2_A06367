@@ -50,7 +50,7 @@ func run() error {
 	filmsUse := filmsUsecase.NewFilmsUsecase(filmsRepo, zapSugar)
 	service := grpc2.NewGrpcFilmsHandler(filmsUse)
 
-	srv, ok := net.Listen("tcp", ":8110")
+	srv, ok := net.Listen("tcp", ":8010")
 	if ok != nil {
 		log.Fatalln("can't listen port", err)
 	}
