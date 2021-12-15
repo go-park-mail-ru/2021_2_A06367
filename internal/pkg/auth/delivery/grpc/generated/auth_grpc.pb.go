@@ -9,6 +9,8 @@ import (
 	status "google.golang.org/grpc/status"
 )
 
+//go:generate mockgen -source=auth_grpc.pb.go -destination=auth_grpc.go -package=generated
+
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
 // Requires gRPC-Go v1.32.0 or later.
