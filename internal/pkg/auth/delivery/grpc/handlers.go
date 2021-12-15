@@ -7,6 +7,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc/generated"
 	"github.com/google/uuid"
+	"log"
 	"time"
 )
 
@@ -123,9 +124,10 @@ func (h GrpcAuthHandler) UpdateProfileBio(ctx context.Context, in *generated.Use
 
 func (h GrpcAuthHandler) CheckByLogin(ctx context.Context, in *generated.LoginUser) (*generated.UserUUID, error) {
 
+	log.Println(in)
 	user := models.User{Login: in.Login}
 
-	token, _ := h.uc.CheckUser(user)
-
+	token, err := h.uc.CheckUser(user)
+	log.Println(token, err)
 	return &generated.UserUUID{ID: token.Id.String()}, nil
 }
