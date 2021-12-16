@@ -36,31 +36,84 @@ func (m *MockSubsUsecase) EXPECT() *MockSubsUsecaseMockRecorder {
 }
 
 // GetLicense mocks base method.
-func (m *MockSubsUsecase) GetLicense(id uuid.UUID) (models.License, models.StatusCode) {
+func (m *MockSubsUsecase) GetLicense(arg0 uuid.UUID) (models.License, models.StatusCode) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetLicense", id)
+	ret := m.ctrl.Call(m, "GetLicense", arg0)
 	ret0, _ := ret[0].(models.License)
 	ret1, _ := ret[1].(models.StatusCode)
 	return ret0, ret1
 }
 
 // GetLicense indicates an expected call of GetLicense.
-func (mr *MockSubsUsecaseMockRecorder) GetLicense(id interface{}) *gomock.Call {
+func (mr *MockSubsUsecaseMockRecorder) GetLicense(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLicense", reflect.TypeOf((*MockSubsUsecase)(nil).GetLicense), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLicense", reflect.TypeOf((*MockSubsUsecase)(nil).GetLicense), arg0)
 }
 
 // SetLicense mocks base method.
-func (m *MockSubsUsecase) SetLicense(id uuid.UUID, license string) (models.License, models.StatusCode) {
+func (m *MockSubsUsecase) SetLicense(arg0 uuid.UUID, arg1 string) (models.License, models.StatusCode) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SetLicense", id, license)
+	ret := m.ctrl.Call(m, "SetLicense", arg0, arg1)
 	ret0, _ := ret[0].(models.License)
 	ret1, _ := ret[1].(models.StatusCode)
 	return ret0, ret1
 }
 
 // SetLicense indicates an expected call of SetLicense.
-func (mr *MockSubsUsecaseMockRecorder) SetLicense(id, license interface{}) *gomock.Call {
+func (mr *MockSubsUsecaseMockRecorder) SetLicense(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetLicense", reflect.TypeOf((*MockSubsUsecase)(nil).SetLicense), id, license)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetLicense", reflect.TypeOf((*MockSubsUsecase)(nil).SetLicense), arg0, arg1)
+}
+
+// MockSubsRepository is a mock of SubsRepository interface.
+type MockSubsRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockSubsRepositoryMockRecorder
+}
+
+// MockSubsRepositoryMockRecorder is the mock recorder for MockSubsRepository.
+type MockSubsRepositoryMockRecorder struct {
+	mock *MockSubsRepository
+}
+
+// NewMockSubsRepository creates a new mock instance.
+func NewMockSubsRepository(ctrl *gomock.Controller) *MockSubsRepository {
+	mock := &MockSubsRepository{ctrl: ctrl}
+	mock.recorder = &MockSubsRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockSubsRepository) EXPECT() *MockSubsRepositoryMockRecorder {
+	return m.recorder
+}
+
+// GetLicense mocks base method.
+func (m *MockSubsRepository) GetLicense(arg0 uuid.UUID) (models.License, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLicense", arg0)
+	ret0, _ := ret[0].(models.License)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// GetLicense indicates an expected call of GetLicense.
+func (mr *MockSubsRepositoryMockRecorder) GetLicense(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLicense", reflect.TypeOf((*MockSubsRepository)(nil).GetLicense), arg0)
+}
+
+// SetLicense mocks base method.
+func (m *MockSubsRepository) SetLicense(arg0 uuid.UUID, arg1 models.License) (models.License, models.StatusCode) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetLicense", arg0, arg1)
+	ret0, _ := ret[0].(models.License)
+	ret1, _ := ret[1].(models.StatusCode)
+	return ret0, ret1
+}
+
+// SetLicense indicates an expected call of SetLicense.
+func (mr *MockSubsRepositoryMockRecorder) SetLicense(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetLicense", reflect.TypeOf((*MockSubsRepository)(nil).SetLicense), arg0, arg1)
 }

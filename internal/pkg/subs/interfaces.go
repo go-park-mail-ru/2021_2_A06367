@@ -8,6 +8,11 @@ import (
 //go:generate mockgen -source=interfaces.go -destination=./mocks/interfaces_mock.go -package=mocks
 
 type SubsUsecase interface {
-	GetLicense(id uuid.UUID) (models.License, models.StatusCode)
-	SetLicense(id uuid.UUID, license string) (models.License, models.StatusCode)
+	GetLicense(uuid.UUID) (models.License, models.StatusCode)
+	SetLicense(uuid.UUID, string) (models.License, models.StatusCode)
+}
+
+type SubsRepository interface {
+	GetLicense(uuid.UUID) (models.License, models.StatusCode)
+	SetLicense(uuid.UUID, models.License) (models.License, models.StatusCode)
 }

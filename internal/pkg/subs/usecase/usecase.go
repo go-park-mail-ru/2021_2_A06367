@@ -1,38 +1,27 @@
 package usecase
 
 import (
-	"fmt"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
+	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/subs"
 	"github.com/google/uuid"
-	"log"
 	"time"
 )
 
 type SubsUsecase struct {
-	data map[uuid.UUID]models.License
+	r subs.SubsRepository
 }
 
-func NewSubsUsecase() *SubsUsecase {
-	return &SubsUsecase{
-		data: map[uuid.UUID]models.License{},
-	}
+func NewSubsUsecase(r subs.SubsRepository) *SubsUsecase {
+	return &SubsUsecase{r: r}
 }
 
 func (u *SubsUsecase) GetLicense(id uuid.UUID) (models.License, models.StatusCode) {
-	fmt.Println(u.data)
-	log.Println(u.data)
-	if l, flag := u.data[id];flag {
-		return l, models.Okey
-	}
-	return models.License{}, models.NotFound
+	return u.r.GetLicense(id)
 
 }
 
 func (u *SubsUsecase) SetLicense(id uuid.UUID, license string) (models.License, models.StatusCode) {
-	log.Println(id)
+
 	l := models.License{ExpDate: time.Now().AddDate(0, 1, 0), IsValid: true}
-	u.data[id] = l
-	fmt.Print(u.data)
-	log.Println(u.data)
-	return l, models.Okey
+	return u.r.SetLicense(id, l)
 }
