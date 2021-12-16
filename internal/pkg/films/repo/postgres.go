@@ -6,7 +6,6 @@ import (
 	"github.com/jackc/pgtype/pgxtype"
 	"go.uber.org/zap"
 	"math/rand"
-	"strings"
 )
 
 const (
@@ -210,6 +209,7 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 
 func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.StatusCode) {
 	rows, err := r.pool.Query(context.Background(), SELECT_FILM_BY_KEYWORD, strings.Replace(keyword, " ", "&", -1), "%"+keyword+"%")
+
 	if err != nil {
 		return nil, models.InternalError
 	}

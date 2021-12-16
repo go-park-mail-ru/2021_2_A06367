@@ -15,6 +15,7 @@ const (
 	SElECT_ACTOR_BY_ID       = "SELECT id, name, surname, avatar, height, date_of_birth, description, genres FROM actors WHERE id = $1"
 	SELECT_ACTORS_BY_ID      = "SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id IN ($1)"
 	SELECT_ACTORS_BY_KEYWORD = "SELECT * FROM actors WHERE make_tsvector(name) @@ to_tsquery($1) or LOWER(name) like LOWER($2)   LIMIT 10"
+
 )
 
 type ActorsRepo struct {
