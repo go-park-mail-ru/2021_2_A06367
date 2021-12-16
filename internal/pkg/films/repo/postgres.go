@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgtype/pgxtype"
 	"go.uber.org/zap"
 	"math/rand"
+	"strings"
 )
 
 const (
