@@ -20,6 +20,12 @@ CREATE TABLE subscriptions (
     UNIQUE (user_id, subscribed_at)
 );
 
+CREATE TABLE subs
+(
+    user_id uuid NOT NULL,
+    exp_date date NOT NULL,
+    CONSTRAINT subs_pkey PRIMARY KEY (user_id)
+);
 
 CREATE TABLE films
 (
