@@ -1,22 +1,15 @@
 -- DROP DATABASE netflix;
-CREATE DATABASE netflix
-    WITH
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'Russian_Russia.1251'
-    LC_CTYPE = 'Russian_Russia.1251'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1;
+CREATE DATABASE netflix;
 
 
 CREATE TABLE users(
                       id UUID PRIMARY KEY,
                       login text UNIQUE NOT NULL,
                       encrypted_password text NOT NULL,
-                      about text,
-                      avatar text,
-                      subscriptions int,
-                      subscribers int,
+                      about text DEFAULT '',
+                      avatar text DEFAULT 'userpic.png',
+                      subscriptions int DEFAULT 0,
+                      subscribers int DEFAULT 0,
                       created_at TIMESTAMP NOT NULL
 );
 
@@ -27,13 +20,19 @@ CREATE TABLE subscriptions (
                                UNIQUE (user_id, subscribed_at)
 );
 
-
-CREATE UNIQUE INDEX online_idx ON online_users (login);
+CREATE TABLE subs
+(
+    user_id uuid NOT NULL,
+    exp_date date NOT NULL,
+    CONSTRAINT subs_pkey PRIMARY KEY (user_id)
+);
 
 CREATE TABLE films
 (
     id UUID NOT NULL,
     genres text[] NOT NULL,
+    country text NOT NULL,
+    releaserus TIMESTAMP WITH TIME ZONE NOT NULL,
     title text NOT NULL,
     year integer NOT NULL,
     director text[] NOT NULL,
@@ -42,25 +41,68 @@ CREATE TABLE films
     release date NOT NULL,
     duration integer NOT NULL,
     language text NOT NULL,
+    budget text NOT NULL,
+    age integer NOT NULL,
+    pic text[] NOT NULL,
     src text[] NOT NULL,
+    description text NOT NULL,
+    isSeries bool DEFAULT false,
+    needsPayment bool DEFAULT false,
+    slug text NOT NULL,
     PRIMARY KEY (id),
     Check(year > 0),
-    Check(duration > 0)
+    Check(duration > 0),
+    UNIQUE (slug)
 );
+
+CREATE TABLE series_seasons
+(
+    series_id UUID REFERENCES films(id) NOT NULL,
+    id integer,
+    pic text[] NOT NULL,
+    src text[] NOT NULL
+);
+
+ALTER TABLE series_seasons
+    ADD CONSTRAINT series_seasons_uniq UNIQUE(series_id, id);
+
+CREATE TABLE starred_films
+(
+    film_id UUID NOT NULL,
+    user_id UUID NOT NULL
+);
+
+ALTER TABLE starred_films
+    ADD CONSTRAINT uniq_list UNIQUE(film_id, user_id);
 
 CREATE INDEX films_actors_idx ON films USING gin(actors);
 
 CREATE TABLE watchlist
 (
-    id UUID REFERENCES users(id) NOT NULL,
-    film_id UUID REFERENCES films(id) NOT NULL
+    id UUID NOT NULL,
+    film_id UUID NOT NULL
 );
+
+ALTER TABLE watchlist
+    ADD CONSTRAINT watchlist_uniq_list UNIQUE(id,film_id);
+
+
+CREATE TABLE ratings
+(
+    id UUID NOT NULL,
+    film_id UUID NOT NULL,
+    rating float NOT NULL
+);
+
+ALTER TABLE ratings
+    ADD CONSTRAINT ratings_uniq_list UNIQUE(id,film_id);
+
 
 CREATE TABLE rating
 (
     film_id UUID REFERENCES films(id) NOT NULL,
-    rating double precision NOT NULL,
-    CONSTRAINT rating_pkey PRIMARY KEY (film_id)
+    rating double precision NOT NULL
+--     CONSTRAINT rating_pkey PRIMARY KEY (film_id)
 );
 
 CREATE TABLE actors
