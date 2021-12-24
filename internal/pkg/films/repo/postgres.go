@@ -33,7 +33,7 @@ const (
 
 	SELECT_FILM_BY_RATING = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, " +
 		"duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
-		" FROM films JOIN rating ON films.id = rating.film_id ORDER BY rating DESC LIMIT 10"
+		" FROM films JOIN ratings ON films.id = ratings.film_id ORDER BY rating DESC LIMIT 10"
 
 	SELECT_FILM_BY_DATE = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, " +
 		"duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
