@@ -195,23 +195,23 @@ INSERT INTO films VALUES ('1dfc3231-c9c9-4962-8954-01da59c5dcdd', '{Фантас
 -- INSERT INTO films VALUES ('2a149c42-d48e-4ad6-a537-e95c19b0a4fd', '{Детективы,Комедия}', 'США', '2003-01-01 03:00:00+03', 'Разыскиваются в Малибу', 2003, '{"Джон Уайтселл"}', '{"Факс Бар","Адам Смолл","Джейми Кеннеди","Ник Свардсон"}', '{b310248d-f398-4199-a63c-b2dc79263ea7,015f5813-5e82-4747-b599-bc75a9757223}', '2003-01-01', 86, 'Ru', '100 млн', 12, '{razyskivaiutsia-v-malibu.png}', '{razyskivaiutsia-v-malibu.mp4}', 'Не стоит ненавидеть его за то, кем он является. Или кем он не является. Все, чем хочет заниматься Брэд - или Би-рэд - разъезжать со своими дружками по Малибу и вести себя, как самый крутой черный рэппер в округе.
 -- Но все вокруг знают, что паренек, лихо читающий рэп, родом из респектабельного квартала Малибу. И отец Брэда, Билл Глакман, кандидат в губернаторы, серьезно боится, что увлечение Би-рэда «черной» культурой может разнести в пух и прах его предвыборную кампанию.', false, false, 'razyskivaiutsia-v-malibu');
 
-INSERT INTO rating VALUES ('e16fc41a-dce8-44fa-bba6-d9af1eecfebd', 4);
-INSERT INTO rating VALUES ('9d574931-e719-44fc-bad2-69a1de36d00e', 1);
-INSERT INTO rating VALUES ('f0285cb7-d7c7-48d7-b94a-1bdf62469553', 5);
-INSERT INTO rating VALUES ('c8ae08e9-ee3d-4b59-9bdf-af456de7f97a', 1);
+INSERT INTO ratings VALUES ('e16fc41a-dce8-44fa-bba6-d9af1eecfebd', 4);
+INSERT INTO ratings VALUES ('9d574931-e719-44fc-bad2-69a1de36d00e', 1);
+INSERT INTO ratings VALUES ('f0285cb7-d7c7-48d7-b94a-1bdf62469553', 5);
+INSERT INTO ratings VALUES ('c8ae08e9-ee3d-4b59-9bdf-af456de7f97a', 1);
 -- INSERT INTO rating VALUES ('cda6387e-a256-4f85-96cc-3cb27343fcc4', 2);
-INSERT INTO rating VALUES ('3100072a-e1e5-44c6-9a10-77be314dd492', 4);
-INSERT INTO rating VALUES ('335b9fdd-64e9-4403-ba24-7269ca8a5a52', 9);
+INSERT INTO ratings VALUES ('3100072a-e1e5-44c6-9a10-77be314dd492', 4);
+INSERT INTO ratings VALUES ('335b9fdd-64e9-4403-ba24-7269ca8a5a52', 3);
 -- INSERT INTO rating VALUES ('2a149c42-d48e-4ad6-a537-e95c19b0a4fd', 5);
-INSERT INTO rating VALUES ('ddd73f7f-3ae7-467f-a79b-f3465485a8bf', 8);
-INSERT INTO rating VALUES ('fbf17d95-f8bb-4ed7-b385-5111c321cbdc', 1);
-INSERT INTO rating VALUES ('36fe5b42-da42-40a7-a554-985c6351f310', 8);
-INSERT INTO rating VALUES ('55e547e7-c344-4990-9952-8bcf94661f0b', 5);
-INSERT INTO rating VALUES ('ba7c44b4-1fac-48f2-832f-200fd18dfe8c', 8);
+INSERT INTO ratings VALUES ('ddd73f7f-3ae7-467f-a79b-f3465485a8bf', 4);
+INSERT INTO ratings VALUES ('fbf17d95-f8bb-4ed7-b385-5111c321cbdc', 1);
+INSERT INTO ratings VALUES ('36fe5b42-da42-40a7-a554-985c6351f310', 5);
+INSERT INTO ratings VALUES ('55e547e7-c344-4990-9952-8bcf94661f0b', 5);
+INSERT INTO ratings VALUES ('ba7c44b4-1fac-48f2-832f-200fd18dfe8c', 4);
 -- INSERT INTO rating VALUES ('a377a105-0b4a-40b7-a6e1-f31bf1b5c8e4', 9);
-INSERT INTO rating VALUES ('82879482-9ceb-492a-8333-80faab5edd64', 3);
-INSERT INTO rating VALUES ('8d7db471-6810-4045-a841-fa47a72f5242', 2);
-INSERT INTO rating VALUES ('6c6abded-9206-44b8-b149-92f08569ca8d', 5);
-INSERT INTO rating VALUES ('c2e011a5-42cc-40f5-97a3-4dc430be3c49', 9);
-INSERT INTO rating VALUES ('1dfc3231-c9c9-4962-8954-01da59c5dcdd', 8);
+INSERT INTO ratings VALUES ('82879482-9ceb-492a-8333-80faab5edd64', 3);
+INSERT INTO ratings VALUES ('8d7db471-6810-4045-a841-fa47a72f5242', 2);
+INSERT INTO ratings VALUES ('6c6abded-9206-44b8-b149-92f08569ca8d', 5);
+INSERT INTO ratings VALUES ('c2e011a5-42cc-40f5-97a3-4dc430be3c49', 5);
+INSERT INTO ratings VALUES ('1dfc3231-c9c9-4962-8954-01da59c5dcdd', 3);
 
