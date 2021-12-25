@@ -6,44 +6,55 @@ import (
 	"github.com/jackc/pgtype/pgxtype"
 	"go.uber.org/zap"
 	"math/rand"
+	"strings"
 )
 
 const (
+	GET_ID_BY_SLUG = "SELECT id FROM films where slug=$1;"
+
+	SET_RATING = "INSERT INTO ratings(id, film_id, rating)" +
+		"values($1, $2, $3) on conflict(id, film_id) do update set rating = $3;"
+
+	GET_RATING = "SELECT AVG(rating) FROM ratings WHERE film_id=$1;"
+
+	GET_RATING_BY_USER = "SELECT rating FROM ratings WHERE id=$1 AND film_id=$2"
+
 	SElECT_FILM_BY_TOPIC = "SELECT id, genres, country, releaseRus, title, year, director, " +
-		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
+		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		"FROM films " +
 		"WHERE $1 = ANY(genres)"
 
 	SElECT_RANDOM_COUNT = "SELECT COUNT(id) FROM films"
 
 	SElECT_RANDOM_FILM = "SELECT id, genres, country, releaseRus, title, year, director, " +
-		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
+		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		"FROM films " +
 		"LIMIT 1 OFFSET $1"
 
-	SELECT_FILM_BY_RATING = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
+	SELECT_FILM_BY_RATING = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, " +
+		"duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		" FROM films JOIN rating ON films.id = rating.film_id ORDER BY rating DESC LIMIT 10"
 
-	SELECT_FILM_BY_DATE = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
+	SELECT_FILM_BY_DATE = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, " +
+		"duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		"FROM films ORDER BY release DESC LIMIT 10"
 
-	SELECT_FILM_BY_KEYWORD = "SELECT id, genres, country, releaseRus, title, year, director, " +
-		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
+	SELECT_FILM_BY_KEYWORD = "SELECT *" +
 		"FROM films " +
-		"WHERE make_tsvector(title) @@ to_tsquery($1) or LOWER(title) like LOWER('%$1%')  LIMIT 10"
+		"WHERE make_tsvector(title) @@ to_tsquery($1) or LOWER(title) like LOWER($2)  LIMIT 10"
 
 	SELECT_FILM_BY_ID = "SELECT id, genres, country, releaseRus, title, year, director, " +
-		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
+		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		"FROM films " +
 		"WHERE id=$1"
 
 	SELECT_FILM_BY_USER = "SELECT f.id, f.genres, f.country, f.releaseRus, f.title, f.year, f.director, " +
-		"f.authors, f.actors , f.release, f.duration, f.language, f.budget, f.age, f.pic, f.src, f.description, f.isSeries " +
+		"f.authors, f.actors , f.release, f.duration, f.language, f.budget, f.age, f.pic, f.src, f.description, f.isSeries, f.needsPayment, f.slug " +
 		"FROM films f INNER JOIN watchlist w ON f.id=w.film_id " +
 		"WHERE w.id=$1"
 
 	SELECT_FILM_BY_ACTOR = "SELECT id, genres, country, releaseRus, title, year, director, " +
-		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
+		"authors, actors, release, duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		"FROM films " +
 		"WHERE $1=ANY(actors)"
 
@@ -51,19 +62,27 @@ const (
 
 	DELETE_FILM_FROM_STARRED = "DELETE FROM starred_films WHERE film_id=$1 AND user_id=$2;"
 
-	GET_STARRED_FILMS = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
+	GET_STARRED_FILMS = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, " +
+		"duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		"FROM films f JOIN starred_films sf ON f.id  = sf.film_id " +
 		"WHERE sf.user_id=$1"
 
-	GET_IF_STARRED_FILMS = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, release, duration, language, budget, age, pic, src, description, isSeries " +
+	GET_IF_STARRED_FILMS = "SELECT id, genres, country, releaseRus, title, year, director, authors, actors, " +
+		"release, duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		"FROM films f JOIN starred_films sf ON f.id  = sf.film_id " +
 		"WHERE sf.user_id=$1 AND id=$2"
+
+	GET_IF_WL_FILMS = "SELECT f.id, genres, country, releaseRus, title, year, director, authors, actors, " +
+		"release, duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
+		"FROM films f JOIN watchlist w ON f.id  = w.film_id " +
+		"WHERE w.id=$1 AND w.film_id = $2"
 
 	INSERT_FILM_TO_WATCHLIST = "INSERT INTO watchlist (id, film_id) VALUES($1, $2);"
 
 	DELETE_FILM_FROM_WATCHLIST = "DELETE FROM watchlist WHERE film_id=$1 AND id=$2;"
 
-	GET_WATCHLIST_FILMS = "SELECT f.id, genres, country, releaseRus, title, year, director, authors, actors, release, duration, language, pic, src, description, isSeries " +
+	GET_WATCHLIST_FILMS = "SELECT f.id, genres, country, releaseRus, title, year, director," +
+		" authors, actors, release, duration, language, budget, age, pic, src, description, isSeries, needsPayment, slug " +
 		"FROM films f JOIN watchlist w ON f.id  = w.film_id " +
 		"WHERE w.id=$1"
 
@@ -96,7 +115,7 @@ func (r *FilmsRepo) GetFilmsByTopic(topic string) ([]models.Film, models.StatusC
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
+			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -107,6 +126,12 @@ func (r *FilmsRepo) GetFilmsByTopic(topic string) ([]models.Film, models.StatusC
 				return nil, models.InternalError
 			}
 		}
+
+		f, code := r.GetRating(film)
+		if code == models.NotFound {
+			f.Rating = 0
+		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 
@@ -127,7 +152,7 @@ func (r *FilmsRepo) GetHottestFilms() ([]models.Film, models.StatusCode) {
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
+			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -137,6 +162,11 @@ func (r *FilmsRepo) GetHottestFilms() ([]models.Film, models.StatusCode) {
 				return nil, models.InternalError
 			}
 		}
+		f, code := r.GetRating(film)
+		if code != models.Okey {
+			f.Rating = 0
+		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 
@@ -157,7 +187,7 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
+			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -167,6 +197,11 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 				return nil, models.InternalError
 			}
 		}
+		f, code := r.GetRating(film)
+		if code != models.Okey {
+			f.Rating = 0
+		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 
@@ -174,7 +209,8 @@ func (r *FilmsRepo) GetNewestFilms() ([]models.Film, models.StatusCode) {
 }
 
 func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.StatusCode) {
-	rows, err := r.pool.Query(context.Background(), SELECT_FILM_BY_KEYWORD, keyword)
+	rows, err := r.pool.Query(context.Background(), SELECT_FILM_BY_KEYWORD, strings.Replace(keyword, " ", "&", -1), "%"+keyword+"%")
+
 	if err != nil {
 		return nil, models.InternalError
 	}
@@ -186,7 +222,7 @@ func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.Sta
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
+			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -196,6 +232,11 @@ func (r *FilmsRepo) GetFilmsByKeyword(keyword string) ([]models.Film, models.Sta
 				return nil, models.InternalError
 			}
 		}
+		f, code := r.GetRating(film)
+		if code == models.NotFound {
+			f.Rating = 0
+		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 
@@ -215,7 +256,7 @@ func (r *FilmsRepo) GetFilmsByActor(actor models.Actors) ([]models.Film, models.
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
+			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -225,6 +266,11 @@ func (r *FilmsRepo) GetFilmsByActor(actor models.Actors) ([]models.Film, models.
 				return nil, models.InternalError
 			}
 		}
+		f, code := r.GetRating(film)
+		if code == models.NotFound {
+			f.Rating = 0
+		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 	return films, models.Okey
@@ -235,7 +281,7 @@ func (r *FilmsRepo) GetFilmById(film models.Film) (models.Film, models.StatusCod
 
 	err := row.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 		&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-		&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
+		&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 
 	if film.IsSeries {
 		code := r.ReadSeries(&film)
@@ -244,6 +290,11 @@ func (r *FilmsRepo) GetFilmById(film models.Film) (models.Film, models.StatusCod
 		}
 	}
 
+	f, code := r.GetRating(film)
+	if code != models.Okey {
+		f = models.Film{}
+	}
+	film.Rating = f.Rating
 	if err != nil {
 		return models.Film{}, models.InternalError
 	}
@@ -262,7 +313,7 @@ func (r *FilmsRepo) GetFilmsByUser(user models.User) ([]models.Film, models.Stat
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
+			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -272,6 +323,11 @@ func (r *FilmsRepo) GetFilmsByUser(user models.User) ([]models.Film, models.Stat
 				return nil, models.InternalError
 			}
 		}
+		f, code := r.GetRating(film)
+		if code == models.NotFound {
+			f.Rating = 0
+		}
+		film.Rating = f.Rating
 		films = append(films, film)
 	}
 	return films, models.Okey
@@ -347,7 +403,7 @@ func (r FilmsRepo) GetStarredFilms(user models.User) ([]models.Film, models.Stat
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
+			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -362,7 +418,20 @@ func (r FilmsRepo) IfStarred(film models.Film, user models.User) models.StatusCo
 
 	err := rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 		&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-		&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
+		&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
+	if err != nil {
+		return models.NotFound
+	}
+
+	return models.Okey
+}
+
+func (r FilmsRepo) IfWatchList(film models.Film, user models.User) models.StatusCode {
+	rows := r.pool.QueryRow(context.Background(), GET_IF_WL_FILMS, user.Id, film.Id)
+
+	err := rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
+		&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
+		&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 	if err != nil {
 		return models.NotFound
 	}
@@ -383,7 +452,7 @@ func (r FilmsRepo) GetWatchlistFilms(user models.User) ([]models.Film, models.St
 		var film models.Film
 		err = rows.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 			&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-			&film.Language, &film.Pic, &film.Src, &film.Description, &film.IsSeries)
+			&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 		if err != nil {
 			return nil, models.InternalError
 		}
@@ -432,7 +501,7 @@ func (r *FilmsRepo) GetRandom() (models.Film, models.StatusCode) {
 	var film models.Film
 	err := row.Scan(&film.Id, &film.Genres, &film.Country, &film.ReleaseRus, &film.Title,
 		&film.Year, &film.Director, &film.Authors, &film.Actors, &film.Release, &film.Duration,
-		&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src)
+		&film.Language, &film.Budget, &film.Age, &film.Pic, &film.Src, &film.Description, &film.IsSeries, &film.NeedsPayment, &film.Slug)
 	if err != nil {
 		return models.Film{}, models.InternalError
 	}
@@ -442,6 +511,50 @@ func (r *FilmsRepo) GetRandom() (models.Film, models.StatusCode) {
 			return models.Film{}, models.InternalError
 		}
 	}
+	f, code := r.GetRating(film)
+	if code == models.NotFound {
+		f.Rating = 0
+	}
 
+	return film, models.Okey
+}
+
+func (r *FilmsRepo) SetRating(film models.Film, user models.User, rating float64) models.StatusCode {
+	exec, err := r.pool.Exec(context.Background(), SET_RATING, user.Id, film.Id, rating)
+	if err != nil {
+		return models.InternalError
+	}
+	if exec.RowsAffected() != 1 {
+		return models.Conflict
+	}
+	return models.Okey
+}
+
+func (r *FilmsRepo) GetRating(film models.Film) (models.Film, models.StatusCode) {
+	row := r.pool.QueryRow(context.Background(), GET_RATING, film.Id)
+	err := row.Scan(&film.Rating)
+	if err != nil {
+		return film, models.NotFound
+	}
+	return film, models.Okey
+}
+
+func (r *FilmsRepo) GetRatingByUser(film models.Film, user models.User) (models.Film, models.StatusCode) {
+	row := r.pool.QueryRow(context.Background(), GET_RATING_BY_USER, user.Id, film.Id)
+	err := row.Scan(&film.Rating)
+	if err != nil {
+		return film, models.NotFound
+	}
+	return film, models.Okey
+}
+
+func (r *FilmsRepo) GetIdBySlug(slug string) (models.Film, models.StatusCode) {
+
+	film := models.Film{}
+	row := r.pool.QueryRow(context.Background(), GET_ID_BY_SLUG, slug)
+	err := row.Scan(&film.Id)
+	if err != nil {
+		return models.Film{}, models.NotFound
+	}
 	return film, models.Okey
 }

@@ -382,6 +382,12 @@ func easyjson14b8084aDecodeGithubComGoParkMailRu20212A06367InternalModels1(in *j
 					in.Delim(']')
 				}
 			}
+		case "rating":
+			out.Rating = float64(in.Float64())
+		case "available":
+			out.IsAvailable = bool(in.Bool())
+		case "slug":
+			out.Slug = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -567,6 +573,21 @@ func easyjson14b8084aEncodeGithubComGoParkMailRu20212A06367InternalModels1(out *
 			}
 			out.RawByte(']')
 		}
+	}
+	{
+		const prefix string = ",\"rating\":"
+		out.RawString(prefix)
+		out.Float64(float64(in.Rating))
+	}
+	{
+		const prefix string = ",\"available\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsAvailable))
+	}
+	{
+		const prefix string = ",\"slug\":"
+		out.RawString(prefix)
+		out.String(string(in.Slug))
 	}
 	out.RawByte('}')
 }

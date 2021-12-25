@@ -10,7 +10,7 @@ import (
 	"log"
 )
 
-//go:generate mockgen -source=films_grpc.pb.go -destination=films_grpc.go -package=grpc
+//go:generate mockgen -source=generated/films_grpc.pb.go -destination=films_grpc.go -package=grpc
 
 type GrpcFilmsHandler struct {
 	uc films.FilmsUsecase
@@ -40,7 +40,10 @@ func (g *GrpcFilmsHandler) FilmBySelection(ctx context.Context, in *generated.Ke
 	return data, nil
 }
 func (g *GrpcFilmsHandler) FilmsByActor(ctx context.Context, in *generated.UUID) (*generated.Films, error) {
-	id, _ := uuid.Parse(in.Id)
+	id, err := uuid.Parse(in.Id)
+	if err != nil {
+		return &generated.Films{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 
 	actor := models.Actors{Id: id}
 	filmSet, status := g.uc.GetFilmsOfActor(actor)
@@ -51,7 +54,10 @@ func (g *GrpcFilmsHandler) FilmsByActor(ctx context.Context, in *generated.UUID)
 	return data, nil
 }
 func (g *GrpcFilmsHandler) FilmById(ctx context.Context, in *generated.UUID) (*generated.Film, error) {
-	id, _ := uuid.Parse(in.Id)
+	id, err := uuid.Parse(in.Id)
+	if err != nil {
+		return &generated.Film{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 
 	filmReq := models.Film{Id: id}
 	film, status := g.uc.GetFilm(filmReq)
@@ -62,7 +68,10 @@ func (g *GrpcFilmsHandler) FilmById(ctx context.Context, in *generated.UUID) (*g
 	return data, nil
 }
 func (g *GrpcFilmsHandler) FilmsByUser(ctx context.Context, in *generated.UUID) (*generated.Films, error) {
-	id, _ := uuid.Parse(in.Id)
+	id, err := uuid.Parse(in.Id)
+	if err != nil {
+		return &generated.Films{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	user := models.User{Id: id}
 	filmSet, status := g.uc.GetCompilationForUser(user)
 	data := g.FilmsAdaptor(filmSet)
@@ -91,9 +100,15 @@ func (g *GrpcFilmsHandler) FilmStartSelection(ctx context.Context, in *generated
 	return data, nil
 }
 func (g *GrpcFilmsHandler) AddStarred(ctx context.Context, in *generated.Pair) (*generated.Nothing, error) {
-	filmId, _ := uuid.Parse(in.FilmUUID)
+	filmId, err := uuid.Parse(in.FilmUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	film := models.Film{Id: filmId}
-	userId, _ := uuid.Parse(in.UserUUID)
+	userId, err := uuid.Parse(in.UserUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	user := models.User{Id: userId}
 	status := g.uc.AddStarred(film, user)
 	return &generated.Nothing{
@@ -101,18 +116,30 @@ func (g *GrpcFilmsHandler) AddStarred(ctx context.Context, in *generated.Pair) (
 	}, nil
 }
 func (g *GrpcFilmsHandler) RemoveStarred(ctx context.Context, in *generated.Pair) (*generated.Nothing, error) {
-	filmId, _ := uuid.Parse(in.FilmUUID)
+	filmId, err := uuid.Parse(in.FilmUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	film := models.Film{Id: filmId}
-	userId, _ := uuid.Parse(in.UserUUID)
+	userId, err := uuid.Parse(in.UserUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	user := models.User{Id: userId}
 	status := g.uc.RemoveStarred(film, user)
 	log.Print(status)
 	return &generated.Nothing{}, nil
 }
 func (g *GrpcFilmsHandler) AddWatchList(ctx context.Context, in *generated.Pair) (*generated.Nothing, error) {
-	filmId, _ := uuid.Parse(in.FilmUUID)
+	filmId, err := uuid.Parse(in.FilmUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	film := models.Film{Id: filmId}
-	userId, _ := uuid.Parse(in.UserUUID)
+	userId, err := uuid.Parse(in.UserUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	user := models.User{Id: userId}
 	status := g.uc.AddWatchlist(film, user)
 	return &generated.Nothing{
@@ -121,19 +148,49 @@ func (g *GrpcFilmsHandler) AddWatchList(ctx context.Context, in *generated.Pair)
 }
 
 func (g *GrpcFilmsHandler) IfStarred(ctx context.Context, in *generated.Pair) (*generated.Nothing, error) {
-	filmId, _ := uuid.Parse(in.FilmUUID)
+	filmId, err := uuid.Parse(in.FilmUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	film := models.Film{Id: filmId}
-	userId, _ := uuid.Parse(in.UserUUID)
+	userId, err := uuid.Parse(in.UserUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	user := models.User{Id: userId}
 	status := g.uc.GetIfStarred(film, user)
 	return &generated.Nothing{
 		Status: grpc.StatusCode(status),
 	}, nil
 }
-func (g *GrpcFilmsHandler) RemoveWatchList(ctx context.Context, in *generated.Pair) (*generated.Nothing, error) {
-	filmId, _ := uuid.Parse(in.FilmUUID)
+
+func (g *GrpcFilmsHandler) IfWatchList(ctx context.Context, in *generated.Pair) (*generated.Nothing, error) {
+	filmId, err := uuid.Parse(in.FilmUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	film := models.Film{Id: filmId}
-	userId, _ := uuid.Parse(in.UserUUID)
+	userId, err := uuid.Parse(in.UserUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
+	user := models.User{Id: userId}
+	status := g.uc.GetIfWatchlist(film, user)
+	return &generated.Nothing{
+		Status: grpc.StatusCode(status),
+	}, nil
+}
+
+func (g *GrpcFilmsHandler) RemoveWatchList(ctx context.Context, in *generated.Pair) (*generated.Nothing, error) {
+	filmId, err := uuid.Parse(in.FilmUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
+	film := models.Film{Id: filmId}
+	userId, err := uuid.Parse(in.UserUUID)
+	if err != nil {
+		return &generated.Nothing{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	user := models.User{Id: userId}
 	status := g.uc.RemoveWatchlist(film, user)
 	return &generated.Nothing{
@@ -142,7 +199,10 @@ func (g *GrpcFilmsHandler) RemoveWatchList(ctx context.Context, in *generated.Pa
 }
 func (g *GrpcFilmsHandler) Starred(ctx context.Context, in *generated.UUID) (*generated.Films, error) {
 
-	userId, _ := uuid.Parse(in.Id)
+	userId, err := uuid.Parse(in.Id)
+	if err != nil {
+		return &generated.Films{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	user := models.User{Id: userId}
 	films, status := g.uc.GetStarred(user)
 	if status == models.Okey {
@@ -151,7 +211,10 @@ func (g *GrpcFilmsHandler) Starred(ctx context.Context, in *generated.UUID) (*ge
 	return &generated.Films{}, nil
 }
 func (g *GrpcFilmsHandler) WatchList(ctx context.Context, in *generated.UUID) (*generated.Films, error) {
-	userId, _ := uuid.Parse(in.Id)
+	userId, err := uuid.Parse(in.Id)
+	if err != nil {
+		return &generated.Films{Status: grpc.StatusCode(models.InternalError)}, nil
+	}
 	user := models.User{Id: userId}
 	films, status := g.uc.GetWatchlist(user)
 	if status == models.Okey {
@@ -166,6 +229,61 @@ func (g *GrpcFilmsHandler) Random(ctx context.Context, in *generated.Nothing) (*
 	return data, nil
 }
 
+func (g *GrpcFilmsHandler) SetRating(ctx context.Context, in *generated.RatingPair) (*generated.Nothing, error) {
+	userId, err := uuid.Parse(in.UserUUID)
+	if err != nil {
+		return nil, nil
+	}
+	user := models.User{Id: userId}
+
+	filmId, err := uuid.Parse(in.FilmUUID)
+	if err != nil {
+		return nil, nil
+	}
+	film := models.Film{Id: filmId}
+
+	status := g.uc.SetRating(film, user, float64(in.Rating))
+	return &generated.Nothing{
+		Status: grpc.StatusCode(status),
+	}, nil
+}
+
+func (g *GrpcFilmsHandler) GetRating(ctx context.Context, in *generated.UUID) (*generated.Film, error) {
+	filmId, err := uuid.Parse(in.Id)
+	if err != nil {
+		return nil, nil
+	}
+	film := models.Film{Id: filmId}
+
+	f, status := g.uc.GetRating(film)
+	film.Rating = f.Rating
+	data := g.FilmAdaptor(film)
+	data.Status = grpc.StatusCode(status)
+
+	return data, nil
+}
+
+func (g *GrpcFilmsHandler) GetRatingByUser(ctx context.Context, in *generated.Pair) (*generated.Film, error) {
+	filmId, err := uuid.Parse(in.FilmUUID)
+	if err != nil {
+		return nil, nil
+	}
+	film := models.Film{Id: filmId}
+
+	userId, err := uuid.Parse(in.UserUUID)
+	if err != nil {
+		return nil, nil
+	}
+	user := models.User{Id: userId}
+
+	f, status := g.uc.GetRatingByUser(film, user)
+	film.Rating = f.Rating
+	data := g.FilmAdaptor(film)
+	data.Status = grpc.StatusCode(status)
+
+	return data, nil
+}
+
 func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *generated.Film {
 
 	if film.Seasons != nil {
@@ -175,8 +293,7 @@ func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *generated.Film {
 	for i := 0; i < len(film.Actors); i++ {
 		actors = append(actors, film.Actors[i].String())
 	}
-	var gfilm *generated.Film
-	gfilm = &generated.Film{
+	gfilm := &generated.Film{
 		Id:                 film.Id.String(),
 		Title:              film.Title,
 		Genres:             film.Genres,
@@ -196,6 +313,9 @@ func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *generated.Film {
 		Description:        film.Description,
 		IsSeries:           film.IsSeries,
 		Seasons:            nil,
+		Rating:             float32(film.Rating),
+		NeedsPayment:       film.NeedsPayment,
+		Slug:               film.Slug,
 	}
 
 	if film.Seasons != nil {
@@ -208,8 +328,6 @@ func (g *GrpcFilmsHandler) FilmAdaptor(film models.Film) *generated.Film {
 			})
 		}
 		gfilm.Seasons = gs
-		log.Println()
-		log.Println("HERE NOW =============")
 	}
 
 	return gfilm

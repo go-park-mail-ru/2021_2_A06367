@@ -14,7 +14,8 @@ import (
 const (
 	SElECT_ACTOR_BY_ID       = "SELECT id, name, surname, avatar, height, date_of_birth, description, genres FROM actors WHERE id = $1"
 	SELECT_ACTORS_BY_ID      = "SELECT id, name, surname, avatar, height,date_of_birth,genres FROM actors WHERE id IN ($1)"
-	SELECT_ACTORS_BY_KEYWORD = "SELECT * FROM actors WHERE make_tsvector(name) @@ to_tsquery($1) or LOWER(name) like LOWER('%$1%')   LIMIT 10"
+	SELECT_ACTORS_BY_KEYWORD = "SELECT * FROM actors WHERE make_tsvector(name) @@ to_tsquery($1) or LOWER(name) like LOWER($2)   LIMIT 10"
+
 )
 
 type ActorsRepo struct {
@@ -87,7 +88,10 @@ func (r *ActorsRepo) GetActors(actors []models.Actors) ([]models.Actors, models.
 }
 
 func (r *ActorsRepo) GetActorsByKeyword(keyword string) ([]models.Actors, models.StatusCode) {
-	rows, err := r.pool.Query(context.Background(), SELECT_ACTORS_BY_KEYWORD, keyword)
+	rows, err := r.pool.Query(context.Background(), SELECT_ACTORS_BY_KEYWORD, strings.Replace(keyword, " ", "&", -1), "%"+keyword+"%")
+	if err != nil {
+		return []models.Actors{}, models.InternalError
+	}
 	actors := make([]models.Actors, 0, 10)
 
 	for rows.Next() {
@@ -97,6 +101,10 @@ func (r *ActorsRepo) GetActorsByKeyword(keyword string) ([]models.Actors, models
 			return nil, models.InternalError
 		}
 		actors = append(actors, actor)
+	}
+
+	if len(actors) == 0 {
+		return actors, models.NotFound
 	}
 	return actors, models.Okey
 }

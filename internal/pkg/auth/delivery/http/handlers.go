@@ -64,7 +64,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Name:   "SSID",
 		Value:  login.Cookie,
 		Path:   "/",
-		Domain: "3.67.182.34",
+		Domain: "a06367.ru",
 		//SameSite: http.SameSiteNoneMode,
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24),
@@ -107,7 +107,7 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		Name:     "SSID",
 		Value:    "",
 		Path:     "/",
-		Domain:   "3.67.182.34",
+		Domain:   "a06367.ru",
 		HttpOnly: true,
 		Expires:  time.Unix(0, 0),
 	}
@@ -152,7 +152,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		Name:   "SSID",
 		Value:  us.Cookie,
 		Path:   "/",
-		Domain: "3.67.182.34",
+		Domain: "a06367.ru",
 		//SameSite: http.SameSiteNoneMode,
 		HttpOnly: true,
 		Expires:  time.Now().Add(time.Hour * 24),
@@ -321,7 +321,10 @@ func (h *AuthHandler) UpdateProfilePic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	hash := md5.New()
-	hash.Write(all)
+	_, err = hash.Write(all)
+	if err != nil {
+		return
+	}
 	name := hash.Sum(nil)
 
 	err = os.WriteFile("/image/"+hex.EncodeToString(name[:])+".png", all, 0644)
@@ -353,9 +356,13 @@ func (h *AuthHandler) UpdateProfilePass(w http.ResponseWriter, r *http.Request) 
 
 	var pass models.PassUpdate
 	err := easyjson.UnmarshalFromReader(r.Body, &pass)
+	if err != nil {
+		utils.Response(w, models.BadRequest, nil)
+		return
+	}
 
 	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
-	if err != nil && err.Error() != "no token" {
+	if err != nil {
 		utils.Response(w, models.Unauthed, nil)
 		return
 	}
@@ -381,6 +388,10 @@ func (h *AuthHandler) UpdateProfileBio(w http.ResponseWriter, r *http.Request) {
 
 	var bio models.BioUpdate
 	err := easyjson.UnmarshalFromReader(r.Body, &bio)
+	if err != nil {
+		utils.Response(w, models.BadRequest, nil)
+		return
+	}
 
 	jwtData, err := utils.ExtractTokenMetadata(r, utils.ExtractTokenFromCookie)
 	if err != nil && err.Error() != "no token" {

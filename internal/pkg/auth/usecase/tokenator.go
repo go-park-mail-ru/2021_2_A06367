@@ -23,12 +23,15 @@ func (t *Tokenator) GetToken(user models.User) string {
 		},
 	}
 
-	SecretKey, err := os.LookupEnv("SECRET")
-	if !err {
+	SecretKey, flag := os.LookupEnv("SECRET")
+	if !flag {
 		return "no secret key"
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenModel)
 
-	jwtCookie, _ := token.SignedString([]byte(SecretKey))
+	jwtCookie, err := token.SignedString([]byte(SecretKey))
+	if err != nil {
+		return "no secret key"
+	}
 	return jwtCookie
 }

@@ -47,7 +47,7 @@ func (r *AuthRepo) CreateUser(user models.User) (models.User, models.StatusCode)
 		user.Id, user.Login, user.EncryptedPassword, time.Now())
 
 	err := row.Scan(&id)
-	if err != nil && id == user.Id {
+	if err != nil {
 		return models.User{}, models.InternalError
 	}
 	userOut := models.User{
@@ -63,6 +63,7 @@ func (r *AuthRepo) CheckUser(user models.User) (models.User, models.StatusCode) 
 		pwd string
 		id  uuid.UUID
 	)
+	log.Println(user)
 	row := r.pool.QueryRow(context.Background(), CHECK_USER, user.Login)
 
 	if err := row.Scan(&id, &pwd); err != nil {
@@ -71,11 +72,28 @@ func (r *AuthRepo) CheckUser(user models.User) (models.User, models.StatusCode) 
 	if pwd != user.EncryptedPassword {
 		return models.User{}, models.Unauthed
 	}
-
 	userOut := models.User{
 		Id:                id,
 		Login:             user.Login,
 		EncryptedPassword: user.EncryptedPassword,
+	}
+	return userOut, models.Okey
+}
+
+func (r *AuthRepo) CheckUserLogin(user models.User) (models.User, models.StatusCode) {
+	var (
+		pwd string
+		id  uuid.UUID
+	)
+	row := r.pool.QueryRow(context.Background(), CHECK_USER, user.Login)
+
+	if err := row.Scan(&id, &pwd); err != nil {
+		return models.User{}, models.InternalError
+	}
+
+	userOut := models.User{
+		Id:                id,
+		Login:             user.Login,
 	}
 	return userOut, models.Okey
 }

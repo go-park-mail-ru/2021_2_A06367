@@ -60,7 +60,11 @@ func (u *FilmsUsecase) AddStarred(film models.Film, user models.User) models.Sta
 }
 
 func (u *FilmsUsecase) GetIfStarred(film models.Film, user models.User) models.StatusCode {
-	return u.repo.InsertStarred(film, user)
+	return u.repo.IfStarred(film, user)
+}
+
+func (u *FilmsUsecase) GetIfWatchlist(film models.Film, user models.User) models.StatusCode {
+	return u.repo.IfWatchList(film, user)
 }
 
 func (u *FilmsUsecase) RemoveStarred(film models.Film, user models.User) models.StatusCode {
@@ -85,4 +89,20 @@ func (u FilmsUsecase) GetWatchlist(user models.User) ([]models.Film, models.Stat
 
 func (u FilmsUsecase) Randomize() (models.Film, models.StatusCode) {
 	return u.repo.GetRandom()
+}
+
+func (u FilmsUsecase) GetRating(film models.Film) (models.Film, models.StatusCode) {
+	return u.repo.GetRating(film)
+}
+
+func (u FilmsUsecase) SetRating(film models.Film, user models.User, rating float64) models.StatusCode {
+	return u.repo.SetRating(film, user, rating)
+}
+
+func (u FilmsUsecase) GetIdBySlug(slug string) (models.Film, models.StatusCode) {
+	return u.repo.GetIdBySlug(slug)
+}
+
+func (u FilmsUsecase) GetRatingByUser(film models.Film, user models.User) (models.Film, models.StatusCode) {
+	return u.repo.GetRatingByUser(film, user)
 }

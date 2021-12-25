@@ -1,0 +1,24 @@
+syntax = "proto3";
+option go_package = "internal/pkg/subs/delivery/grpc/generated";
+import "codes.proto";
+
+message LicenseUUID {
+  string ID = 1;
+}
+
+message LicenseReq {
+  string ID = 1;
+  string Type = 2;
+  codes.StatusCode Status= 3;
+}
+
+message License {
+  bool IsValid = 1;
+  string ExpiresDate = 2;
+  codes.StatusCode Status= 3;
+}
+
+service SubsService {
+  rpc GetLicense(LicenseUUID) returns (License) {}
+  rpc SetLicense(LicenseReq) returns (License) {}
+}

@@ -62,4 +62,5 @@ service AuthService {
   rpc UpdateProfilePic(UserUpdatePic) returns (Empty) {}
   rpc UpdateProfilePass(UserUpdatePass) returns (Empty) {}
   rpc UpdateProfileBio(UserUpdateBio) returns (Empty) {}
+  rpc CheckByLogin(LoginUser) returns (UserUUID) {}
 }

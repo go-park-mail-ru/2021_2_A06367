@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"context"
 	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
 	"math/rand"
@@ -95,9 +94,6 @@ func (m *MetricsMiddleware) Register(name string) {
 func (m *MetricsMiddleware) LogMetrics(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-		reqId := fmt.Sprintf("%016x", rand.Int())[:10]
-		ctx = context.WithValue(ctx, "ReqId", reqId)
-
 		start := time.Now()
 
 		wrapper := NewWriter(w)

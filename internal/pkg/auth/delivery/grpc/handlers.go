@@ -7,6 +7,7 @@ import (
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/auth/delivery/grpc/generated"
 	"github.com/google/uuid"
+	"log"
 	"time"
 )
 
@@ -43,7 +44,12 @@ func (h GrpcAuthHandler) SignUp(ctx context.Context, in *generated.User) (*gener
 }
 
 func (h GrpcAuthHandler) GetProfile(ctx context.Context, in *generated.UserUUID) (*generated.Profile, error) {
-	id, _ := uuid.Parse(in.ID)
+	id, err := uuid.Parse(in.ID)
+	if err != nil {
+		return &generated.Profile{
+			Status: grpc.StatusCode(models.InternalError),
+		}, nil
+	}
 	profile := models.Profile{
 		Id: id,
 	}
@@ -60,7 +66,12 @@ func (h GrpcAuthHandler) GetProfile(ctx context.Context, in *generated.UserUUID)
 }
 
 func (h GrpcAuthHandler) UpdateProfilePic(ctx context.Context, in *generated.UserUpdatePic) (*generated.Empty, error) {
-	id, _ := uuid.Parse(in.ID)
+	id, err := uuid.Parse(in.ID)
+	if err != nil {
+		return &generated.Empty{
+			Status: grpc.StatusCode(models.InternalError),
+		}, nil
+	}
 	user := models.Profile{
 		Id:     id,
 		Login:  in.Login,
@@ -74,7 +85,12 @@ func (h GrpcAuthHandler) UpdateProfilePic(ctx context.Context, in *generated.Use
 }
 
 func (h GrpcAuthHandler) UpdateProfilePass(ctx context.Context, in *generated.UserUpdatePass) (*generated.Empty, error) {
-	id, _ := uuid.Parse(in.ID)
+	id, err := uuid.Parse(in.ID)
+	if err != nil {
+		return &generated.Empty{
+			Status: grpc.StatusCode(models.InternalError),
+		}, nil
+	}
 	user := models.User{
 		Id:                id,
 		Login:             in.Login,
@@ -88,7 +104,12 @@ func (h GrpcAuthHandler) UpdateProfilePass(ctx context.Context, in *generated.Us
 }
 
 func (h GrpcAuthHandler) UpdateProfileBio(ctx context.Context, in *generated.UserUpdateBio) (*generated.Empty, error) {
-	id, _ := uuid.Parse(in.ID)
+	id, err := uuid.Parse(in.ID)
+	if err != nil {
+		return &generated.Empty{
+			Status: grpc.StatusCode(models.InternalError),
+		}, nil
+	}
 	user := models.Profile{
 		Id:    id,
 		Login: in.Login,
@@ -99,4 +120,14 @@ func (h GrpcAuthHandler) UpdateProfileBio(ctx context.Context, in *generated.Use
 	return &generated.Empty{
 		Status: grpc.StatusCode(status),
 	}, nil
+}
+
+func (h GrpcAuthHandler) CheckByLogin(ctx context.Context, in *generated.LoginUser) (*generated.UserUUID, error) {
+
+	log.Println(in)
+	user := models.User{Login: in.Login}
+
+	token, err := h.uc.CheckUserLogin(user)
+	log.Println(token, err)
+	return &generated.UserUUID{ID: token.Id.String()}, nil
 }

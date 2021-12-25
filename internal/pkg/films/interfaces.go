@@ -17,6 +17,7 @@ type FilmsUsecase interface {
 
 	GetStarred(user models.User) ([]models.Film, models.StatusCode)
 	GetIfStarred(film models.Film, user models.User) models.StatusCode
+	GetIfWatchlist(film models.Film, user models.User) models.StatusCode
 	AddStarred(film models.Film, user models.User) models.StatusCode
 	RemoveStarred(film models.Film, user models.User) models.StatusCode
 
@@ -25,6 +26,10 @@ type FilmsUsecase interface {
 	RemoveWatchlist(film models.Film, user models.User) models.StatusCode
 
 	Randomize() (models.Film, models.StatusCode)
+	GetRating(film models.Film) (models.Film, models.StatusCode)
+	GetRatingByUser(film models.Film, user models.User) (models.Film, models.StatusCode)
+	SetRating(film models.Film, user models.User, rating float64) models.StatusCode
+	GetIdBySlug(slug string) (models.Film, models.StatusCode)
 }
 
 type FilmsRepository interface {
@@ -40,10 +45,15 @@ type FilmsRepository interface {
 	InsertStarred(film models.Film, user models.User) models.StatusCode
 	DeleteStarred(film models.Film, user models.User) models.StatusCode
 	IfStarred(film models.Film, user models.User) models.StatusCode
+	IfWatchList(film models.Film, user models.User) models.StatusCode
 
 	GetWatchlistFilms(user models.User) ([]models.Film, models.StatusCode)
 	InsertWatchlist(film models.Film, user models.User) models.StatusCode
 	DeleteWatchlist(film models.Film, user models.User) models.StatusCode
 
 	GetRandom() (models.Film, models.StatusCode)
+	SetRating(film models.Film, user models.User, rating float64) models.StatusCode
+	GetRating(film models.Film) (models.Film, models.StatusCode)
+	GetRatingByUser(film models.Film, user models.User) (models.Film, models.StatusCode)
+	GetIdBySlug(slug string) (models.Film, models.StatusCode)
 }

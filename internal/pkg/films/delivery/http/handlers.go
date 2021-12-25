@@ -4,24 +4,27 @@ import (
 	"context"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/models"
 	"github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/films/delivery/grpc/generated"
+	subs "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/subs/delivery/grpc/generated"
 	util "github.com/go-park-mail-ru/2021_2_A06367/internal/pkg/utils"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
-	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
 type FilmsHandler struct {
-	logger *zap.SugaredLogger
-	client generated.FilmsServiceClient
+	logger     *zap.SugaredLogger
+	client     generated.FilmsServiceClient
+	subsClient subs.SubsServiceClient
 }
 
-func NewFilmsHandler(logger *zap.SugaredLogger, cl generated.FilmsServiceClient) *FilmsHandler {
+func NewFilmsHandler(logger *zap.SugaredLogger, cl generated.FilmsServiceClient, sl subs.SubsServiceClient) *FilmsHandler {
 	return &FilmsHandler{
-		logger: logger,
-		client: cl,
+		logger:     logger,
+		subsClient: sl,
+		client:     cl,
 	}
 }
 
@@ -49,7 +52,8 @@ func (h FilmsHandler) FilmByGenre(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
+
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
@@ -78,7 +82,7 @@ func (h FilmsHandler) FilmBySelection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
@@ -112,7 +116,7 @@ func (h FilmsHandler) FilmByActor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
@@ -145,8 +149,36 @@ func (h FilmsHandler) FilmById(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.NotFound, nil)
 		return
 	}
-	log.Println(film.Seasons)
 	filmSet := h.FilmToModel(film)
+
+	if filmSet.NeedsPayment {
+		//если токена нет и пользователь неавторизован
+		access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+		if err != nil || access == nil {
+			filmSet.IsAvailable = false
+		} else {
+			//если токен есть
+			license, err := h.subsClient.GetLicense(context.Background(), &subs.LicenseUUID{ID: access.Id.String()})
+			//если микросервис отвалился
+			if err != nil {
+				filmSet.IsAvailable = false
+			} else {
+				//если микросервис ок и надо просто проверить лицензию
+				parsed, err := time.Parse("2006-01-02",  license.ExpiresDate[:10])
+				if err != nil {
+					filmSet.IsAvailable = false
+				} else {
+					filmSet.IsAvailable = time.Now().Before(parsed)
+				}
+			}
+		}
+	} else {
+		filmSet.IsAvailable = true
+	}
+	if !filmSet.IsAvailable {
+		filmSet.Src = nil
+	}
+
 	util.Response(w, models.StatusCode(film.Status), filmSet)
 
 }
@@ -173,12 +205,16 @@ func (h FilmsHandler) FilmsByUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
 func (h FilmsHandler) FilmStartSelection(w http.ResponseWriter, r *http.Request) {
 	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
 
 	if access == nil {
 		access = &models.AccessDetails{}
@@ -187,7 +223,7 @@ func (h FilmsHandler) FilmStartSelection(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		return
 	}
-	film := h.FilmsToModels(*selection)
+	film := h.FilmsToModels(selection)
 	util.Response(w, models.StatusCode(selection.Status), film)
 }
 
@@ -252,6 +288,42 @@ func (h FilmsHandler) IfStarred(w http.ResponseWriter, r *http.Request) {
 	user := models.User{Id: access.Id}
 
 	none, err := h.client.IfStarred(context.Background(), &generated.Pair{
+		FilmUUID: film.Id.String(),
+		UserUUID: user.Id.String(),
+	})
+	if err != nil {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	util.Response(w, models.StatusCode(none.Status), nil)
+}
+
+func (h FilmsHandler) IfWl(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	none, err := h.client.IfWatchList(context.Background(), &generated.Pair{
 		FilmUUID: film.Id.String(),
 		UserUUID: user.Id.String(),
 	})
@@ -387,9 +459,10 @@ func (h FilmsHandler) GetStarred(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.NotFound, nil)
 		return
 	}
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
+
 func (h FilmsHandler) GetWatchlist(w http.ResponseWriter, r *http.Request) {
 
 	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
@@ -405,7 +478,7 @@ func (h FilmsHandler) GetWatchlist(w http.ResponseWriter, r *http.Request) {
 		util.Response(w, models.NotFound, nil)
 		return
 	}
-	filmSet := h.FilmsToModels(*films)
+	filmSet := h.FilmsToModels(films)
 	util.Response(w, models.StatusCode(films.Status), filmSet)
 }
 
@@ -420,34 +493,144 @@ func (h FilmsHandler) RandomFilm(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (h FilmsHandler) SetRating(w http.ResponseWriter, r *http.Request) {
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	rating := r.URL.Query().Get("rating")
+	mark, err := strconv.ParseFloat(rating, 32)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	res, err := h.client.SetRating(context.Background(), &generated.RatingPair{
+		FilmUUID: film.Id.String(),
+		UserUUID: user.Id.String(),
+		Rating:   float32(mark),
+	})
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	util.Response(w, models.StatusCode(res.Status), film)
+
+}
+
+func (h FilmsHandler) GetRating(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	res, err := h.client.GetRating(context.Background(), &generated.UUID{
+		Id: film.Id.String(),
+	})
+
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	film.Rating = float64(res.Rating)
+	util.Response(w, models.StatusCode(res.Status), film)
+
+}
+
+func (h FilmsHandler) GetRatingByUser(w http.ResponseWriter, r *http.Request) {
+
+	access, err := util.ExtractTokenMetadata(r, util.ExtractTokenFromCookie)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	user := models.User{Id: access.Id}
+
+	vars := mux.Vars(r)
+	idStr, found := vars["id"]
+	if !found {
+		util.Response(w, models.NotFound, nil)
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+
+	film := models.Film{Id: id}
+
+	res, err := h.client.GetRatingByUser(context.Background(), &generated.Pair{
+		FilmUUID: film.Id.String(),
+		UserUUID: user.Id.String(),
+	})
+
+	if err != nil {
+		util.Response(w, models.BadRequest, nil)
+		return
+	}
+	film.Rating = float64(res.Rating)
+	util.Response(w, models.StatusCode(res.Status), film)
+
+}
+
 func (h FilmsHandler) FilmToModel(film *generated.Film) models.Film {
-	id, _ := uuid.Parse(film.Id)
-	releaseru, _ := time.Parse("", film.ReleaseRus)
-	release, _ := time.Parse("", film.Release)
+	layout := "2006-01-02"
+	id, err := uuid.Parse(film.Id)
+	if err != nil {
+		return models.Film{}
+	}
+	dateRus := film.ReleaseRus[0:len(layout)]
+	releaseru, err := time.Parse(layout, dateRus)
+	if err != nil {
+		return models.Film{}
+	}
+	dateRelease := film.Release[0:len(layout)]
+	release, err := time.Parse(layout, dateRelease)
+	if err != nil {
+		return models.Film{}
+	}
 
 	var actors []uuid.UUID
 	for i := 0; i < len(film.Actors); i++ {
-		id, _ := uuid.Parse(film.Actors[i])
-		actors = append(actors, id)
+		id2, err2 := uuid.Parse(film.Actors[i])
+		if err2 != nil {
+			return models.Film{}
+		}
+		actors = append(actors, id2)
 	}
 
-	//out := &[]models.Season{}
-	//if film.Seasons != nil {
-	//
-	//	SeasonsOut := []models.Season{}
-	//	for _, season := range film.Seasons {
-	//		temp := models.Season{
-	//			Num:  int(season.Num),
-	//			Src:  season.Src,
-	//			Pics: season.Pics,
-	//		}
-	//		SeasonsOut = append(SeasonsOut, temp)
-	//	}
-	//	log.Println(SeasonsOut)
-	//	out = &SeasonsOut
-	//} else {
-	//	out = nil
-	//}
 	SeasonsOut := []models.Season{}
 	for _, season := range film.Seasons {
 		temp := models.Season{
@@ -463,28 +646,31 @@ func (h FilmsHandler) FilmToModel(film *generated.Film) models.Film {
 	}
 
 	return models.Film{
-		Id:          id,
-		Title:       film.Title,
-		Genres:      film.Genres,
-		Country:     film.Country,
-		ReleaseRus:  releaseru,
-		Year:        int(film.Year),
-		Director:    film.Director,
-		Authors:     film.Authors,
-		Actors:      actors,
-		Release:     release,
-		Duration:    int(film.Duration),
-		Budget:      film.Budget,
-		Age:         int(film.Age),
-		Pic:         film.Pic,
-		Src:         film.Src,
-		Description: film.Description,
-		IsSeries:    film.IsSeries,
-		Seasons:     &SeasonsOut,
+		Id:           id,
+		Title:        film.Title,
+		Genres:       film.Genres,
+		Country:      film.Country,
+		ReleaseRus:   releaseru,
+		Year:         int(film.Year),
+		Director:     film.Director,
+		Authors:      film.Authors,
+		Actors:       actors,
+		Release:      release,
+		Duration:     int(film.Duration),
+		Budget:       film.Budget,
+		Age:          int(film.Age),
+		Pic:          film.Pic,
+		Src:          film.Src,
+		Description:  film.Description,
+		IsSeries:     film.IsSeries,
+		Seasons:      &SeasonsOut,
+		Rating:       float64(film.Rating),
+		NeedsPayment: film.NeedsPayment,
+		Slug:         film.Slug,
 	}
 }
 
-func (h FilmsHandler) FilmsToModels(films generated.Films) []models.Film {
+func (h FilmsHandler) FilmsToModels(films *generated.Films) []models.Film {
 	var result []models.Film
 	for i := 0; i < len(films.Data); i++ {
 		film := h.FilmToModel(films.Data[i])

@@ -31,7 +31,11 @@ type FilmsServiceClient interface {
 	Starred(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Films, error)
 	IfStarred(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error)
 	WatchList(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Films, error)
+	IfWatchList(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error)
 	Random(ctx context.Context, in *Nothing, opts ...grpc.CallOption) (*Film, error)
+	SetRating(ctx context.Context, in *RatingPair, opts ...grpc.CallOption) (*Nothing, error)
+	GetRating(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Film, error)
+	GetRatingByUser(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Film, error)
 }
 
 type filmsServiceClient struct {
@@ -159,9 +163,45 @@ func (c *filmsServiceClient) WatchList(ctx context.Context, in *UUID, opts ...gr
 	return out, nil
 }
 
+func (c *filmsServiceClient) IfWatchList(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Nothing, error) {
+	out := new(Nothing)
+	err := c.cc.Invoke(ctx, "/FilmsService/IfWatchList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *filmsServiceClient) Random(ctx context.Context, in *Nothing, opts ...grpc.CallOption) (*Film, error) {
 	out := new(Film)
 	err := c.cc.Invoke(ctx, "/FilmsService/Random", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *filmsServiceClient) SetRating(ctx context.Context, in *RatingPair, opts ...grpc.CallOption) (*Nothing, error) {
+	out := new(Nothing)
+	err := c.cc.Invoke(ctx, "/FilmsService/SetRating", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *filmsServiceClient) GetRating(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Film, error) {
+	out := new(Film)
+	err := c.cc.Invoke(ctx, "/FilmsService/GetRating", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *filmsServiceClient) GetRatingByUser(ctx context.Context, in *Pair, opts ...grpc.CallOption) (*Film, error) {
+	out := new(Film)
+	err := c.cc.Invoke(ctx, "/FilmsService/GetRatingByUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +225,11 @@ type FilmsServiceServer interface {
 	Starred(context.Context, *UUID) (*Films, error)
 	IfStarred(context.Context, *Pair) (*Nothing, error)
 	WatchList(context.Context, *UUID) (*Films, error)
+	IfWatchList(context.Context, *Pair) (*Nothing, error)
 	Random(context.Context, *Nothing) (*Film, error)
+	SetRating(context.Context, *RatingPair) (*Nothing, error)
+	GetRating(context.Context, *UUID) (*Film, error)
+	GetRatingByUser(context.Context, *Pair) (*Film, error)
 	mustEmbedUnimplementedFilmsServiceServer()
 }
 
@@ -232,8 +276,20 @@ func (UnimplementedFilmsServiceServer) IfStarred(context.Context, *Pair) (*Nothi
 func (UnimplementedFilmsServiceServer) WatchList(context.Context, *UUID) (*Films, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WatchList not implemented")
 }
+func (UnimplementedFilmsServiceServer) IfWatchList(context.Context, *Pair) (*Nothing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IfWatchList not implemented")
+}
 func (UnimplementedFilmsServiceServer) Random(context.Context, *Nothing) (*Film, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Random not implemented")
+}
+func (UnimplementedFilmsServiceServer) SetRating(context.Context, *RatingPair) (*Nothing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetRating not implemented")
+}
+func (UnimplementedFilmsServiceServer) GetRating(context.Context, *UUID) (*Film, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRating not implemented")
+}
+func (UnimplementedFilmsServiceServer) GetRatingByUser(context.Context, *Pair) (*Film, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRatingByUser not implemented")
 }
 func (UnimplementedFilmsServiceServer) mustEmbedUnimplementedFilmsServiceServer() {}
 
@@ -482,6 +538,24 @@ func _FilmsService_WatchList_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FilmsService_IfWatchList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Pair)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FilmsServiceServer).IfWatchList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/FilmsService/IfWatchList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FilmsServiceServer).IfWatchList(ctx, req.(*Pair))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _FilmsService_Random_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Nothing)
 	if err := dec(in); err != nil {
@@ -496,6 +570,60 @@ func _FilmsService_Random_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(FilmsServiceServer).Random(ctx, req.(*Nothing))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FilmsService_SetRating_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RatingPair)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FilmsServiceServer).SetRating(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/FilmsService/SetRating",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FilmsServiceServer).SetRating(ctx, req.(*RatingPair))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FilmsService_GetRating_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UUID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FilmsServiceServer).GetRating(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/FilmsService/GetRating",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FilmsServiceServer).GetRating(ctx, req.(*UUID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FilmsService_GetRatingByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Pair)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FilmsServiceServer).GetRatingByUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/FilmsService/GetRatingByUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FilmsServiceServer).GetRatingByUser(ctx, req.(*Pair))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -560,8 +688,24 @@ var FilmsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _FilmsService_WatchList_Handler,
 		},
 		{
+			MethodName: "IfWatchList",
+			Handler:    _FilmsService_IfWatchList_Handler,
+		},
+		{
 			MethodName: "Random",
 			Handler:    _FilmsService_Random_Handler,
+		},
+		{
+			MethodName: "SetRating",
+			Handler:    _FilmsService_SetRating_Handler,
+		},
+		{
+			MethodName: "GetRating",
+			Handler:    _FilmsService_GetRating_Handler,
+		},
+		{
+			MethodName: "GetRatingByUser",
+			Handler:    _FilmsService_GetRatingByUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
